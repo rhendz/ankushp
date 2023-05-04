@@ -8,7 +8,7 @@ import twitterIcon from "../public/images/twitter.svg"
 
 export default function Home() {
   return (
-    <main className="container mx-auto max-w-2xl bg-transparent py-8">
+    <main className="container mx-auto max-w-2xl py-8">
       <div className="overflow-hidden rounded-xl shadow-lg">
         <div className="flex flex-col items-center pt-8">
           <h1 className="text-2xl font-extrabold">Ankush Patel</h1>
