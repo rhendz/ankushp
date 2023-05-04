@@ -1,7 +1,5 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+import { fontSans } from "../lib/fonts"
 
 export const metadata = {
   title: "Ankush Patel",
@@ -15,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans`}>{children}</body>
+      <body className={fontSans.variable}>{children}</body>
     </html>
   )
 }

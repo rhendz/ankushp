@@ -1,4 +1,3 @@
-import { Inter } from "next/font/google"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -6,10 +5,6 @@ import emailIcon from "../public/images/email.svg"
 import githubIcon from "../public/images/github.svg"
 import linkedinIcon from "../public/images/linkedin.svg"
 import twitterIcon from "../public/images/twitter.svg"
-
-const inter = Inter({
-  subsets: ["latin"],
-})
 
 export default function Home() {
   return (
