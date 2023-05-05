@@ -1,19 +1,18 @@
 import "./globals.css"
-import { fontSans } from "../lib/fonts"
 
 export const metadata = {
   title: "Ankush Patel",
   description: "Ankush Patel | ML Engineer in the Bay Area",
 }
 
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode
-}) {
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={fontSans.variable}>{children}</body>
+      <body>{children}</body>
     </html>
   )
 }
