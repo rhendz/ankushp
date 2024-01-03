@@ -5,6 +5,7 @@ import { Canvas, extend, useFrame } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
 import { OrbitControls, shaderMaterial, useHelper } from '@react-three/drei';
 import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
+import { KernelSize, Resolution } from 'postprocessing';
 
 // import fragmentShader from './shaders/fragment.glsl';
 // import vertexShader from './shaders/vertex.glsl'; 
@@ -186,7 +187,7 @@ const Blob = () => {
       castShadow
       receiveShadow
     >
-      <icosahedronGeometry args={[2, 20]} />
+      <icosahedronGeometry args={[2, 100]} />
       <shaderMaterial
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
@@ -221,15 +222,19 @@ const Scene = () => {
 }
 
 export default function Home() {
-  
-
   return (
-    <div className='h-screen w-full'>
-      <Canvas className='h-full w-full'>
+    <div className='relative h-screen w-full'>
+      <Canvas className='z-0 h-full w-full'>
         <color attach="background" args={[new THREE.Color("#0e1111")]}/>
         <Scene />
         <OrbitControls />
       </Canvas>
+      <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
+        <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
+          <h1 className='text-8xl font-bold text-white'>Ankush Patel</h1>
+          <h2 className='text-6xl font-semibold'><span className='black-border'>ML Engineer</span></h2>
+        </div>
+      </div>
     </div>
   );
 }

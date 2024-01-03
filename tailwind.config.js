@@ -8,6 +8,11 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    colors: {
+      'transparent': 'transparent',
+      'silver': '#ecebff',
+      'white': 'white',
+    },
     container: {
       padding: {
         DEFAULT: '1rem',
