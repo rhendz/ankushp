@@ -3,9 +3,7 @@
 import * as THREE from 'three';
 import { Canvas, extend, useFrame } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
-import { OrbitControls, shaderMaterial, useHelper } from '@react-three/drei';
-import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
-import { KernelSize, Resolution } from 'postprocessing';
+import { OrbitControls, PerspectiveCamera, shaderMaterial, useHelper } from '@react-three/drei';
 
 // import fragmentShader from './shaders/fragment.glsl';
 // import vertexShader from './shaders/vertex.glsl'; 
@@ -181,13 +179,13 @@ const Blob = () => {
     <mesh
       ref={mesh}
       position={[0, 0, 0]}
-      scale={1.5}
+      scale={1.0}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
       castShadow
       receiveShadow
     >
-      <icosahedronGeometry args={[2, 100]} />
+      <icosahedronGeometry args={[1.5, 100]} />
       <shaderMaterial
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
@@ -198,15 +196,6 @@ const Blob = () => {
   );
 };
 
-const Floor = () => {
-  return (
-    <mesh position={[0, -4, 0]} castShadow receiveShadow>
-      <boxGeometry args={[10,0.1,10]} />
-      <meshStandardMaterial color={"red"}/>
-    </mesh>
-  )
-}
-
 const Scene = () => {
   const dirLight = useRef<THREE.DirectionalLight>(null);
   // useHelper(dirLight, THREE.DirectionalLightHelper, 1, 'red')
@@ -216,7 +205,6 @@ const Scene = () => {
       <ambientLight intensity={0.5}/>
       <directionalLight position={[0, 5, 2]} ref={dirLight} />
       <Blob />
-      {/* <Floor /> */}
     </>
   )
 }
@@ -227,7 +215,7 @@ export default function Home() {
       <Canvas className='z-0 h-full w-full'>
         <color attach="background" args={[new THREE.Color("#0e1111")]}/>
         <Scene />
-        <OrbitControls />
+        <OrbitControls enablePan={false} enableZoom={false}/>
       </Canvas>
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
