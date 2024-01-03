@@ -1,14 +1,9 @@
 'use client';
 
 import * as THREE from 'three';
-import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
-import { OrbitControls, PerspectiveCamera, shaderMaterial, useHelper } from '@react-three/drei';
-
-// import fragmentShader from './shaders/fragment.glsl';
-// import vertexShader from './shaders/vertex.glsl'; 
-
-
+import { OrbitControls } from '@react-three/drei'
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
