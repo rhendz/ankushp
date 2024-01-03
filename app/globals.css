@@ -27,8 +27,8 @@ body {
 }
 
 .black-border {
-  -webkit-text-stroke: 2px rgba(14, 17, 17, 0.5);  /* Webkit-based browsers */
-  text-stroke: 2px rgba(14, 17, 17, 0.5);  /* Standard CSS property */
+  -webkit-text-stroke: 1px rgba(14, 17, 17, 0.5);  /* Webkit-based browsers */
+  text-stroke: 1px rgba(14, 17, 17, 0.5);  /* Standard CSS property */
   color: rgba(0,0,0,0.1);  /* Make the text transparent */
   background-clip: text;  /* Apply the background to the text only */
   background-color: transparent;  /* Set the background color to transparent */

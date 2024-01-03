@@ -1,7 +1,7 @@
 'use client';
 
 import * as THREE from 'three';
-import { Canvas, extend, useFrame } from '@react-three/fiber';
+import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
 import { OrbitControls, PerspectiveCamera, shaderMaterial, useHelper } from '@react-three/drei';
 
@@ -196,31 +196,18 @@ const Blob = () => {
   );
 };
 
-const Scene = () => {
-  const dirLight = useRef<THREE.DirectionalLight>(null);
-  // useHelper(dirLight, THREE.DirectionalLightHelper, 1, 'red')
-
-  return (
-    <>
-      <ambientLight intensity={0.5}/>
-      <directionalLight position={[0, 5, 2]} ref={dirLight} />
-      <Blob />
-    </>
-  )
-}
-
 export default function Home() {
   return (
     <div className='relative h-screen w-full'>
       <Canvas className='z-0 h-full w-full'>
         <color attach="background" args={[new THREE.Color("#0e1111")]}/>
-        <Scene />
+        <Blob />
         <OrbitControls enablePan={false} enableZoom={false}/>
       </Canvas>
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
-          <h1 className='text-8xl font-bold text-white'>Ankush Patel</h1>
-          <h2 className='text-6xl font-semibold'><span className='black-border'>ML Engineer</span></h2>
+          <h1 className='text-nowrap text-5xl font-bold text-white sm:text-8xl'>Ankush Patel</h1>
+          <h2 className='text-nowrap text-3xl font-semibold sm:text-6xl'><span className='black-border'>ML Engineer</span></h2>
         </div>
       </div>
     </div>
