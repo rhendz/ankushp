@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ onDarkModeChange }) => {
     const [theme, setTheme] = useState("light");
 
     useEffect(() => {
@@ -13,7 +13,9 @@ const Navbar = () => {
     }, [theme]);
 
     const handleThemeSwitch = () => {
+        // Toggle dark mode and notify the parent component
         setTheme(theme === "dark" ? "light" : "dark");
+        onDarkModeChange();
     };
   
     return (
@@ -25,7 +27,7 @@ const Navbar = () => {
                         <ul className="hidden gap-x-6 text-content md:flex">
                         <li>
                             <Link href="/about">
-                            <p>About Us</p>
+                            <p>About</p>
                             </Link>
                         </li>
                         <li>
@@ -34,8 +36,8 @@ const Navbar = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/contacts">
-                            <p>Contacts</p>
+                            <Link href="/contact">
+                            <p>Contact</p>
                             </Link>
                         </li>
                         </ul>

@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --color-bkg: #3498db; /* Example HEX color for background */
-    --color-content: #2c3e50; /* Example HEX color for content */
+    --color-bkg: #e6e8e6; /* Example HEX color for background */
+    --color-content: #3f403f; /* Example HEX color for content */
     --color-accent1: #e74c3c; /* Example HEX color for accent1 */
     --color-accent2: #27ae60; /* Example HEX color for accent2 */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-bkg: #34495e; /* Example HEX color for dark mode background */
-      --color-content: #ecf0f1; /* Example HEX color for dark mode content */
+      --color-bkg: #3f403f; /* Example HEX color for dark mode background */
+      --color-content: #e6e8e6; /* Example HEX color for dark mode content */
       --color-accent1: #e74c3c; /* Example HEX color for dark mode accent1 */
       --color-accent2: #27ae60; /* Example HEX color for dark mode accent2 */
     }
   }
   :root[data-theme="dark"] {
-    --color-bkg: #34495e; /* Example HEX color for custom dark mode background */
-    --color-content: #ecf0f1; /* Example HEX color for custom dark mode content */
+    --color-bkg: #3f403f; /* Example HEX color for custom dark mode background */
+    --color-content: #e6e8e6; /* Example HEX color for custom dark mode content */
     --color-accent1: #e74c3c; /* Example HEX color for custom dark mode accent1 */
     --color-accent2: #27ae60; /* Example HEX color for custom dark mode accent2 */
   }

@@ -210,9 +210,10 @@ const vertexShader = /*glsl*/ `
 //   });
 // }
 
-const Blob = () => {
+const Blob = ( {darkMode = false} ) => {
   const mesh = useRef<THREE.Mesh>(null)
   const hover = useRef(false)
+  console.log('Blob Component - darkMode:', darkMode);
 
   const { hue, saturation, lightness } = useControls({
     hue: { value: 1.0, min: 0.0, max: 1.0 },
@@ -254,13 +255,15 @@ const Blob = () => {
 
       // shaderMaterial.uniforms.u_lightness.value = THREE.MathUtils.lerp(
       //   shaderMaterial.uniforms.u_intensity.value,
-      //   hover.current ? 1.0 : 0.0,
+      //   darkMode ? 0.0 : 2.0,
       //   0.01
       // );
 
+      shaderMaterial.uniforms.u_lightness.value = darkMode ? 0.0 : 0.2;
+
       shaderMaterial.uniforms.u_hue.value = hue;
       shaderMaterial.uniforms.u_saturation.value = saturation;
-      shaderMaterial.uniforms.u_lightness.value = lightness;
+      // shaderMaterial.uniforms.u_lightness.value = lightness;
     }
   });
   
@@ -277,25 +280,50 @@ const Blob = () => {
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
         uniforms={uniforms}
-        wireframe={false}
+        wireframe={darkMode ? false : true}
       />
     </mesh>
   );
 };
 
 export default function Home() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Check and update dark mode on mount
+  useEffect(() => {
+    console.log('Before state update:', isDarkMode);
+    setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
+    console.log('After state update:', isDarkMode);
+  
+    const darkModeChangeListener = () => {
+      console.log('Dark mode changed event received');
+      setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
+    };
+  
+    window.addEventListener('darkModeChange', darkModeChangeListener);
+  
+    return () => {
+      window.removeEventListener('darkModeChange', darkModeChangeListener);
+    };
+  }, []);
+
+  const handleDarkModeChange = () => {
+    // Toggle dark mode and update the state
+    setIsDarkMode((prevDarkMode) => !prevDarkMode);
+  };
+
   return (
     <div className='relative h-screen w-full bg-bkg'>
-      <Navbar/>
+      <Navbar onDarkModeChange={handleDarkModeChange} />
       <Leva />
       <Canvas className='z-0 h-full w-full'>
-        <Blob />
+        <Blob darkMode={isDarkMode}/>
         <OrbitControls enablePan={false} enableZoom={false}/>
       </Canvas>
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
-          <h1 className='text-nowrap text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
-          {/* <h2 className='text-nowrap text-3xl sm:text-6xl'><span className=''>ML Engineer</span></h2> */}
+          <h1 className='text-nowrap font-mono text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
+          <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'><span className=''>ML Engineer</span></h2>
         </div>
       </div>
     </div>
