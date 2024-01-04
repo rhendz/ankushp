@@ -7,11 +7,12 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
+  darkMode: 'class',
   theme: {
     colors: {
       'transparent': 'transparent',
-      'silver': '#ecebff',
-      'white': 'white',
+      bkg: "var(--color-bkg)",
+      content: "var(--color-content)",
     },
     container: {
       padding: {

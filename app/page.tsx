@@ -2,24 +2,97 @@
 
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'
+import { Leva, useControls } from 'leva';
+
+import Navbar from './components/navbar';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
   uniform float u_time;
 
+  // Leva controls for modifying RGB channels
+  uniform float u_hue;
+  uniform float u_saturation;
+  uniform float u_lightness;
+
   varying vec2 vUv;
   varying float vDisplacement;
+  
+  // Helper functions for converting between RGB and HSL
+  vec3 rgb2hsl(vec3 color) {
+    vec3 hsl;
+    float maxVal = max(max(color.r, color.g), color.b);
+    float minVal = min(min(color.r, color.g), color.b);
+
+    hsl.z = (maxVal + minVal) / 2.0;
+
+    float delta = maxVal - minVal;
+
+    if (delta == 0.0) {
+        hsl.x = 0.0;
+        hsl.y = 0.0;
+    } else {
+        hsl.y = (hsl.z < 0.5) ? (delta / (maxVal + minVal)) : (delta / (2.0 - maxVal - minVal));
+
+        if (maxVal == color.r) {
+            hsl.x = (color.g - color.b) / delta + ((color.g < color.b) ? 6.0 : 0.0);
+        } else if (maxVal == color.g) {
+            hsl.x = (color.b - color.r) / delta + 2.0;
+        } else {
+            hsl.x = (color.r - color.g) / delta + 4.0;
+        }
+
+        hsl.x /= 6.0;
+    }
+
+    return hsl;
+  }
+
+  float hue2rgb(float p, float q, float t) {
+    if (t < 0.0) t += 1.0;
+    if (t > 1.0) t -= 1.0;
+    if (t < 1.0 / 6.0) return p + (q - p) * 6.0 * t;
+    if (t < 1.0 / 2.0) return q;
+    if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+    return p;
+  }
+
+  vec3 hsl2rgb(vec3 hsl) {
+    vec3 rgb;
+    if (hsl.y == 0.0) {
+        rgb = vec3(hsl.z);
+    } else {
+        float q = (hsl.z < 0.5) ? (hsl.z * (1.0 + hsl.y)) : (hsl.z + hsl.y - (hsl.z * hsl.y));
+        float p = 2.0 * hsl.z - q;
+        rgb.r = hue2rgb(p, q, hsl.x + 1.0 / 3.0);
+        rgb.g = hue2rgb(p, q, hsl.x);
+        rgb.b = hue2rgb(p, q, hsl.x - 1.0 / 3.0);
+    }
+    return rgb;
+  }
 
   void main() {
     float distort = 2.0 * vDisplacement * u_intensity;
 
-    vec3 color = vec3(abs(vUv - 0.5) * 2.0  * (1.0 - distort), 1.0);
+    // Using HSL color space for better control over lightness
+    vec3 baseColor = vec3(abs(vUv - 0.5) * 2.0  * (1.0 - distort), 1.0);
+
+    // Convert to HSL
+    vec3 hsl = rgb2hsl(baseColor);
+
+    // Update hue, saturation, and lightness from uniform variables
+    hsl.x = mod(hsl.x + u_hue, 1.0); // Apply hue (looped)
+    hsl.y = clamp(hsl.y * u_saturation, 0.0, 1.0); // Apply saturation
+    hsl.z = clamp(hsl.z + u_lightness, 0.0, 1.0);
     
-    gl_FragColor = vec4(color ,1.0);
+    // Convert back to RGB
+    vec3 finalColor = hsl2rgb(hsl);
+
+    gl_FragColor = vec4(finalColor, 1.0);
   }
-`
+`;
 
 const vertexShader = /*glsl*/ `
   uniform float u_intensity;
@@ -129,17 +202,23 @@ const vertexShader = /*glsl*/ `
   }
 `
 
-// Import Leva only in development
-let useControls;
-if (process.env.NODE_ENV === 'development') {
-  import('leva').then((levaModule) => {
-    useControls = levaModule.useControls;
-  });
-}
+// // Import Leva only in development
+// let useControls;
+// if (process.env.NODE_ENV === 'development') {
+//   import('leva').then((levaModule) => {
+//     useControls = levaModule.useControls;
+//   });
+// }
 
 const Blob = () => {
   const mesh = useRef<THREE.Mesh>(null)
   const hover = useRef(false)
+
+  const { hue, saturation, lightness } = useControls({
+    hue: { value: 1.0, min: 0.0, max: 1.0 },
+    saturation: { value: 1.0, min: 0.0, max: 1.0 },
+    lightness: { value: 0.0, min: 0.0, max: 1.0 },
+  });
 
   const uniforms = useMemo(
     () => ({
@@ -149,8 +228,11 @@ const Blob = () => {
       u_time: {
         value: 0.0,
       },
+      u_hue: {value: hue},
+      u_saturation: { value: saturation},
+      u_lightness: { value: lightness },
     }),
-    []
+    [hue, saturation, lightness]
   );
 
   useFrame((state) => {
@@ -160,6 +242,8 @@ const Blob = () => {
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const shaderMaterial = mesh.current.material as THREE.ShaderMaterial;
   
+      shaderMaterial.dispose();
+
       shaderMaterial.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
   
       shaderMaterial.uniforms.u_intensity.value = THREE.MathUtils.lerp(
@@ -167,6 +251,16 @@ const Blob = () => {
         hover.current ? 0.85 : 0.15,
         0.02
       );
+
+      // shaderMaterial.uniforms.u_lightness.value = THREE.MathUtils.lerp(
+      //   shaderMaterial.uniforms.u_intensity.value,
+      //   hover.current ? 1.0 : 0.0,
+      //   0.01
+      // );
+
+      shaderMaterial.uniforms.u_hue.value = hue;
+      shaderMaterial.uniforms.u_saturation.value = saturation;
+      shaderMaterial.uniforms.u_lightness.value = lightness;
     }
   });
   
@@ -177,8 +271,6 @@ const Blob = () => {
       scale={1.0}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
-      castShadow
-      receiveShadow
     >
       <icosahedronGeometry args={[1.5, 100]} />
       <shaderMaterial
@@ -193,16 +285,17 @@ const Blob = () => {
 
 export default function Home() {
   return (
-    <div className='relative h-screen w-full'>
+    <div className='relative h-screen w-full bg-bkg'>
+      <Navbar/>
+      <Leva />
       <Canvas className='z-0 h-full w-full'>
-        <color attach="background" args={[new THREE.Color("#0e1111")]}/>
         <Blob />
         <OrbitControls enablePan={false} enableZoom={false}/>
       </Canvas>
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
-          <h1 className='text-nowrap text-5xl font-bold text-white sm:text-8xl'>Ankush Patel</h1>
-          <h2 className='text-nowrap text-3xl font-semibold sm:text-6xl'><span className='black-border'>ML Engineer</span></h2>
+          <h1 className='text-nowrap text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
+          {/* <h2 className='text-nowrap text-3xl sm:text-6xl'><span className=''>ML Engineer</span></h2> */}
         </div>
       </div>
     </div>
