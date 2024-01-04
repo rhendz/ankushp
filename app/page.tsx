@@ -243,7 +243,7 @@ const Blob = ( {darkMode = false} ) => {
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const shaderMaterial = mesh.current.material as THREE.ShaderMaterial;
   
-      shaderMaterial.dispose();
+      // shaderMaterial.dispose();
 
       shaderMaterial.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
   
@@ -323,7 +323,7 @@ export default function Home() {
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
           <h1 className='text-nowrap font-mono text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
-          <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'><span className=''>ML Engineer</span></h2>
+          <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'>ML Engineer</h2>
         </div>
       </div>
     </div>

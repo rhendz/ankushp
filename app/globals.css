@@ -4,31 +4,23 @@
 
 @layer base {
   :root {
-    --color-bkg: #e6e8e6; /* Example HEX color for background */
-    --color-content: #3f403f; /* Example HEX color for content */
-    --color-accent1: #e74c3c; /* Example HEX color for accent1 */
-    --color-accent2: #27ae60; /* Example HEX color for accent2 */
+    --color-bkg: #e6e8e6; /* platinum */
+    --color-content: #3f403f; /* onyx */
+    --color-accent1: #ef6f6c; /* light coral */
+    --color-accent2: #539987; /* zomp */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-bkg: #3f403f; /* Example HEX color for dark mode background */
-      --color-content: #e6e8e6; /* Example HEX color for dark mode content */
-      --color-accent1: #e74c3c; /* Example HEX color for dark mode accent1 */
-      --color-accent2: #27ae60; /* Example HEX color for dark mode accent2 */
+      --color-bkg: #171219; /* licorice */
+      --color-content: #f5fbef; /* ivory */
+      --color-accent1: #FB3640; /* imperial red */
+      --color-accent2: #247BA0 /* cerulean */
     }
   }
   :root[data-theme="dark"] {
-    --color-bkg: #3f403f; /* Example HEX color for custom dark mode background */
-    --color-content: #e6e8e6; /* Example HEX color for custom dark mode content */
-    --color-accent1: #e74c3c; /* Example HEX color for custom dark mode accent1 */
-    --color-accent2: #27ae60; /* Example HEX color for custom dark mode accent2 */
+      --color-bkg: #171219; /* licorice */
+      --color-content: #f5fbef; /* ivory */
+      --color-accent1: #FB3640; /* imperial red */
+      --color-accent2: #247BA0 /* cerulean */
   }
-}
-
-.black-border {
-  -webkit-text-stroke: 1px rgba(14, 17, 17, 0.5);  /* Webkit-based browsers */
-  text-stroke: 1px rgba(14, 17, 17, 0.5);  /* Standard CSS property */
-  color: rgba(0,0,0,0.05);  /* Make the text transparent */
-  background-clip: text;  /* Apply the background to the text only */
-  background-color: transparent;  /* Set the background color to transparent */
 }
