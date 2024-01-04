@@ -4,15 +4,16 @@ import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'
-import { Leva, useControls } from 'leva';
+// import { Leva, useControls } from 'leva';
 
 import Navbar from './components/navbar';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
   uniform float u_time;
 
-  // Leva controls for modifying RGB channels
+  // Uniforms for modifying HSL
   uniform float u_hue;
   uniform float u_saturation;
   uniform float u_lightness;
@@ -104,7 +105,6 @@ const vertexShader = /*glsl*/ `
 
   // Classic Perlin 3D Noise 
   // by Stefan Gustavson
-  //
   vec4 permute(vec4 x) {
       return mod(((x*34.0)+1.0)*x, 289.0);
   }
@@ -213,13 +213,13 @@ const vertexShader = /*glsl*/ `
 const Blob = ( {darkMode = false} ) => {
   const mesh = useRef<THREE.Mesh>(null)
   const hover = useRef(false)
-  console.log('Blob Component - darkMode:', darkMode);
 
-  const { hue, saturation, lightness } = useControls({
-    hue: { value: 1.0, min: 0.0, max: 1.0 },
-    saturation: { value: 1.0, min: 0.0, max: 1.0 },
-    lightness: { value: 0.0, min: 0.0, max: 1.0 },
-  });
+  // Leva Controls
+  // const { hue, saturation, lightness } = useControls({
+  //   hue: { value: 1.0, min: 0.0, max: 1.0 },
+  //   saturation: { value: 1.0, min: 0.0, max: 1.0 },
+    // lightness: { value: 0.0, min: 0.0, max: 1.0 },
+  // });
 
   const uniforms = useMemo(
     () => ({
@@ -229,11 +229,12 @@ const Blob = ( {darkMode = false} ) => {
       u_time: {
         value: 0.0,
       },
-      u_hue: {value: hue},
-      u_saturation: { value: saturation},
-      u_lightness: { value: lightness },
+      u_hue: { value: 1.0 },
+      u_saturation: { value: 1.0 },
+      u_lightness: { value: 0.2 },
     }),
-    [hue, saturation, lightness]
+    // [hue, saturation, lightness]
+    []
   );
 
   useFrame((state) => {
@@ -243,7 +244,7 @@ const Blob = ( {darkMode = false} ) => {
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const shaderMaterial = mesh.current.material as THREE.ShaderMaterial;
   
-      // shaderMaterial.dispose();
+      shaderMaterial.dispose();
 
       shaderMaterial.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
   
@@ -261,8 +262,8 @@ const Blob = ( {darkMode = false} ) => {
 
       shaderMaterial.uniforms.u_lightness.value = darkMode ? 0.0 : 0.2;
 
-      shaderMaterial.uniforms.u_hue.value = hue;
-      shaderMaterial.uniforms.u_saturation.value = saturation;
+      // shaderMaterial.uniforms.u_hue.value = hue;
+      // shaderMaterial.uniforms.u_saturation.value = saturation;
       // shaderMaterial.uniforms.u_lightness.value = lightness;
     }
   });
@@ -291,12 +292,9 @@ export default function Home() {
 
   // Check and update dark mode on mount
   useEffect(() => {
-    console.log('Before state update:', isDarkMode);
     setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
-    console.log('After state update:', isDarkMode);
   
     const darkModeChangeListener = () => {
-      console.log('Dark mode changed event received');
       setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
     };
   
@@ -315,10 +313,15 @@ export default function Home() {
   return (
     <div className='relative h-screen w-full bg-bkg'>
       <Navbar onDarkModeChange={handleDarkModeChange} />
-      <Leva />
+      {/* <Leva /> */}
       <Canvas className='z-0 h-full w-full'>
         <Blob darkMode={isDarkMode}/>
         <OrbitControls enablePan={false} enableZoom={false}/>
+        {isDarkMode && (
+          <EffectComposer>
+            <Bloom intensity={0.2} luminanceThreshold={0.1}/>
+          </EffectComposer>
+        )}
       </Canvas>
       <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
         <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
