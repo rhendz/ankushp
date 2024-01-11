@@ -5,9 +5,9 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'
 // import { Leva, useControls } from 'leva';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 import Navbar from './components/navbar';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -267,7 +267,7 @@ const Blob = ( {darkMode = false} ) => {
       // shaderMaterial.uniforms.u_lightness.value = lightness;
     }
   });
-  
+
   return (
     <mesh
       ref={mesh}
@@ -285,6 +285,15 @@ const Blob = ( {darkMode = false} ) => {
       />
     </mesh>
   );
+};
+
+const HeroHeadline = () => {
+  return (
+    <div className='pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
+      <h1 className='text-nowrap font-mono text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
+      <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'>ML Engineer</h2>
+    </div>
+  )
 };
 
 export default function Home() {
@@ -314,7 +323,7 @@ export default function Home() {
     <div className='relative h-screen w-full bg-bkg'>
       <Navbar onDarkModeChange={handleDarkModeChange} />
       {/* <Leva /> */}
-      <Canvas className='z-0 h-full w-full'>
+      <Canvas className='absolute left-0 top-0 z-0 h-full w-full'>
         <Blob darkMode={isDarkMode}/>
         <OrbitControls enablePan={false} enableZoom={false}/>
         {isDarkMode && (
@@ -323,12 +332,7 @@ export default function Home() {
           </EffectComposer>
         )}
       </Canvas>
-      <div className='pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center'>
-        <div className='flex size-56 grow flex-col justify-center bg-transparent text-center '>
-          <h1 className='text-nowrap font-mono text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
-          <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'>ML Engineer</h2>
-        </div>
-      </div>
+      <HeroHeadline />
     </div>
   );
 }
