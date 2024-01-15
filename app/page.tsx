@@ -7,7 +7,7 @@ import { OrbitControls } from '@react-three/drei'
 // import { Leva, useControls } from 'leva';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
-import Navbar from './components/navbar';
+import Navbar from '../components/navbar';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -244,7 +244,8 @@ const Blob = ( {darkMode = false} ) => {
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const shaderMaterial = mesh.current.material as THREE.ShaderMaterial;
   
-      shaderMaterial.dispose();
+      // Dev setting to refresh shaders
+      // shaderMaterial.dispose();
 
       shaderMaterial.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
   
