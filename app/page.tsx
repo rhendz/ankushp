@@ -7,7 +7,7 @@ import { OrbitControls } from '@react-three/drei'
 // import { Leva, useControls } from 'leva';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
-import Navbar from '../components/navbar';
+import Navbar from '@/components/navbar';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;

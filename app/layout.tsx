@@ -1,5 +1,5 @@
-import { fontMono, fontSans } from './fonts';
-import './globals.css';
+import { fontMono, fontSans } from '@/app/fonts';
+import '@/app/globals.css';
 
 export const metadata = {
   title: 'Ankush Patel',
