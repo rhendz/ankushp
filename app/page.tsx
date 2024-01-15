@@ -8,6 +8,7 @@ import { OrbitControls } from '@react-three/drei'
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 
 import Navbar from '@/components/navbar';
+import { useTheme } from '@/components/theme-provider';
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -298,31 +299,13 @@ const HeroHeadline = () => {
 };
 
 export default function Home() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode } = useTheme();
 
-  // Check and update dark mode on mount
-  useEffect(() => {
-    setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
-  
-    const darkModeChangeListener = () => {
-      setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
-    };
-  
-    window.addEventListener('darkModeChange', darkModeChangeListener);
-  
-    return () => {
-      window.removeEventListener('darkModeChange', darkModeChangeListener);
-    };
-  }, []);
-
-  const handleDarkModeChange = () => {
-    // Toggle dark mode and update the state
-    setIsDarkMode((prevDarkMode) => !prevDarkMode);
-  };
+  console.log("dark mode:", isDarkMode)
 
   return (
     <div className='relative h-screen w-full'>
-      <Navbar onDarkModeChange={handleDarkModeChange} />
+      <Navbar />
       {/* <Leva /> */}
       <Canvas className='absolute left-0 top-0 z-0 h-full w-full'>
         <Blob darkMode={isDarkMode}/>

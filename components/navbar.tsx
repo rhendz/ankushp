@@ -1,36 +1,27 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { MdHome, MdOutlineHome, MdOutlineLightMode, MdDarkMode } from 'react-icons/md';
 
-const Navbar = ({ onDarkModeChange }) => {
-    const [theme, setTheme] = useState("light");
+import { useTheme } from "@/components/theme-provider";
 
-    useEffect(() => {
-        document.documentElement.setAttribute("data-theme", theme);
-    }, [theme]);
-
-    const handleThemeSwitch = () => {
-        // Toggle dark mode and notify the parent component
-        setTheme(theme === "dark" ? "light" : "dark");
-        onDarkModeChange();
-    };
+const Navbar = () => {
+    const { isDarkMode, toggleTheme } = useTheme();
 
     return (
         <div className="container fixed inset-x-0 top-0 z-50 p-8 lg:h-40">
             <ul className="flex h-full items-center justify-between text-2xl lg:text-3xl">
                 <li>
                     <Link href="/">
-                        {theme === 'dark'? <MdOutlineHome /> : <MdHome /> }
+                        {isDarkMode ? <MdOutlineHome aria-label="Home" /> : <MdHome aria-label="Home" />}
                     </Link>
                 </li>
                 <li>
                     <button
                         type="button"
-                        className=""
-                        onClick={handleThemeSwitch}
-                        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                        onClick={toggleTheme}
+                        aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
                     >
-                        {theme === 'dark' ? <MdOutlineLightMode /> : <MdDarkMode />}
+                        {isDarkMode ? <MdOutlineLightMode aria-label="Light Mode" /> : <MdDarkMode aria-label="Dark Mode" />}
                     </button>
                 </li>
             </ul>

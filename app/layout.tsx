@@ -1,5 +1,6 @@
 import { fontMono, fontSans } from '@/app/fonts';
 import '@/app/globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata = {
   title: 'Ankush Patel',
@@ -13,7 +14,9 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='en' className={`${fontSans.variable} ${fontMono.variable} bg-background text-content`}>
-      <body>{children}</body>
+      <ThemeProvider>
+        <body>{children}</body>
+      </ThemeProvider>
     </html>
   );
 }
