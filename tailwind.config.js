@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     colors: {
       'transparent': 'transparent',
-      bkg: "var(--color-bkg)",
+      background: "var(--color-background)",
       content: "var(--color-content)",
     },
     container: {
@@ -22,10 +22,12 @@ module.exports = {
         xl: '5rem',
         '2xl': '6rem',
       },
+      center: true,
     },
     extend: {
       fontFamily: {
-        sans: ['Roboto', ...fontFamily.sans],
+        sans: ['var(--font-sans)', ...fontFamily.sans],
+        mono: ['var(--font-mono)', ...fontFamily.mono],
       },
     },
   },

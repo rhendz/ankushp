@@ -1,3 +1,4 @@
+import { fontMono, fontSans } from './fonts';
 import './globals.css';
 
 export const metadata = {
@@ -11,7 +12,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang='en'>
+    <html lang='en' className={`${fontSans.variable} ${fontMono.variable} bg-background text-content`}>
       <body>{children}</body>
     </html>
   );

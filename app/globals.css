@@ -4,21 +4,21 @@
 
 @layer base {
   :root {
-    --color-bkg: #e6e8e6; /* platinum */
+    --color-background: #e6e8e6; /* platinum */
     --color-content: #3f403f; /* onyx */
     --color-accent1: #ef6f6c; /* light coral */
     --color-accent2: #539987; /* zomp */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-bkg: #171219; /* licorice */
+      --color-background: #171219; /* licorice */
       --color-content: #f5fbef; /* ivory */
       --color-accent1: #FB3640; /* imperial red */
       --color-accent2: #247BA0 /* cerulean */
     }
   }
   :root[data-theme="dark"] {
-      --color-bkg: #171219; /* licorice */
+      --color-background: #171219; /* licorice */
       --color-content: #f5fbef; /* ivory */
       --color-accent1: #FB3640; /* imperial red */
       --color-accent2: #247BA0 /* cerulean */

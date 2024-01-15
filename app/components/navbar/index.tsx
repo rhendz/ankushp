@@ -1,15 +1,12 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { MdHome, MdOutlineHome, MdOutlineLightMode, MdDarkMode } from 'react-icons/md';
 
 const Navbar = ({ onDarkModeChange }) => {
     const [theme, setTheme] = useState("light");
 
     useEffect(() => {
-        if (theme === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark")
-        } else {
-        document.documentElement.removeAttribute("data-theme")
-        }
+        document.documentElement.setAttribute("data-theme", theme);
     }, [theme]);
 
     const handleThemeSwitch = () => {
@@ -17,38 +14,28 @@ const Navbar = ({ onDarkModeChange }) => {
         setTheme(theme === "dark" ? "light" : "dark");
         onDarkModeChange();
     };
-  
+
     return (
-        <>
-            <div className="fixed top-0 z-50 h-20 w-full bg-bkg">
-                <div className="container mx-auto h-full px-4">
-                    <div className="flex h-full items-center justify-between">
-                        {/* <Logo /> */}
-                        <ul className="hidden gap-x-6 text-content md:flex">
-                        <li>
-                            <Link href="/about">
-                            <p>About</p>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/services">
-                            <p>Services</p>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/contact">
-                            <p>Contact</p>
-                            </Link>
-                        </li>
-                        </ul>
-                        <button className='rounded-3xl bg-bkg p-2 text-content' onClick={handleThemeSwitch}>
-                            Dark Mode
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
-}
+        <div className="container fixed inset-x-0 top-0 z-50 p-8 lg:h-40">
+            <ul className="flex h-full items-center justify-between text-2xl lg:text-3xl">
+                <li>
+                    <Link href="/">
+                        {theme === 'dark'? <MdOutlineHome /> : <MdHome /> }
+                    </Link>
+                </li>
+                <li>
+                    <button
+                        type="button"
+                        className=""
+                        onClick={handleThemeSwitch}
+                        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                    >
+                        {theme === 'dark' ? <MdOutlineLightMode /> : <MdDarkMode />}
+                    </button>
+                </li>
+            </ul>
+        </div>
+    );
+};
 
 export default Navbar;

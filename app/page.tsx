@@ -290,8 +290,8 @@ const Blob = ( {darkMode = false} ) => {
 const HeroHeadline = () => {
   return (
     <div className='pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
-      <h1 className='text-nowrap font-mono text-5xl font-bold text-content sm:text-8xl'>Ankush Patel</h1>
-      <h2 className='text-nowrap font-mono text-2xl text-content sm:text-4xl'>ML Engineer</h2>
+      <h1 className='whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
+      <h2 className='whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
     </div>
   )
 };
@@ -320,7 +320,7 @@ export default function Home() {
   };
 
   return (
-    <div className='relative h-screen w-full bg-bkg'>
+    <div className='relative h-screen w-full'>
       <Navbar onDarkModeChange={handleDarkModeChange} />
       {/* <Leva /> */}
       <Canvas className='absolute left-0 top-0 z-0 h-full w-full'>
