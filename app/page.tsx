@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'
 // import { Leva, useControls } from 'leva';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { MdEmail } from 'react-icons/md';
 
 import Navbar from '@/components/navbar';
 import { useTheme } from '@/components/theme-provider';
@@ -278,7 +279,7 @@ const Blob = ( {darkMode = false} ) => {
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
     >
-      <icosahedronGeometry args={[1.5, 100]} />
+      <icosahedronGeometry args={[2, 100]} />
       <shaderMaterial
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
@@ -289,34 +290,45 @@ const Blob = ( {darkMode = false} ) => {
   );
 };
 
-const HeroHeadline = () => {
-  return (
-    <div className='pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
-      <h1 className='whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
-      <h2 className='whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
-    </div>
-  )
-};
-
 export default function Home() {
   const { isDarkMode } = useTheme();
 
-  console.log("dark mode:", isDarkMode)
-
   return (
-    <div className='relative h-screen w-full'>
+    <div className='flex h-screen w-screen flex-col items-center'>
       <Navbar />
-      {/* <Leva /> */}
-      <Canvas className='absolute left-0 top-0 z-0 h-full w-full'>
-        <Blob darkMode={isDarkMode}/>
-        <OrbitControls enablePan={false} enableZoom={false}/>
-        {isDarkMode && (
-          <EffectComposer>
-            <Bloom intensity={0.2} luminanceThreshold={0.1}/>
-          </EffectComposer>
-        )}
-      </Canvas>
-      <HeroHeadline />
+      <div className='relative mt-20 min-h-60 w-full flex-initial basis-3/4 items-center justify-center'>
+        <Canvas>
+          {/* Canvas components */}
+          <Blob darkMode={isDarkMode} />
+          <OrbitControls enablePan={false} enableZoom={false} />
+          {isDarkMode && (
+            <EffectComposer>
+              <Bloom intensity={0.2} luminanceThreshold={0.1} />
+            </EffectComposer>
+          )}
+        </Canvas>
+        {/* HeroHeadline centered on top of the Canvas */}
+        <div className='absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
+          <h1 className='whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
+          <h2 className='whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
+        </div>
+      </div>
+      
+      {/* Social links */}
+      <div className="flex w-full flex-initial basis-1/4 items-center justify-around">
+        <a href="mailto:ap@ankushp.com" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
+          Email
+        </a>
+        <a href="https://www.linkedin.com/in/your-linkedin" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
+          LinkedIn
+        </a>
+        <a href="https://github.com/your-github" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="https://twitter.com/your-twitter" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
+          Twitter
+        </a>
+      </div>
     </div>
   );
 }
