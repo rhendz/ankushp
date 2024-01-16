@@ -297,7 +297,7 @@ export default function Home() {
   return (
     <div className='flex h-screen w-screen flex-col items-center'>
       <Navbar />
-      <div className='relative mt-20 min-h-60 w-full flex-initial basis-3/4 items-center justify-center'>
+      <div className='relative mt-20 min-h-20 w-full flex-initial basis-4/5 items-center justify-center'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />
@@ -316,7 +316,7 @@ export default function Home() {
       </div>
       
       {/* Social links */}
-      <div className="flex w-full flex-initial basis-1/4 flex-wrap items-center justify-around px-8 text-4xl">
+      <div className="flex w-full max-w-screen-md flex-initial basis-1/5 flex-wrap items-center justify-around px-8 pb-8 text-4xl">
         <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
           <FaEnvelope/>
         </Link>

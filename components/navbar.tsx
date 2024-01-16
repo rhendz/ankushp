@@ -8,8 +8,8 @@ const Navbar = () => {
     const { isDarkMode, toggleTheme } = useTheme();
 
     return (
-        <div className="container fixed inset-x-0 top-0 z-50 p-8 lg:h-40">
-            <ul className="flex h-full items-center justify-between text-2xl lg:text-3xl">
+        <div className="container fixed inset-x-0 top-0 z-50 max-w-screen-md px-4 pt-8 lg:h-40">
+            <ul className="flex h-full items-center justify-between text-3xl lg:text-4xl">
                 <li>
                     <Link href="/">
                         {isDarkMode ? <MdOutlineHome aria-label="Home" /> : <MdHome aria-label="Home" />}
