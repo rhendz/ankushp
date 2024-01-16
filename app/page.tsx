@@ -3,10 +3,11 @@
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Link from "next/link";
 import { OrbitControls } from '@react-three/drei'
 // import { Leva, useControls } from 'leva';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
-import { MdEmail } from 'react-icons/md';
+import { FaEnvelope, FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6';
 
 import Navbar from '@/components/navbar';
 import { useTheme } from '@/components/theme-provider';
@@ -315,19 +316,19 @@ export default function Home() {
       </div>
       
       {/* Social links */}
-      <div className="flex w-full flex-initial basis-1/4 items-center justify-around">
-        <a href="mailto:ap@ankushp.com" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
-          Email
-        </a>
-        <a href="https://www.linkedin.com/in/your-linkedin" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
-          LinkedIn
-        </a>
-        <a href="https://github.com/your-github" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
-          GitHub
-        </a>
-        <a href="https://twitter.com/your-twitter" className="hover:text-accent1 text-content" target="_blank" rel="noopener noreferrer">
-          Twitter
-        </a>
+      <div className="flex w-full flex-initial basis-1/4 flex-wrap items-center justify-around px-8 text-4xl">
+        <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+          <FaEnvelope/>
+        </Link>
+        <Link href="https://www.linkedin.com/in/ankush-p/" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+          <FaLinkedin/>
+        </Link>
+        <Link href="https://github.com/rhendz" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+          <FaGithub/>
+        </Link>
+        <Link href="https://twitter.com/ankushp98" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+          <FaXTwitter/>
+        </Link>
       </div>
     </div>
   );
