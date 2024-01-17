@@ -315,8 +315,7 @@ export default function Home() {
   const { isDarkMode } = useTheme();
 
   return (
-    <div className='flex h-screen flex-col items-center'>
-      <Navbar />
+    <div className='h-screen w-screen items-center'>
       <div className='h-full w-full flex-initial items-center justify-center'>
         <Canvas>
           {/* Canvas components */}
