@@ -281,7 +281,7 @@ const Blob = ( {darkMode = false} ) => {
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
     >
-      <icosahedronGeometry args={[2, 100]} />
+      <icosahedronGeometry args={[1.5, 100]} />
       <shaderMaterial
         fragmentShader={fragmentShader}
         vertexShader={vertexShader}
@@ -292,13 +292,32 @@ const Blob = ( {darkMode = false} ) => {
   );
 };
 
+const Socials = () => {
+  return (
+    <div className="container absolute inset-x-0 bottom-[12.5%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
+      <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+        <FaEnvelope/>
+      </Link>
+      <Link href="https://www.linkedin.com/in/ankush-p/" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+        <FaLinkedin/>
+      </Link>
+      <Link href="https://github.com/rhendz" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+        <FaGithub/>
+      </Link>
+      <Link href="https://twitter.com/ankushp98" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
+        <FaXTwitter/>
+      </Link>
+    </div>
+  )
+};
+
 export default function Home() {
   const { isDarkMode } = useTheme();
 
   return (
-    <div className='flex h-screen w-screen flex-col items-center'>
+    <div className='flex h-screen flex-col items-center'>
       <Navbar />
-      <div className='relative mt-20 min-h-20 w-full flex-initial basis-4/5 items-center justify-center'>
+      <div className='h-full w-full flex-initial items-center justify-center'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />
@@ -315,22 +334,7 @@ export default function Home() {
           <h2 className='whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
         </div>
       </div>
-      
-      {/* Social links */}
-      <div className="flex w-full max-w-screen-md flex-initial basis-1/5 flex-wrap items-center justify-around px-8 pb-32 text-4xl">
-        <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-          <FaEnvelope/>
-        </Link>
-        <Link href="https://www.linkedin.com/in/ankush-p/" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-          <FaLinkedin/>
-        </Link>
-        <Link href="https://github.com/rhendz" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-          <FaGithub/>
-        </Link>
-        <Link href="https://twitter.com/ankushp98" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-          <FaXTwitter/>
-        </Link>
-      </div>
+      <Socials />
     </div>
   );
 }

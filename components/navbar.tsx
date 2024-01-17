@@ -10,7 +10,7 @@ const Navbar = () => {
     const { isDarkMode, toggleTheme } = useTheme();
 
     return (
-        <div className="container fixed inset-x-0 top-0 z-50 max-w-screen-md px-4 pt-8 lg:h-40">
+        <div className="container fixed top-4 z-50 max-w-screen-lg sm:top-8 lg:top-16 xl:top-20 2xl:top-24">
             <ul className="flex h-full items-center justify-between text-3xl lg:text-4xl">
                 <li>
                     <Link href="/">
