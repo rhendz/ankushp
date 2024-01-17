@@ -297,7 +297,7 @@ export default function Home() {
   return (
     <div className='flex h-screen w-screen flex-col items-center'>
       <Navbar />
-      <div className='relative mt-20 min-h-20 w-full flex-initial basis-4/5 items-center justify-center'>
+      <div className='relative min-h-20 w-full flex-initial basis-4/5 items-center justify-center'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />
