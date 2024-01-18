@@ -276,7 +276,7 @@ const Blob = ( {darkMode = false} ) => {
     <mesh
       ref={mesh}
       position={[0, 0, 0]}
-      rotation={[0, 0, 0]}
+      rotation={[-Math.PI / 4, 0, 0]}
       scale={1.0}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
@@ -294,7 +294,7 @@ const Blob = ( {darkMode = false} ) => {
 
 const Socials = () => {
   return (
-    <div className="container absolute inset-x-0 bottom-[12.5%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
+    <div className="container absolute inset-x-0 bottom-[6.25%] lg:bottom-[12.5%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
       <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
         <FaEnvelope/>
       </Link>
@@ -316,7 +316,7 @@ export default function Home() {
 
   return (
     <div className='flex h-screen w-screen flex-col items-center overflow-hidden'>
-      <div className='h-full w-full flex-initial items-center justify-center'>
+      <div className='relative h-full w-full flex-1'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />
@@ -333,6 +333,7 @@ export default function Home() {
           <h2 className='flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
         </div>
       </div>
+      
       <Socials />
     </div>
   );

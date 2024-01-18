@@ -14,13 +14,8 @@ interface RootLayoutProps {
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDarkMode;
-    }
-    return false;
-  });
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [isDarkMode, setIsDarkMode] = useState(prefersDark);
 
   const toggleTheme = () => {
     setIsDarkMode((prevDarkMode) => !prevDarkMode);
