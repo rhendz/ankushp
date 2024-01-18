@@ -1,7 +1,7 @@
 import '@/app/globals.css';
 
 import { fontMono, fontSans } from '@/app/fonts';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 
 import Navbar from '@/components/navbar'
 import { ThemeProvider } from '@/components/theme-provider';
@@ -34,6 +34,12 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e6e8e6" },
+    { media: "(prefers-color-scheme: dark)", color: "#171219" },
+  ],
+}
 interface RootLayoutProps {
   children: React.ReactNode;
 }
