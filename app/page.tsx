@@ -328,7 +328,7 @@ export default function Home() {
           )}
         </Canvas>
         {/* HeroHeadline centered on top of the Canvas */}
-        <div className='absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
+        <div className='pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 select-none text-center'>
           <h1 className='flex-initial whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
           <h2 className='flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
         </div>
