@@ -328,9 +328,9 @@ export default function Home() {
           )}
         </Canvas>
         {/* HeroHeadline centered on top of the Canvas */}
-        <div className='absolute left-0 top-0 z-10 flex h-full w-full select-none flex-col flex-wrap items-center justify-center text-center'>
-          <h1 className='flex-initial text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
-          <h2 className='flex-initial font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
+        <div className='absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
+          <h1 className='flex-initial whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
+          <h2 className='flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
         </div>
       </div>
       <Socials />
