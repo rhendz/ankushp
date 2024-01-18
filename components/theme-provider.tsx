@@ -13,6 +13,20 @@ interface RootLayoutProps {
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
+const updateThemeColorMetaTag = (color: string) => {
+  const existingMetaTag = document.querySelector('meta[name="theme-color"]');
+  if (existingMetaTag) {
+    // Update existing meta tag
+    existingMetaTag.setAttribute('content', color);
+  } else {
+    // Create new meta tag
+    const newMetaTag = document.createElement('meta');
+    newMetaTag.name = 'theme-color';
+    newMetaTag.content = color;
+    document.head.appendChild(newMetaTag);
+  }
+};
+
 export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -21,6 +35,7 @@ export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
     // This must be done client-side when window is defined
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDark);
+    updateThemeColorMetaTag(isDarkMode ? "#171219" : "#e6e8e6")
   }, []);
 
   const toggleTheme = () => {
@@ -29,6 +44,7 @@ export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    updateThemeColorMetaTag(isDarkMode ? "#171219" : "#e6e8e6")
   }, [isDarkMode]);
 
   return (
