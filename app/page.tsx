@@ -276,7 +276,7 @@ const Blob = ( {darkMode = false} ) => {
     <mesh
       ref={mesh}
       position={[0, 0, 0]}
-      rotation={[-Math.PI / 4, 0, 0]}
+      rotation={[0, 0, 0]}
       scale={1.0}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
