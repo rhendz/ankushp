@@ -316,7 +316,7 @@ export default function Home() {
 
   return (
     <div className='flex h-screen w-screen flex-col items-center overflow-hidden'>
-      <div className='relative h-full w-full flex-1'>
+      <div className='relative h-full w-full basis-5/6'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />

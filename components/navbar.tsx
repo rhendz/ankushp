@@ -11,7 +11,7 @@ const Navbar = () => {
 
     return (
         <div className="container fixed inset-x-0 top-4 z-50 mx-auto max-w-screen-lg sm:top-8 lg:top-16 xl:top-20 2xl:top-24">
-            <ul className="flex h-full items-center justify-between text-3xl lg:text-4xl">
+            <ul className="flex h-full items-center justify-between p-4 text-3xl lg:text-4xl">
                 <li>
                     <Link href="/">
                         <svg viewBox="0 0 116.56 92.428" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
