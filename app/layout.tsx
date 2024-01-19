@@ -9,38 +9,29 @@ import { ThemeProvider } from '@/components/theme-provider';
 export const metadata: Metadata = {
   title: 'Ankush Patel',
   description: 'Ankush Patel is a machine learning engineer with 5 years of experience.',
+  manifest: '/site.webmanifest',
   icons: {
     icon: [
+      {
+        rel: 'icon',
+        url: '/favicon.ico',
+        href: '/favicon.ico',
+        sizes: 'any',
+      },
+      {
+        rel: 'icon',
+        url: '/icon.svg',
+        href: '/icon.svg',
+        type: 'image/svg+xml',
+      },
       {
         rel: "apple-touch-icon",
         url: '/apple-touch-icon.png',
         href: '/apple-touch-icon.png',
-        sizes: '180x180',
-      },
-      {
-        media: '(prefers-color-scheme: dark)',
-        url: '/favicon-dark.ico',
-        href: '/favicon-dark.ico',
-        sizes: 'any',
-      },
-      {
-        url: '/favicon-light.ico',
-        href: '/favicon-light.ico',
-        sizes: 'any',
       },
     ],
   },
-  manifest: '/site.webmanifest',
 };
-
-// export const viewport: Viewport = {
-//   width: "device-width",
-//   initialScale: 1.0,
-//   themeColor: [
-//     { media: "(prefers-color-scheme: light)", color: "#e6e8e6" },
-//     { media: "(prefers-color-scheme: dark)", color: "#171219" },
-//   ],
-// }
 
 interface RootLayoutProps {
   children: React.ReactNode;

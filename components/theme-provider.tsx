@@ -27,21 +27,6 @@ const updateThemeColorMetaTag = (color: string) => {
   }
 };
 
-const updateFavicon = (url: string) => {
-  const existingFavicon = document.querySelector('link[rel="icon"]');
-  
-  if (existingFavicon) {
-    // Update existing favicon
-    existingFavicon.setAttribute('href', url);
-  } else {
-    // Create new favicon link
-    const newFavicon = document.createElement('link');
-    newFavicon.rel = 'icon';
-    newFavicon.href = url;
-    document.head.appendChild(newFavicon);
-  }
-};
-
 export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -51,7 +36,6 @@ export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDark);
     updateThemeColorMetaTag(prefersDark ? "#171219" : "#e6e8e6");
-    updateFavicon(prefersDark ? "favicon-dark.ico" : "favicon-light.ico");
   }, []);
 
   const toggleTheme = () => {
@@ -61,7 +45,6 @@ export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     updateThemeColorMetaTag(isDarkMode ? "#171219" : "#e6e8e6")
-    updateFavicon(isDarkMode ? "favicon-dark.ico" : "favicon-light.ico");
   }, [isDarkMode]);
 
   return (

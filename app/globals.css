@@ -9,6 +9,12 @@
     --color-accent1: #ef6f6c; /* light coral */
     --color-accent2: #539987; /* zomp */
   }
+  :root[data-theme="dark"] {
+      --color-background: #171219; /* licorice */
+      --color-content: #f5fbef; /* ivory */
+      --color-accent1: #FB3640; /* imperial red */
+      --color-accent2: #247BA0 /* cerulean */
+  }
   @media (prefers-color-scheme: light) {
     :root[data-theme="light"] {
       --color-background: #e6e8e6; /* platinum */
@@ -24,11 +30,5 @@
       --color-accent1: #FB3640; /* imperial red */
       --color-accent2: #247BA0 /* cerulean */
     }
-  }
-  :root[data-theme="dark"] {
-      --color-background: #171219; /* licorice */
-      --color-content: #f5fbef; /* ivory */
-      --color-accent1: #FB3640; /* imperial red */
-      --color-accent2: #247BA0 /* cerulean */
   }
 }
