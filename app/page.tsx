@@ -294,7 +294,7 @@ const Blob = ( {darkMode = false} ) => {
 
 const Socials = () => {
   return (
-    <div className="container absolute inset-x-0 bottom-[6.25%] lg:bottom-[12.5%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
+    <div className="container absolute inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl lg:bottom-[12.5%]">
       <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
         <FaEnvelope/>
       </Link>

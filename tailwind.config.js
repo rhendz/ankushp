@@ -10,7 +10,6 @@ module.exports = {
   darkMode: 'class',
   theme: {
     colors: {
-      'transparent': 'transparent',
       background: "var(--color-background)",
       content: "var(--color-content)",
       accent1: "var(--color-accent1)",
