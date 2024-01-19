@@ -59,7 +59,7 @@ export const ThemeProvider: React.FC<RootLayoutProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'default');
     updateThemeColorMetaTag(isDarkMode ? "#171219" : "#e6e8e6")
     updateFavicon(isDarkMode ? "favicon-dark.ico" : "favicon-light.ico");
   }, [isDarkMode]);
