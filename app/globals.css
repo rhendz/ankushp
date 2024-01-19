@@ -2,26 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  :root[data-theme="light"] {
+    --color-background: #e6e8e6; /* platinum */
+    --color-content: #3f403f; /* onyx */
+    --color-accent1: #ef6f6c; /* light coral */
+    --color-accent2: #539987; /* zomp */
   }
-} */
-
-body {
-  color: rgb(var(--foreground-rgb));
-  /* background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); */
+  :root[data-theme="dark"] {
+      --color-background: #171219; /* licorice */
+      --color-content: #f5fbef; /* ivory */
+      --color-accent1: #FB3640; /* imperial red */
+      --color-accent2: #247BA0 /* cerulean */
+  }
+  @media (prefers-color-scheme: light) {
+    :root[data-theme="light"] {
+      --color-background: #e6e8e6; /* platinum */
+      --color-content: #3f403f; /* onyx */
+      --color-accent1: #ef6f6c; /* light coral */
+      --color-accent2: #539987; /* zomp */
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background: #171219; /* licorice */
+      --color-content: #f5fbef; /* ivory */
+      --color-accent1: #FB3640; /* imperial red */
+      --color-accent2: #247BA0 /* cerulean */
+    }
+  }
 }
