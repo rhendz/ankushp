@@ -3,11 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root[data-theme="light"] {
     --color-background: #e6e8e6; /* platinum */
     --color-content: #3f403f; /* onyx */
     --color-accent1: #ef6f6c; /* light coral */
     --color-accent2: #539987; /* zomp */
+  }
+  @media (prefers-color-scheme: light) {
+    :root[data-theme="light"] {
+      --color-background: #e6e8e6; /* platinum */
+      --color-content: #3f403f; /* onyx */
+      --color-accent1: #ef6f6c; /* light coral */
+      --color-accent2: #539987; /* zomp */
+    }
   }
   @media (prefers-color-scheme: dark) {
     :root {
