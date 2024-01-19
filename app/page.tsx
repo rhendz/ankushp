@@ -294,7 +294,7 @@ const Blob = ( {darkMode = false} ) => {
 
 const Socials = () => {
   return (
-    <div className="container absolute inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl lg:bottom-[12.5%]">
+    <div className="container absolute inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
       <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
         <FaEnvelope/>
       </Link>
@@ -316,7 +316,7 @@ export default function Home() {
 
   return (
     <div className='flex h-screen w-screen flex-col items-center overflow-hidden'>
-      <div className='relative h-full w-full basis-5/6'>
+      <div className='absolute bottom-[2.5%] h-full w-full'>
         <Canvas>
           {/* Canvas components */}
           <Blob darkMode={isDarkMode} />
