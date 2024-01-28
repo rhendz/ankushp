@@ -17,6 +17,7 @@ const HomeNav = () => {
           {link.title}
         </Link>
       ))}
+      <ThemeSwitch />
     </div>
   )
 }
@@ -30,6 +31,7 @@ const BlogNav = () => {
         </Link>
       ))}
       <SearchButton />
+      <ThemeSwitch />
     </div>
   )
 }

@@ -44,7 +44,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
       <body>
         <Providers>
-          <div className="mx-auto flex flex-col min-h-screen justify-normal font-sans bg-background text-content">
+          <div className="mx-auto flex flex-col min-h-screen justify-normal font-sans">
             <Header />
             {children}
           </div>
