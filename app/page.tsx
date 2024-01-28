@@ -1,16 +1,16 @@
 "use client";
 
-import * as THREE from 'three';
-import { Canvas, useFrame } from '@react-three/fiber';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import * as THREE from "three";
+import { Canvas, useFrame } from "@react-three/fiber";
+import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls } from "@react-three/drei";
 // import { Leva, useControls } from 'leva';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
-import { FaEnvelope, FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6';
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { FaEnvelope, FaLinkedin, FaGithub, FaXTwitter } from "react-icons/fa6";
 
-import Navbar from '@/components/navbar';
-import { useTheme } from '@/components/theme-provider';
+import Navbar from "@/components/navbar";
+import { useTheme } from "@/components/theme-provider";
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -203,7 +203,7 @@ const vertexShader = /*glsl*/ `
 
     gl_Position = projectedPosition;
   }
-`
+`;
 
 // // Import Leva only in development
 // let useControls;
@@ -213,15 +213,15 @@ const vertexShader = /*glsl*/ `
 //   });
 // }
 
-const Blob = ( {darkMode = false} ) => {
-  const mesh = useRef<THREE.Mesh>(null)
-  const hover = useRef(false)
+const Blob = ({ darkMode = false }) => {
+  const mesh = useRef<THREE.Mesh>(null);
+  const hover = useRef(false);
 
   // Leva Controls
   // const { hue, saturation, lightness } = useControls({
   //   hue: { value: 1.0, min: 0.0, max: 1.0 },
   //   saturation: { value: 1.0, min: 0.0, max: 1.0 },
-    // lightness: { value: 0.0, min: 0.0, max: 1.0 },
+  // lightness: { value: 0.0, min: 0.0, max: 1.0 },
   // });
 
   const uniforms = useMemo(
@@ -237,25 +237,25 @@ const Blob = ( {darkMode = false} ) => {
       u_lightness: { value: 0.2 },
     }),
     // [hue, saturation, lightness]
-    []
+    [],
   );
 
   useFrame((state) => {
     const { clock } = state;
-  
+
     // Check if mesh.current is defined before accessing its properties
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const shaderMaterial = mesh.current.material as THREE.ShaderMaterial;
-  
+
       // Dev setting to refresh shaders
       // shaderMaterial.dispose();
 
       shaderMaterial.uniforms.u_time.value = 0.4 * clock.getElapsedTime();
-  
+
       shaderMaterial.uniforms.u_intensity.value = THREE.MathUtils.lerp(
         shaderMaterial.uniforms.u_intensity.value,
         hover.current ? 0.85 : 0.15,
-        0.02
+        0.02,
       );
 
       // shaderMaterial.uniforms.u_lightness.value = THREE.MathUtils.lerp(
@@ -292,48 +292,114 @@ const Blob = ( {darkMode = false} ) => {
   );
 };
 
-const Socials = () => {
-  return (
-    <div className="container absolute inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
-      <Link href="mailto:ap@ankushp.com" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-        <FaEnvelope/>
-      </Link>
-      <Link href="https://www.linkedin.com/in/ankush-p/" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-        <FaLinkedin/>
-      </Link>
-      <Link href="https://github.com/rhendz" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-        <FaGithub/>
-      </Link>
-      <Link href="https://twitter.com/ankushp98" className="text-content hover:text-accent1" target="_blank" rel="noopener noreferrer">
-        <FaXTwitter/>
-      </Link>
-    </div>
-  )
-};
+const BlobDisplay = () => {
+  // const { isDarkMode } = useTheme();
 
-export default function Home() {
-  const { isDarkMode } = useTheme();
+  const divRef = useRef(null);
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      // Use callback function to ensure current values are captured
+      if (divRef.current && canvasWrapperRef.current) {
+        const { clientHeight, clientWidth } = entries[0].target;
+        canvasWrapperRef.current.style.width = `${clientWidth}px`;
+        canvasWrapperRef.current.style.height = `${clientHeight}px`;
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+
+    // Capture current values of refs in variables
+    const currentDivRef = divRef.current;
+
+    if (currentDivRef) {
+      resizeObserver.observe(currentDivRef);
+    }
+
+    return () => {
+      // Use the variable created inside the effect
+      if (currentDivRef) {
+        resizeObserver.unobserve(currentDivRef);
+      }
+    };
+  }, []);
 
   return (
-    <div className='flex h-screen w-screen flex-col items-center overflow-hidden'>
-      <div className='absolute bottom-[2.5%] h-full w-full'>
-        <Canvas>
+    <div className="flex-1" ref={divRef}>
+      <div id="canvas-wrapper" ref={canvasWrapperRef}>
+        <Canvas className="z-0">
           {/* Canvas components */}
-          <Blob darkMode={isDarkMode} />
+          <Blob darkMode={true} />
           <OrbitControls enablePan={false} enableZoom={false} />
-          {isDarkMode && (
+          {true && (
             <EffectComposer>
               <Bloom intensity={0.2} luminanceThreshold={0.1} />
             </EffectComposer>
           )}
         </Canvas>
+      </div>
+    </div>
+  );
+};
+
+const Socials = () => {
+  return (
+    <div className="container inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
+      <Link
+        href="mailto:ap@ankushp.com"
+        className="text-content hover:text-accent1"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FaEnvelope />
+      </Link>
+      <Link
+        href="https://www.linkedin.com/in/ankush-p/"
+        className="text-content hover:text-accent1"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FaLinkedin />
+      </Link>
+      <Link
+        href="https://github.com/rhendz"
+        className="text-content hover:text-accent1"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FaGithub />
+      </Link>
+      <Link
+        href="https://twitter.com/ankushp98"
+        className="text-content hover:text-accent1"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FaXTwitter />
+      </Link>
+    </div>
+  );
+};
+
+export default function Home() {
+  // const { isDarkMode } = useTheme();
+
+  return (
+    <div className="flex-1 flex flex-col items-stretch">
+      <div className="flex-1 flex flex-col items-stretch justify-center">
+        <BlobDisplay />
         {/* HeroHeadline centered on top of the Canvas */}
-        <div className='pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 select-none text-center'>
-          <h1 className='flex-initial whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl'>Ankush Patel</h1>
-          <h2 className='flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl'>ML Engineer</h2>
+        <div className="absolute flex flex-wrap flex-col pointer-events-none left-1/2 transform -translate-x-1/2 z-10 select-none text-center">
+          <h1 className="flex-initial whitespace-nowrap text-4xl font-extrabold text-content lg:text-8xl">
+            Ankush Patel
+          </h1>
+          <h2 className="flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl">
+            ML Engineer
+          </h2>
         </div>
       </div>
-      
+
       <Socials />
     </div>
   );
