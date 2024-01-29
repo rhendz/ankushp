@@ -40,9 +40,7 @@ const BlogHome = ({ posts }) => {
                       <div className="space-y-6">
                         <div>
                           <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link href={`/blog/${slug}`} className="">
-                              {title}
-                            </Link>
+                            <Link href={`/blog/posts/${slug}`}>{title}</Link>
                           </h2>
                           <div className="flex flex-wrap">
                             {tags.map((tag) => (
@@ -56,7 +54,7 @@ const BlogHome = ({ posts }) => {
                       </div>
                       <div className="text-base font-medium leading-6">
                         <Link
-                          href={`/blog/${slug}`}
+                          href={`/blog/posts/${slug}`}
                           className="text-accent hover:text-accent/70"
                           aria-label={`Read more: "${title}"`}
                         >
