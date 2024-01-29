@@ -330,9 +330,9 @@ const BlobDisplay = () => {
       <div id="canvas-wrapper" ref={canvasWrapperRef}>
         <Canvas className="z-0">
           {/* Canvas components */}
-          <Blob darkMode={true} />
+          <Blob darkMode={false} />
           <OrbitControls enablePan={false} enableZoom={false} />
-          {true && (
+          {false && (
             <EffectComposer>
               <Bloom intensity={0.2} luminanceThreshold={0.1} />
             </EffectComposer>
@@ -383,8 +383,6 @@ const Socials = () => {
 };
 
 export default function Home() {
-  // const { isDarkMode } = useTheme();
-
   return (
     <div className="flex-1 flex flex-col items-stretch">
       <div className="flex-1 flex flex-col items-stretch justify-center">

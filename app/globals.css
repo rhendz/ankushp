@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --color-primary: #fffcf9; /* baby powder */
-    --color-secondary: #3f403f; /* onyx */
-    --color-accent: #ef6f6c; /* light coral */
+    --color-primary: 255 252 249; /* baby powder */
+    --color-secondary: 63 64 63; /* onyx */
+    --color-accent: 239 111 108; /* light coral */
   }
   :root[data-theme="light"] {
-    --color-primary: #fffcf9; /* baby powder */
-    --color-secondary: #3f403f; /* onyx */
-    --color-accent: #ef6f6c; /* light coral */
+    --color-primary: 255 252 249; /* baby powder */
+    --color-secondary: 63 64 63; /* onyx */
+    --color-accent: 239 111 108; /* light coral */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-primary: #171219; /* licorice */
-      --color-secondary: #f5fbef; /* ivory */
-      --color-accent: #fb3640; /* imperial red */
+      --color-primary: 23 18 25; /* licorice */
+      --color-secondary: 245 251 239; /* ivory */
+      --color-accent: 251 54 64; /* imperial red */
     }
   }
   :root[data-theme="dark"] {
-    --color-primary: #171219; /* licorice */
-    --color-secondary: #f5fbef; /* ivory */
-    --color-accent: #fb3640; /* imperial red */
+    --color-primary: 23 18 25; /* licorice */
+    --color-secondary: 245 251 239; /* ivory */
+    --color-accent: 251 54 64; /* imperial red */
   }
 }

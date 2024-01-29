@@ -24,9 +24,9 @@ module.exports = {
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
-        primary: 'var(--color-primary) / <alpha-value>',
-        secondary: 'var(--color-secondary) / <alpha-value>',
-        accent: 'var(--color-accent) / <alpha-value>',
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
         gray: colors.gray,
       },
       container: {
@@ -43,43 +43,43 @@ module.exports = {
         sans: ['var(--font-sans)', ...fontFamily.sans],
         mono: ['var(--font-mono)', ...fontFamily.mono],
       },
-    //   typography: ({ theme }) => ({
-    //     DEFAULT: {
-    //       css: {
-    //         a: {
-    //           color: theme('colors.primary.500'),
-    //           '&:hover': {
-    //             color: `${theme('colors.primary.600')}`,
-    //           },
-    //           code: { color: theme('colors.primary.400') },
-    //         },
-    //         'h1,h2': {
-    //           fontWeight: '700',
-    //           letterSpacing: theme('letterSpacing.tight'),
-    //         },
-    //         h3: {
-    //           fontWeight: '600',
-    //         },
-    //         code: {
-    //           color: theme('colors.indigo.500'),
-    //         },
-    //       },
-    //     },
-    //     invert: {
-    //       css: {
-    //         a: {
-    //           color: theme('colors.primary.500'),
-    //           '&:hover': {
-    //             color: `${theme('colors.primary.400')}`,
-    //           },
-    //           code: { color: theme('colors.primary.400') },
-    //         },
-    //         'h1,h2,h3,h4,h5,h6': {
-    //           color: theme('colors.gray.100'),
-    //         },
-    //       },
-    //     },
-    //   }),
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            a: {
+              color: theme('colors.primary.500'),
+              '&:hover': {
+                color: `${theme('colors.primary.600')}`,
+              },
+              code: { color: theme('colors.primary.400') },
+            },
+            'h1,h2': {
+              fontWeight: '700',
+              letterSpacing: theme('letterSpacing.tight'),
+            },
+            h3: {
+              fontWeight: '600',
+            },
+            code: {
+              color: theme('colors.indigo.500'),
+            },
+          },
+        },
+        invert: {
+          css: {
+            a: {
+              color: theme('colors.primary.500'),
+              '&:hover': {
+                color: `${theme('colors.primary.400')}`,
+              },
+              code: { color: theme('colors.primary.400') },
+            },
+            'h1,h2,h3,h4,h5,h6': {
+              color: theme('colors.gray.100'),
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
