@@ -38,6 +38,7 @@ const BlogNav = () => {
 
 const Header = () => {
   const pathname = usePathname()
+  const isBlogPage = pathname.includes('/blog')
 
   return (
     <header className="mx-auto flex h-16 w-3/4 max-w-screen-lg items-center justify-between py-10">
@@ -57,7 +58,7 @@ const Header = () => {
           </g>
         </svg>
       </Link>
-      {pathname === '/blog' ? <BlogNav /> : <HomeNav />}
+      {isBlogPage ? <BlogNav /> : <HomeNav />}
     </header>
   )
 }
