@@ -12,7 +12,7 @@ module.exports = {
     './layouts/**/*.{js,ts,tsx}',
     './data/**/*.mdx',
   ],
-  darkMode: ['class'],
+  darkMode: ['class', '[data-mode="dark"]'],
   theme: {
     extend: {
       lineHeight: {

@@ -41,10 +41,14 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
+    <html
+      lang="en"
+      className={`${fontSans.variable} ${fontMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <Providers>
-          <div className="mx-auto flex flex-col min-h-screen justify-normal font-sans">
+          <div className="mx-auto flex flex-col min-h-screen justify-normal font-sans bg-primary text-secondary">
             <Header />
             {children}
           </div>
