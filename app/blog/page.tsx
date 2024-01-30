@@ -48,7 +48,7 @@ const BlogHome = ({ posts }) => {
                             ))}
                           </div>
                         </div>
-                        <div className="prose max-w-none text-secondary/60">
+                        <div className="prose max-w-none text-secondary/70">
                           {summary}
                         </div>
                       </div>
@@ -72,7 +72,7 @@ const BlogHome = ({ posts }) => {
       {posts.length > MAX_DISPLAY && (
         <div className="flex justify-end text-base font-medium leading-6">
           <Link
-            href="/blog"
+            href="/blog/posts"
             className="text-accent hover:text-accent/70"
             aria-label="All posts"
           >
