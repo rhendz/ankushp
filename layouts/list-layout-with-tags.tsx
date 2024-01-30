@@ -10,6 +10,7 @@ import Link from '@/components/link'
 import Tag from '@/components/tag'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
+import { useMemo } from 'react'
 
 interface PaginationProps {
   totalPages: number
@@ -24,7 +25,10 @@ interface ListLayoutProps {
 
 function Pagination({ totalPages, currentPage }: PaginationProps) {
   const pathname = usePathname()
-  const basePath = pathname.split('/')[1]
+  const basePath = useMemo(() => {
+    const segments = pathname.split('/')
+    return `${segments[1]}/${segments[2]}/`
+  }, [pathname])
   const prevPage = currentPage - 1 > 0
   const nextPage = currentPage + 1 <= totalPages
 
