@@ -7,7 +7,7 @@ interface Props {
 const Tag = ({ text }: Props) => {
   return (
     <Link
-      href={`/tags/${slug(text)}`}
+      href={`/blog/tags/${slug(text)}`}
       className="mr-3 text-sm font-medium uppercase text-accent hover:text-accent/70"
     >
       {text.split(' ').join('-')}

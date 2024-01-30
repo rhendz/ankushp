@@ -6,5 +6,5 @@ export const homeNavLinks = [
 export const blogNavLinks = [
   { href: '/blog', title: 'Blog' },
   { href: '/blog/posts', title: 'Posts' },
-  { href: '/tags', title: 'Tags' },
+  { href: '/blog/tags', title: 'Tags' },
 ]

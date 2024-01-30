@@ -35,8 +35,8 @@ var require_siteMetadata = __commonJS({
       language: "en-us",
       theme: "system",
       // system, dark or light
-      siteUrl: "https://tailwind-nextjs-starter-blog.vercel.app",
-      siteRepo: "https://github.com/timlrx/tailwind-nextjs-starter-blog",
+      siteUrl: "https://ankushp.com",
+      siteRepo: "https://github.com/rhendz/ankushp",
       siteLogo: "/static/images/logo.png",
       socialBanner: "/static/images/twitter-card.png",
       mastodon: "https://mastodon.social/@mastodonuser",
@@ -276,4 +276,4 @@ export {
   Blog,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-534UMNC3.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-VAFVRMEO.mjs.map

@@ -6,8 +6,8 @@ const siteMetadata = {
   description: 'A blog created with Next.js and Tailwind.css',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://ankushp.com',
+  siteRepo: 'https://github.com/rhendz/ankushp',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
@@ -88,6 +88,6 @@ const siteMetadata = {
     //   indexName: 'docsearch',
     // },
   },
-};
+}
 
-module.exports = siteMetadata;
+module.exports = siteMetadata
