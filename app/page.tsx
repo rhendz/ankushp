@@ -2,17 +2,13 @@
 
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import React, { createRef, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { OrbitControls } from "@react-three/drei";
 // import { Leva, useControls } from 'leva';
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { FaEnvelope, FaLinkedin, FaGithub, FaXTwitter } from "react-icons/fa6";
+import { useTheme } from "next-themes";
 
-import Navbar from "@/components/navbar";
-import { useTheme } from "@/components/theme-provider";
 import Footer from "@/components/footer";
-
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
   uniform float u_time;
@@ -294,7 +290,8 @@ const Blob = ({ darkMode = false }) => {
 };
 
 const BlobDisplay = () => {
-  // const { isDarkMode } = useTheme();
+  const theme = localStorage.getItem("theme");
+  console.log("Theme", theme);
 
   const divRef = useRef(null);
   const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -340,45 +337,6 @@ const BlobDisplay = () => {
           )}
         </Canvas>
       </div>
-    </div>
-  );
-};
-
-const Socials = () => {
-  return (
-    <div className="container inset-x-0 bottom-[6.25%] flex w-full max-w-screen-lg flex-initial flex-wrap items-center justify-around text-4xl">
-      <Link
-        href="mailto:ap@ankushp.com"
-        className="text-content hover:text-accent1"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <FaEnvelope />
-      </Link>
-      <Link
-        href="https://www.linkedin.com/in/ankush-p/"
-        className="text-content hover:text-accent1"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <FaLinkedin />
-      </Link>
-      <Link
-        href="https://github.com/rhendz"
-        className="text-content hover:text-accent1"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <FaGithub />
-      </Link>
-      <Link
-        href="https://twitter.com/ankushp98"
-        className="text-content hover:text-accent1"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <FaXTwitter />
-      </Link>
     </div>
   );
 };
