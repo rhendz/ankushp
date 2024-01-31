@@ -2,7 +2,6 @@
 
 import siteMetadata from '@/data/siteMetadata'
 import { homeNavLinks, blogNavLinks } from '@/data/headerNavLinks'
-import Logo from '@/data/logo.svg'
 import Link from './link'
 import MobileNav from './mobile-nav'
 import ThemeSwitch from './theme-switch'
