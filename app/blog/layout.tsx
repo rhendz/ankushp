@@ -77,10 +77,10 @@ export default function BlogLayout({
     //   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
     //   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
     //   <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
-    <div className="antialiased">
+    <div className="flex-1 flex antialiased">
       <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
       <SectionContainer>
-        <div className="flex min-h-screen flex-col justify-between font-sans">
+        <div className="flex flex-col mx-auto justify-between font-sans">
           {/* <SearchProvider searchConfig={siteMetadata.search as SearchConfig}> */}
           {/* <Header /> */}
           <main className="mb-auto">{children}</main>
