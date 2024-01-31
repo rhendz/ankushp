@@ -290,11 +290,10 @@ const Blob = ({ darkMode = false }) => {
 };
 
 const BlobDisplay = () => {
-  const theme = localStorage.getItem("theme");
-  console.log("Theme", theme);
-
   const divRef = useRef(null);
-  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);  
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]) => {
@@ -328,9 +327,9 @@ const BlobDisplay = () => {
       <div id="canvas-wrapper" ref={canvasWrapperRef}>
         <Canvas className="z-0">
           {/* Canvas components */}
-          <Blob darkMode={false} />
+          <Blob darkMode={isDarkMode} />
           <OrbitControls enablePan={false} enableZoom={false} />
-          {false && (
+          {isDarkMode && (
             <EffectComposer>
               <Bloom intensity={0.2} luminanceThreshold={0.1} />
             </EffectComposer>
