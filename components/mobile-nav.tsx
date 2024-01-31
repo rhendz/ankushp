@@ -2,9 +2,30 @@
 
 import { useState } from 'react'
 import Link from './link'
-import { blogNavLinks } from '@/data/headerNavLinks'
+import { homeNavLinks, blogNavLinks } from '@/data/headerNavLinks'
+import { usePathname } from 'next/navigation'
+
+const NavLinks = ({ links, onToggleNav }) => {
+  return (
+    <>
+      {links.map((link) => (
+        <div key={link.title} className="px-12 py-4">
+          <Link
+            href={link.href}
+            className="text-2xl font-bold tracking-widest text-secondary"
+            onClick={onToggleNav}
+          >
+            {link.title}
+          </Link>
+        </div>
+      ))}
+    </>
+  )
+}
 
 const MobileNav = () => {
+  const pathname = usePathname()
+  const isBlogPage = pathname.includes('/blog')
   const [navShow, setNavShow] = useState(false)
 
   const onToggleNav = () => {
@@ -26,7 +47,7 @@ const MobileNav = () => {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="h-8 w-8 text-gray-900 dark:text-gray-100"
+          className="h-8 w-8 text-secondary"
         >
           <path
             fillRule="evenodd"
@@ -36,7 +57,7 @@ const MobileNav = () => {
         </svg>
       </button>
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-full bg-white opacity-95 duration-300 ease-in-out dark:bg-gray-950 dark:opacity-[0.98] ${
+        className={`fixed left-0 top-0 z-50 h-full w-full bg-primary/95 duration-300 ease-in-out ${
           navShow ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -46,7 +67,7 @@ const MobileNav = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="text-gray-900 dark:text-gray-100"
+              className="text-secondary"
             >
               <path
                 fillRule="evenodd"
@@ -57,17 +78,7 @@ const MobileNav = () => {
           </button>
         </div>
         <nav className="fixed mt-8 h-full">
-          {blogNavLinks.map((link) => (
-            <div key={link.title} className="px-12 py-4">
-              <Link
-                href={link.href}
-                className="text-2xl font-bold tracking-widest text-gray-900 dark:text-gray-100"
-                onClick={onToggleNav}
-              >
-                {link.title}
-              </Link>
-            </div>
-          ))}
+          <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} onToggleNav={onToggleNav}/>
         </nav>
       </div>
     </>
