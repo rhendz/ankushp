@@ -37,17 +37,17 @@ var require_siteMetadata = __commonJS({
       // system, dark or light
       siteUrl: "https://ankushp.com",
       siteRepo: "https://github.com/rhendz/ankushp",
-      siteLogo: "/static/images/logo.png",
-      socialBanner: "/static/images/twitter-card.png",
-      mastodon: "https://mastodon.social/@mastodonuser",
-      email: "address@yoursite.com",
-      github: "https://github.com",
-      twitter: "https://twitter.com/Twitter",
-      facebook: "https://facebook.com",
-      youtube: "https://youtube.com",
-      linkedin: "https://www.linkedin.com",
-      threads: "https://www.threads.net",
-      instagram: "https://www.instagram.com",
+      // siteLogo: '/static/images/logo.png',
+      // socialBanner: '/static/images/twitter-card.png',
+      // mastodon: 'https://mastodon.social/@mastodonuser',
+      email: "ap@ankushp.com",
+      github: "https://github.com/rhendz",
+      twitter: "https://twitter.com/ankushp98",
+      // facebook: 'https://facebook.com',
+      // youtube: 'https://youtube.com',
+      linkedin: "https://www.linkedin.com/in/ankush-p/",
+      // threads: 'https://www.threads.net',
+      // instagram: 'https://www.instagram.com',
       locale: "en-US",
       analytics: {
         // If you want to use an analytics provider you have to add it to the
@@ -276,4 +276,4 @@ export {
   Blog,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-VAFVRMEO.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-JQZ27MW6.mjs.map
