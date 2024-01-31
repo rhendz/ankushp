@@ -84,7 +84,6 @@ export default function BlogLayout({
         {/* <Header /> */}
         <main className="mb-auto">{children}</main>
         {/* </SearchProvider> */}
-        <Footer />
       </div>
     </div>
     // </html>

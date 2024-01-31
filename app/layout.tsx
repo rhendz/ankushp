@@ -7,6 +7,7 @@ import Navbar from "@/components/navbar";
 import { Providers } from "./providers";
 import Header from "@/components/header";
 import SectionContainer from "@/components/section-container";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Ankush Patel",
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <div className="flex h-screen flex-col justify-between font-sans">
               <Header />
               {children}
+              <Footer />
             </div>
           </SectionContainer>
         </Providers>
