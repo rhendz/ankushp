@@ -41,7 +41,7 @@ const Header = () => {
   const isBlogPage = pathname.includes('/blog')
 
   return (
-    <header className="mx-auto flex h-16 w-3/4 max-w-screen-lg items-center justify-between py-10">
+    <header className="flex h-16 items-center justify-between py-10">
       <Link className="mr-5" href="/" aria-label={siteMetadata.headerTitle}>
         <svg viewBox="0 0 116.56 92.428" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
           <g transform="translate(-90.221 -58.786)">

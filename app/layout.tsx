@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import Navbar from "@/components/navbar";
 import { Providers } from "./providers";
 import Header from "@/components/header";
+import SectionContainer from "@/components/section-container";
 
 export const metadata: Metadata = {
   title: "Ankush Patel",
@@ -46,12 +47,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${fontSans.variable} ${fontMono.variable}`}
       suppressHydrationWarning
     >
-      <body>
+      <body className="bg-primary text-secondary">
         <Providers>
-          <div className="mx-auto flex flex-col min-h-screen justify-normal font-sans bg-primary text-secondary">
-            <Header />
-            {children}
-          </div>
+          <SectionContainer>
+            <div className="flex h-screen flex-col justify-between font-sans">
+              <Header />
+              {children}
+            </div>
+          </SectionContainer>
         </Providers>
       </body>
     </html>

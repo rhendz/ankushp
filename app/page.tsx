@@ -11,6 +11,7 @@ import { FaEnvelope, FaLinkedin, FaGithub, FaXTwitter } from "react-icons/fa6";
 
 import Navbar from "@/components/navbar";
 import { useTheme } from "@/components/theme-provider";
+import Footer from "@/components/footer";
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -277,7 +278,7 @@ const Blob = ({ darkMode = false }) => {
       ref={mesh}
       position={[0, 0, 0]}
       rotation={[-Math.PI / 4, 0, 0]}
-      scale={1.0}
+      scale={1.25}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
     >
@@ -398,7 +399,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Socials />
+      <Footer />
     </div>
   );
 }

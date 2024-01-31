@@ -79,15 +79,13 @@ export default function BlogLayout({
     //   <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
     <div className="flex-1 flex antialiased">
       <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
-      <SectionContainer>
-        <div className="flex flex-col mx-auto justify-between font-sans">
-          {/* <SearchProvider searchConfig={siteMetadata.search as SearchConfig}> */}
-          {/* <Header /> */}
-          <main className="mb-auto">{children}</main>
-          {/* </SearchProvider> */}
-          <Footer />
-        </div>
-      </SectionContainer>
+      <div className="flex flex-col mx-auto justify-between font-sans">
+        {/* <SearchProvider searchConfig={siteMetadata.search as SearchConfig}> */}
+        {/* <Header /> */}
+        <main className="mb-auto">{children}</main>
+        {/* </SearchProvider> */}
+        <Footer />
+      </div>
     </div>
     // </html>
   );
