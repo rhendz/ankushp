@@ -47,28 +47,16 @@ export const KBarSearchProvider: FC<{
   useEffect(() => {
     const mapPosts = (posts: CoreContent<MDXDocument>[]) => {
       const actions: Action[] = []
-      
-      function transformPath(originalPath) {
-        const parts = originalPath.split('/');
-        const index = parts.findIndex(part => part !== '');
-
-        if (index !== -1) {
-          parts.splice(index + 1, 0, 'posts');
-        } else {
-          parts.unshift('posts');
-        }
-
-        return parts.join('/');
-      }
-
       for (const post of posts) {
+        const postIndex = post.path.indexOf('/')
+        
         actions.push({
           id: post.path,
           name: post.title,
           keywords: post?.summary || '',
           section: 'Content',
           subtitle: formatDate(post.date, 'en-US'),
-          perform: () => router.push('/' + transformPath(post.path)),
+          perform: () => router.push('/blog/posts/' + post.path.slice(postIndex+1)),
         })
       }
       return actions
