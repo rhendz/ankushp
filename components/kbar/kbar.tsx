@@ -49,14 +49,14 @@ export const KBarSearchProvider: FC<{
       const actions: Action[] = []
       for (const post of posts) {
         const postIndex = post.path.indexOf('/')
-        
+
         actions.push({
           id: post.path,
           name: post.title,
           keywords: post?.summary || '',
           section: 'Content',
           subtitle: formatDate(post.date, 'en-US'),
-          perform: () => router.push('/blog/posts/' + post.path.slice(postIndex+1)),
+          perform: () => router.push('/blog/posts/' + post.path.slice(postIndex + 1)),
         })
       }
       return actions
