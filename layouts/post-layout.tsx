@@ -91,9 +91,9 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 </ul>
               </dd>
             </dl>
-            <div className="divide-y divide-gray-200 xl:col-span-3 xl:row-span-2 xl:pb-0 dark:divide-gray-700">
+            <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
-              <div className="py-6 text-sm text-gray-700 dark:text-gray-300">
+              <div className="py-6 text-sm text-secondary">
                 <Link href={discussUrl(path)} rel="nofollow">
                   Discuss on Twitter
                 </Link>
@@ -102,7 +102,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               </div>
               {siteMetadata.comments && (
                 <div
-                  className="py-6 text-center text-gray-700 dark:text-gray-300"
+                  className="py-6 text-center text-secondary/70"
                   id="comment"
                 >
                   <Comments slug={slug} />
@@ -110,10 +110,10 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               )}
             </div>
             <footer>
-              <div className="divide-gray-200 text-sm font-medium leading-5 xl:col-start-1 xl:row-start-2 xl:divide-y dark:divide-gray-700">
+              <div className="divide-secondary/30 text-sm font-medium leading-5 xl:col-start-1 xl:row-start-2 xl:divide-y">
                 {tags && (
                   <div className="py-4 xl:py-8">
-                    <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <h2 className="text-xs uppercase tracking-wide text-secondary/70">
                       Tags
                     </h2>
                     <div className="flex flex-wrap">
@@ -127,7 +127,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                   <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">
                     {prev && prev.slug && (
                       <div>
-                        <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        <h2 className="text-xs uppercase tracking-wide text-secondary/70">
                           Previous Article
                         </h2>
                         <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
@@ -137,10 +137,10 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                     )}
                     {next && next.slug && (
                       <div>
-                        <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        <h2 className="text-xs uppercase tracking-wide text-secondary/70">
                           Next Article
                         </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <div className="text-accent hover:text-accent/70">
                           <Link href={`/blog/posts/${next.slug}`}>{next.title}</Link>
                         </div>
                       </div>
@@ -151,7 +151,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="pt-4 xl:pt-8">
                 <Link
                   href={`/${basePath}`}
-                  className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="text-accent hover:text-accent/70"
                   aria-label="Back to the blog"
                 >
                   &larr; Back to the blog
