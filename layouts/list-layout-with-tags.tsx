@@ -127,7 +127,7 @@ export default function ListLayoutWithTags({
             <ul>
               {displayPosts.map((post) => {
                 const { path, date, title, summary, tags } = post
-                const postsPath = 'blog/posts/' + path.split('/')[1]
+                const postsPath = 'blog/posts/' + path.slice(path.indexOf('/')+1)
                 return (
                   <li key={path} className="py-5">
                     <article className="flex flex-col space-y-2 xl:space-y-0">
