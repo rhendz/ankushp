@@ -101,10 +101,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 <Link href={editUrl(filePath)}>View on GitHub</Link>
               </div>
               {siteMetadata.comments && (
-                <div
-                  className="py-6 text-center text-secondary/70"
-                  id="comment"
-                >
+                <div className="py-6 text-center text-secondary/70" id="comment">
                   <Comments slug={slug} />
                 </div>
               )}
@@ -113,9 +110,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="divide-secondary/30 text-sm font-medium leading-5 xl:col-start-1 xl:row-start-2 xl:divide-y">
                 {tags && (
                   <div className="py-4 xl:py-8">
-                    <h2 className="text-xs uppercase tracking-wide text-secondary/70">
-                      Tags
-                    </h2>
+                    <h2 className="text-xs uppercase tracking-wide text-secondary/70">Tags</h2>
                     <div className="flex flex-wrap">
                       {tags.map((tag) => (
                         <Tag key={tag} text={tag} />
@@ -130,7 +125,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                         <h2 className="text-xs uppercase tracking-wide text-secondary/70">
                           Previous Article
                         </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <div className="text-accent hover:text-accent/70">
                           <Link href={`/blog/posts/${prev.slug}`}>{prev.title}</Link>
                         </div>
                       </div>
