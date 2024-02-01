@@ -291,7 +291,7 @@ const Blob = ({ darkMode = false }) => {
 
 const BlobDisplay = () => {
   const divRef = useRef(null);
-  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);  
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 

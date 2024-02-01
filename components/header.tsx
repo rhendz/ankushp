@@ -29,9 +29,13 @@ const Header = () => {
     <header className="flex items-center justify-between py-10">
       <div>
         <Link href="/" aria-label={siteMetadata.headerTitle}>
-          <div className='flex items-center justify-between'>
-            <div className='mr-3'>
-              <svg viewBox="0 0 116.56 92.428" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
+          <div className="flex items-center justify-between">
+            <div className="mr-3">
+              <svg
+                viewBox="0 0 116.56 92.428"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+              >
                 <g transform="translate(-90.221 -58.786)">
                   <g transform="translate(-9.2428 15.753)">
                     <path
@@ -51,11 +55,11 @@ const Header = () => {
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
         <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
-        {isBlogPage && siteMetadata.search?.provider === "kbar" &&
+        {isBlogPage && siteMetadata.search?.provider === 'kbar' && (
           <KBarSearchProvider kbarConfig={siteMetadata.search.kbarConfig as KBarSearchProps}>
             <KBarButton />
           </KBarSearchProvider>
-        }
+        )}
         <ThemeSwitch />
         <MobileNav />
       </div>

@@ -75,7 +75,7 @@ export default function BlogLayout({
     <div className="flex-1 flex antialiased">
       <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
       <div className="flex flex-col mx-auto justify-between font-sans">
-          <main className="mb-auto">{children}</main>
+        <main className="mb-auto">{children}</main>
       </div>
     </div>
     // </html>
