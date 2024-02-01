@@ -5,8 +5,9 @@ import { homeNavLinks, blogNavLinks } from '@/data/headerNavLinks'
 import Link from './link'
 import MobileNav from './mobile-nav'
 import ThemeSwitch from './theme-switch'
-import SearchButton from './search-button'
 import { usePathname } from 'next/navigation'
+import { KBarSearchProvider, KBarSearchProps } from './kbar/kbar'
+import KBarButton from './kbar/kbar-button'
 
 const NavLinks = ({ links }) => {
   return (
@@ -50,7 +51,11 @@ const Header = () => {
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
         <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
-        {isBlogPage && <SearchButton />}
+        {isBlogPage && siteMetadata.search?.provider === "kbar" &&
+          <KBarSearchProvider kbarConfig={siteMetadata.search.kbarConfig as KBarSearchProps}>
+            <KBarButton />
+          </KBarSearchProvider>
+        }
         <ThemeSwitch />
         <MobileNav />
       </div>

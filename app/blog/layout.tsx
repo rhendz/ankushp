@@ -3,12 +3,7 @@ import "css/tailwind.css";
 
 import { Space_Grotesk } from "next/font/google";
 import { Analytics, AnalyticsConfig } from "pliny/analytics";
-import { SearchProvider, SearchConfig } from "pliny/search";
-import Header from "@/components/header";
-import SectionContainer from "@/components/section-container";
-import Footer from "@/components/footer";
 import siteMetadata from "@/data/siteMetadata";
-import { ThemeProviders } from "../../layouts/theme-providers";
 import { Metadata } from "next";
 
 const space_grotesk = Space_Grotesk({
@@ -80,10 +75,7 @@ export default function BlogLayout({
     <div className="flex-1 flex antialiased">
       <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
       <div className="flex flex-col mx-auto justify-between font-sans">
-        {/* <SearchProvider searchConfig={siteMetadata.search as SearchConfig}> */}
-        {/* <Header /> */}
-        <main className="mb-auto">{children}</main>
-        {/* </SearchProvider> */}
+          <main className="mb-auto">{children}</main>
       </div>
     </div>
     // </html>
