@@ -37,8 +37,8 @@ var require_siteMetadata = __commonJS({
       // system, dark or light
       siteUrl: "https://ankushp.com",
       siteRepo: "https://github.com/rhendz/ankushp",
-      siteLogo: "/static/images/logo.png",
-      socialBanner: "/static/images/twitter-card.png",
+      siteLogo: "/images/logo.png",
+      socialBanner: "/images/twitter-card.png",
       // mastodon: 'https://mastodon.social/@mastodonuser',
       email: "ap@ankushp.com",
       github: "https://github.com/rhendz",
@@ -273,4 +273,4 @@ export {
   Blog,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-CLS6AOGE.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-XCMHA22F.mjs.map
