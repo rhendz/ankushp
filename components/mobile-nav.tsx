@@ -78,7 +78,7 @@ const MobileNav = () => {
           </button>
         </div>
         <nav className="fixed mt-8 h-full">
-          <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} onToggleNav={onToggleNav}/>
+          <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} onToggleNav={onToggleNav} />
         </nav>
       </div>
     </>

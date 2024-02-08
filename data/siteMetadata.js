@@ -3,13 +3,14 @@ const siteMetadata = {
   title: 'Ankush Patel',
   author: 'Ankush Patel',
   headerTitle: 'Ankush Patel',
-  description: 'A blog created with Next.js and Tailwind.css',
+  description:
+    'Ankush Patel is a proficient ML engineer, dedicated to crafting scalable and engaging machine learning applications. With a robust academic foundation and extensive professional experience, he possesses strong programming skills, adept team collaboration abilities, and entrepreneurial acumen.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://ankushp.com',
   siteRepo: 'https://github.com/rhendz/ankushp',
-  // siteLogo: '/static/images/logo.png',
-  // socialBanner: '/static/images/twitter-card.png',
+  siteLogo: '/static/images/logo.png',
+  socialBanner: '/static/images/twitter-card.png',
   // mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'ap@ankushp.com',
   github: 'https://github.com/rhendz',

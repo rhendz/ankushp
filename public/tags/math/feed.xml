@@ -1,22 +1,22 @@
 
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-      <title>Next.js Starter Blog</title>
-      <link>https://tailwind-nextjs-starter-blog.vercel.app/blog</link>
-      <description>A blog created with Next.js and Tailwind.css</description>
+      <title>Ankush Patel</title>
+      <link>https://ankushp.com/blog</link>
+      <description>Ankush Patel is a proficient ML engineer, dedicated to crafting scalable and engaging machine learning applications. With a robust academic foundation and extensive professional experience, he possesses strong programming skills, adept team collaboration abilities, and entrepreneurial acumen.</description>
       <language>en-us</language>
-      <managingEditor>address@yoursite.com (Tails Azimuth)</managingEditor>
-      <webMaster>address@yoursite.com (Tails Azimuth)</webMaster>
+      <managingEditor>ap@ankushp.com (Ankush Patel)</managingEditor>
+      <webMaster>ap@ankushp.com (Ankush Patel)</webMaster>
       <lastBuildDate>Mon, 21 Dec 2020 00:00:00 GMT</lastBuildDate>
-      <atom:link href="https://tailwind-nextjs-starter-blog.vercel.app/tags/math/feed.xml" rel="self" type="application/rss+xml"/>
+      <atom:link href="https://ankushp.com/tags/math/feed.xml" rel="self" type="application/rss+xml"/>
       
   <item>
-    <guid>https://tailwind-nextjs-starter-blog.vercel.app/blog/deriving-ols-estimator</guid>
+    <guid>https://ankushp.com/blog/posts/deriving-ols-estimator</guid>
     <title>Deriving the OLS Estimator</title>
-    <link>https://tailwind-nextjs-starter-blog.vercel.app/blog/deriving-ols-estimator</link>
+    <link>https://ankushp.com/blog/posts/deriving-ols-estimator</link>
     <description>How to derive the OLS Estimator with matrix notation and a tour of math typesetting using markdown with the help of KaTeX.</description>
     <pubDate>Mon, 21 Dec 2020 00:00:00 GMT</pubDate>
-    <author>address@yoursite.com (Tails Azimuth)</author>
+    <author>ap@ankushp.com (Ankush Patel)</author>
     <category>next js</category><category>math</category><category>ols</category>
   </item>
 
