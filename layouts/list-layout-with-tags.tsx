@@ -9,7 +9,7 @@ import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/link'
 import Tag from '@/components/tag'
 import siteMetadata from '@/data/siteMetadata'
-import tagData from 'app/tag-data.json'
+import tagData from 'app/blog/tag-data.json'
 import { useMemo } from 'react'
 
 interface PaginationProps {

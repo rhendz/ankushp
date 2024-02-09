@@ -179,7 +179,7 @@ function createTagCount(allBlogs) {
       });
     }
   });
-  writeFileSync("./app/tag-data.json", JSON.stringify(tagCount));
+  writeFileSync("./app/blog/tag-data.json", JSON.stringify(tagCount));
 }
 function createSearchIndex(allBlogs) {
   if (import_siteMetadata.default?.search?.provider === "kbar" && import_siteMetadata.default.search.kbarConfig.searchDocumentsPath) {
@@ -273,4 +273,4 @@ export {
   Blog,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-7GTALZ7A.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-RDIDACQP.mjs.map

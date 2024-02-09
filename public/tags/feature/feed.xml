@@ -7,9 +7,19 @@
       <language>en-us</language>
       <managingEditor>ap@ankushp.com (Ankush Patel)</managingEditor>
       <webMaster>ap@ankushp.com (Ankush Patel)</webMaster>
-      <lastBuildDate>Sat, 05 Aug 2023 00:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Tue, 08 Mar 2016 00:00:00 GMT</lastBuildDate>
       <atom:link href="https://ankushp.com/tags/feature/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://ankushp.com/blog/posts/code-sample</guid>
+    <title>Sample .md file</title>
+    <link>https://ankushp.com/blog/posts/code-sample</link>
+    <description>Example of a markdown file with code blocks and syntax highlighting</description>
+    <pubDate>Tue, 08 Mar 2016 00:00:00 GMT</pubDate>
+    <author>ap@ankushp.com (Ankush Patel)</author>
+    <category>markdown</category><category>code</category><category>feature</category>
+  </item>
+
   <item>
     <guid>https://ankushp.com/blog/posts/release-of-tailwind-nextjs-starter-blog-v2.0</guid>
     <title>Release of Tailwind Nextjs Starter Blog v2.0</title>
