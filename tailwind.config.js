@@ -81,6 +81,9 @@ module.exports = {
             '--tw-prose-pre-bg': theme('colors.slate[800]'),
             '--tw-prose-th-borders': theme('colors.pink[300]'),
             '--tw-prose-td-borders': theme('colors.pink[200]'),
+            code: {
+              fontFamily: theme('fontFamily.mono'),
+            },
           },
         },
       }),
