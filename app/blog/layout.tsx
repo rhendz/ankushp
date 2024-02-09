@@ -1,7 +1,6 @@
 import "css/tailwind.css";
 
 import { Metadata } from "next";
-import { Analytics, AnalyticsConfig } from "pliny/analytics";
 import siteMetadata from "@/data/siteMetadata";
 
 export const metadata: Metadata = {
@@ -33,7 +32,6 @@ export default function BlogLayout({
     //   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
     //   <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
     <div className="flex-1 flex antialiased">
-      <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
       <div className="flex flex-col mx-auto justify-between font-sans">
         <main className="mb-auto">{children}</main>
       </div>

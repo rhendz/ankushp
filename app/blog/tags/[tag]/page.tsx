@@ -4,7 +4,7 @@ import siteMetadata from "@/data/siteMetadata";
 import ListLayout from "@/layouts/list-layout-with-tags";
 import { allBlogs } from "contentlayer/generated";
 import tagData from "app/blog/tag-data.json";
-import { genPageMetadata } from "app/blog/seo";
+import { genPageMetadata } from "app/seo";
 import { Metadata } from "next";
 
 export async function generateMetadata({

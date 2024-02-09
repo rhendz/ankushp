@@ -2,7 +2,7 @@ import Link from "@/components/link";
 import Tag from "@/components/tag";
 import { slug } from "github-slugger";
 import tagData from "app/blog/tag-data.json";
-import { genPageMetadata } from "app/blog/seo";
+import { genPageMetadata } from "app/seo";
 
 export const metadata = genPageMetadata({
   title: "Tags",
