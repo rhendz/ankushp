@@ -1,8 +1,9 @@
 import "./globals.css";
 
-import { fontMono, fontSans } from "./fonts";
 import { Metadata } from "next";
+import { Analytics, AnalyticsConfig } from "pliny/analytics";
 
+import { fontMono, fontSans } from "./fonts";
 import { Providers } from "./providers";
 import Header from "@/components/header";
 import SectionContainer from "@/components/section-container";
@@ -85,6 +86,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body className="bg-primary text-secondary">
         <Providers>
+          <Analytics
+            analyticsConfig={siteMetadata.analytics as AnalyticsConfig}
+          />
           <SectionContainer>
             <div className="flex h-screen flex-col justify-between font-sans">
               <Header />
