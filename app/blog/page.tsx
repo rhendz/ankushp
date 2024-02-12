@@ -17,10 +17,10 @@ const BlogHome = ({ posts }) => {
         </h1>
         <p className="text-lg leading-7 text-secondary/60">
           Welcome to my blog, where curiosity drives exploration and passion
-          sparks discovery! 🚀 Join me in exploring the dynamic world of
-          technology, from coding challenges to deep dives into AI. Whether
-          you're here to delve into insights or to savor everyday wonders,
-          welcome aboard!
+          sparks discovery! 🚀 Join me in navigating the dynamic world of
+          technology, from exploring the latest AI advancements to unraveling
+          fascinating tech innovations. Whether you're here to delve into
+          insights or to savor everyday wonders, welcome aboard!
         </p>
       </div>
       <div className="divide-y divide-secondary/30">
