@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --color-primary: 255 252 249; /* baby powder */
-    --color-secondary: 63 64 63; /* onyx */
+    --color-primary: 251 254 249; /* baby powder */
+    --color-secondary: 1 22 39; /* rich black */
     --color-accent: 239 111 108; /* light coral */
   }
   :root[data-theme="light"] {
-    --color-primary: 255 252 249; /* baby powder */
-    --color-secondary: 63 64 63; /* onyx */
+    --color-primary: 251 254 249; /* baby powder */
+    --color-secondary: 1 22 39; /* rich black */
     --color-accent: 239 111 108; /* light coral */
   }
   @media (prefers-color-scheme: dark) {
