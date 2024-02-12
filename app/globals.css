@@ -3,32 +3,26 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-primary: 251 254 249; /* baby powder */
+    --color-secondary: 1 22 39; /* rich black */
+    --color-accent: 239 111 108; /* light coral */
+  }
   :root[data-theme="light"] {
-    --color-background: #e6e8e6; /* platinum */
-    --color-content: #3f403f; /* onyx */
-    --color-accent1: #ef6f6c; /* light coral */
-    --color-accent2: #539987; /* zomp */
-  }
-  :root[data-theme="dark"] {
-      --color-background: #171219; /* licorice */
-      --color-content: #f5fbef; /* ivory */
-      --color-accent1: #FB3640; /* imperial red */
-      --color-accent2: #247BA0 /* cerulean */
-  }
-  @media (prefers-color-scheme: light) {
-    :root[data-theme="light"] {
-      --color-background: #e6e8e6; /* platinum */
-      --color-content: #3f403f; /* onyx */
-      --color-accent1: #ef6f6c; /* light coral */
-      --color-accent2: #539987; /* zomp */
-    }
+    --color-primary: 251 254 249; /* baby powder */
+    --color-secondary: 1 22 39; /* rich black */
+    --color-accent: 239 111 108; /* light coral */
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-background: #171219; /* licorice */
-      --color-content: #f5fbef; /* ivory */
-      --color-accent1: #FB3640; /* imperial red */
-      --color-accent2: #247BA0 /* cerulean */
+      --color-primary: 23 18 25; /* licorice */
+      --color-secondary: 245 251 239; /* ivory */
+      --color-accent: 251 54 64; /* imperial red */
     }
+  }
+  :root[data-theme="dark"] {
+    --color-primary: 23 18 25; /* licorice */
+    --color-secondary: 245 251 239; /* ivory */
+    --color-accent: 251 54 64; /* imperial red */
   }
 }
