@@ -11,14 +11,23 @@ const MAX_DISPLAY = 5;
 const BlogHome = ({ posts }) => {
   return (
     <>
+      <div className="space-y-2 pb-8 pt-6 md:space-y-5">
+        <h1 className="text-3xl font-extrabold leading-9 tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+          Hi, I'm Ankush Patel
+        </h1>
+        <p className="text-lg leading-7 text-secondary/60">
+          Welcome to my blog, where curiosity drives exploration and passion
+          sparks discovery! 🚀 Join me in exploring the dynamic world of
+          technology, from coding challenges to deep dives into AI. Whether
+          you're here to delve into insights or to savor everyday wonders,
+          welcome aboard!
+        </p>
+      </div>
       <div className="divide-y divide-secondary/30">
         <div className="space-y-2 pb-8 pt-6 md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             Latest
           </h1>
-          <p className="text-lg leading-7 text-secondary/60">
-            {siteMetadata.description}
-          </p>
         </div>
         <ul className="divide-y divide-secondary/30">
           {!posts.length && "No posts found."}
