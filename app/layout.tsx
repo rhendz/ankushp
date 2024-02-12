@@ -49,28 +49,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [siteMetadata.socialBanner],
   },
-  manifest: "/site.webmanifest",
-  icons: {
-    icon: [
-      {
-        rel: "icon",
-        url: "/favicon.ico",
-        href: "/favicon.ico",
-        sizes: "any",
-      },
-      {
-        rel: "icon",
-        url: "/icon.svg",
-        href: "/icon.svg",
-        type: "image/svg+xml",
-      },
-      {
-        rel: "apple-touch-icon",
-        url: "/apple-touch-icon.png",
-        href: "/apple-touch-icon.png",
-      },
-    ],
-  },
 };
 
 interface RootLayoutProps {
@@ -81,9 +59,52 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${fontSans.variable} ${fontMono.variable}`}
+      className={`${fontSans.variable} ${fontMono.variable} scroll-smooth`}
       suppressHydrationWarning
     >
+      <head>
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/static/favicons/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/static/favicons/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/static/favicons/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/static/favicons/site.webmanifest" />
+        <link
+          rel="mask-icon"
+          href="/static/favicons/safari-pinned-tab.svg"
+          color="#5bbad5"
+        />
+        <link rel="shortcut icon" href="/static/favicons/favicon.ico" />
+        <meta name="msapplication-TileColor" content="#2d89ef" />
+        <meta
+          name="msapplication-config"
+          content="/static/favicons/browserconfig.xml"
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: light)"
+          content="#fff"
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: dark)"
+          content="#000"
+        />
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+      </head>
+
       <body className="bg-primary text-secondary">
         <Providers>
           <Analytics
