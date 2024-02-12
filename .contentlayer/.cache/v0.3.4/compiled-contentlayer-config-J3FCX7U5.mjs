@@ -65,7 +65,7 @@ var require_siteMetadata = __commonJS({
         //   posthogProjectApiKey: '', // e.g. 123e4567-e89b-12d3-a456-426614174000
         // },
         googleAnalytics: {
-          googleAnalyticsId: "G-1M7S52TEW1"
+          googleAnalyticsId: process.env.NEXT_GA_ID
           // e.g. G-XXXXXXX
         }
       },
@@ -273,4 +273,4 @@ export {
   Blog,
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-HT3DITNW.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-J3FCX7U5.mjs.map
