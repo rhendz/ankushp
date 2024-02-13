@@ -17,7 +17,7 @@ export default function BlogLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col justify-between font-sans">
+    <div className="flex flex-1 flex-col justify-between font-sans">
       <main className="mb-auto">{children}</main>
     </div>
   );
