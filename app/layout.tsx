@@ -85,7 +85,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <link
           rel="mask-icon"
           href="/static/favicons/safari-pinned-tab.svg"
-          color="#5bbad5"
+          color="#171219"
         />
         <link rel="shortcut icon" href="/static/favicons/favicon.ico" />
         <meta name="msapplication-TileColor" content="#2d89ef" />
