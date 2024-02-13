@@ -1,6 +1,7 @@
 import "./globals.css";
 
 import { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Analytics from "@/components/analytics";
 
 import { fontMono, fontSans } from "./fonts";
@@ -92,16 +93,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           name="msapplication-config"
           content="/static/favicons/browserconfig.xml"
         />
-        <meta
-          name="theme-color"
-          media="(prefers-color-scheme: light)"
-          content="#fff"
-        />
-        <meta
-          name="theme-color"
-          media="(prefers-color-scheme: dark)"
-          content="#000"
-        />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
 
@@ -116,6 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </div>
           </SectionContainer>
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
