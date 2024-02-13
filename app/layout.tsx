@@ -100,7 +100,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <Analytics />
           <SectionContainer>
-            <div className="flex h-screen flex-col justify-between font-sans">
+            <div className="flex min-h-screen flex-col justify-between font-sans">
               <Header />
               {children}
               <Footer />
