@@ -8,7 +8,24 @@ const ThemeSwitch = () => {
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true);
+    // Ensure meta tag for theme color exists and set it if not
+    if (!document.querySelector("meta[name=theme-color]")) {
+      const metaTag = document.createElement('meta');
+      metaTag.name = 'theme-color';
+      metaTag.content = theme === 'dark' || resolvedTheme === 'dark' ? 'rgb(23,18,25)' : 'rgb(251,254,249)';
+      document.head.appendChild(metaTag);
+    }
+  }, [])
+
+  useEffect(() => {
+    // Update meta tag for theme color dynamically
+    const metaThemeColor = document.querySelector("meta[name=theme-color]");
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute("content", theme === 'dark' || resolvedTheme === 'dark' ? 'rgb(23,18,25)' : 'rgb(251,254,249)');
+    }
+  }, [theme, resolvedTheme]);
 
   if (!mounted) {
     return null
