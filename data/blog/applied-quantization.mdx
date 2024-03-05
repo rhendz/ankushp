@@ -43,9 +43,10 @@ $$
 
 Let's say we have the following 32-bit network composed of an input, output, and two fully connected linear layers.
 
-<div className="flex w-full items-center justify-center">
-  <Diagram src="./applied-quantization/diagram00" />
-</div>
+<Diagram
+  src="./applied-quantization/diagram00"
+  caption="32-bit network with an input layer, 2 hidden layers, and an output layer"
+/>
 
 We can compute the output of the first hidden layer by using the following:
 
@@ -63,27 +64,33 @@ Overall, when implementing optimizations like quantization, the goal is to achie
 
 ### Applying Quantization
 
-So what does this process actually look like? Well let's start with some random weights:
+So what does this process actually look like? Well let's start with some random weights as shown in [Figure 2](#figure-2):
 
-<div className="flex h-[200px] items-center justify-center">
-  <Diagram src="./applied-quantization/diagram01" />
-</div>
+<Diagram
+  src="./applied-quantization/diagram01"
+  caption="Random fp32 weights initialized from [-500,1000]"
+  style={{ height: '12rem' }}
+/>
 
-We can quantize these weights to 8-bit by mapping them to the range $$[-127,127]$$. Although we won't cover the mapping process here, the general idea is to find a scale factor that we can multiply with our floating point numbers to get an integer value bounded by the range mentioned previously. Note, we don't use $$128$$ for the sake of symmetry.
+We can quantize these weights to 8-bit by mapping them to the range $$[-127,127]$$ as shown in [Figure 3](#figure-3). Although we won't cover the mapping process here, the general idea is to find a scale factor that we can multiply with our floating point numbers to get an integer value bounded by the range mentioned previously. Note, we don't use $$128$$ for the sake of symmetry.
 
-<div className="flex h-[200px] items-center justify-center">
-  <Diagram src="./applied-quantization/diagram02" />
-</div>
+<Diagram
+  src="./applied-quantization/diagram02"
+  caption="Quantized int8 weights ranging from [-127,127]"
+  style={{ height: '12rem' }}
+/>
 
 Notice that the largest value in the array maps to 127. If we had a number let's say $$-944.754$$ it would map to $$-127$$ since our range is symmetric around 0. This is great for balanced data since we can evenly distribute the floating point numbers across integer values, but may lead to a loss in precision and a performance hit for asymmetric data. Fortunately, there are multiple approaches to quantization that can solve these issues.
 
 ### Applying Dequantization
 
-Finally, we can dequantize the weights. As you can see, the dequantized weights are quite similar to the original weights with a mean-squared error of $6.8\%$.
+Finally, we can dequantize the weights as shown in [Figure 4](#figure-4). As you can see, the dequantized weights are quite similar to the original weights with a mean-squared error of $6.8\%$.
 
-<div className="flex h-[200px] items-center justify-center">
-  <Diagram src="./applied-quantization/diagram03" />
-</div>
+<Diagram
+  src="./applied-quantization/diagram03"
+  caption="fp32 dequantized weights"
+  style={{ height: '12rem' }}
+/>
 
 If you'd like to learn more, see [foundations of quantization](./foundations-of-quantization), where we explore different methods of quantization, look at quantization error, and see how an entire convolutional / fully-connected layer is quantized.
 
