@@ -8,7 +8,6 @@ import { OrbitControls } from "@react-three/drei";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useTheme } from "next-themes";
 
-import Footer from "@/components/footer";
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
   uniform float u_time;
