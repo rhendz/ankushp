@@ -1,0 +1,110 @@
+---
+title: 'Applied Quantization: Techniques and Case Studies'
+date: '2024-02-14'
+lastmod: '2024-02-14'
+draft: true
+tags: ['python', 'machine-learning', 'quantization']
+authors: ['default']
+summary: Introduces the concept of quantization for machine learning models and discusses various methods and applications of the concept.
+---
+
+In the relentless pursuit of smarter, faster, and large machine learning models, one often-overlooked hero emerges: <Highlight>quantization</Highlight>. Picture this &mdash; you've painstakingly trained a groundbreaking deep learning model, only to find that deploying it on your mobile device or resource-constrained edge device feels like trying to pour the ocean into a teacup. This is where quantization steps in as the hero, offering a solution to scale down the model's size without compromising its effectiveness.
+
+<Image
+  src="/static/images/applied-quantization/ocean-in-teacup.jpeg"
+  alt="ocean in teacup"
+  width="760"
+  height="570"
+/>
+
+<TOCInline toc={props.toc} toHeading={(2, 3)} asDisclosure />
+
+## What is Quantization?
+
+The term "quantization" derives from the word "quantize," which in turn originates from the Latin word "quantus," meaning "how great" or "how much." Might as well throw in some high school Latin and Etymology knowledge.
+
+The concept of quantization has its roots in physics, particularly in the field of quantum mechanics, where it refers to the process of discretizing or dividing a continuous physical quantity into discrete or quantized values. This concept was introduced in the early 20th century by physicists such as Max Planck, Albert Einstein, and Niels Bohr as part of their groundbreaking work on the nature of matter and radiation.
+
+Widely used since the mid-20th century, quantization divides continuous variables or functions into discrete levels. It has applications in diverse fields, including signal processing, digital communications, and machine learning. In the latter, quantization refers to the reduction in precision of numerical values (fp32), converting them to lower precision formats like fixed-point integers (int16 or int8) or reduced-precision floating-point numbers (fp16).
+
+## Why do we need Quantization?
+
+**Problem**: Modern deep neural networks are _enormous_ with even relatively small ones such as Llama-2-7B. Assuming 32-bit floating point values or 4 bytes, then we need:
+
+$$
+7*10^9*4 \text{B} * \frac{1 \text{GB}}{10^9 \text{B}} = 28\text{GB}
+$$
+
+28 gigabytes to just load the model into your RAM or GPU is outrageous! Forget about your phone.
+
+**Solution**: We can use quantization to reduce the total amount of bits required to represent each parameter. Reducing Llama-2-7B from 32-bit to a 4-bit representation, leads to a 8x reduction in space. In other words, we only need 3.5GB for model inference, making deployment on resource-constrained devices a viable option! **Note**: since modern GPUs are optimized for reduced precision operations, expect improved inference speeds and less battery usage as a bonus.
+
+## Fundamentals of Quantization
+
+Let's say we have the following 32-bit network composed of an input, output, and two fully connected linear layers.
+
+<div className="flex w-full items-center justify-center">
+  <Diagram src="./applied-quantization/diagram00" />
+</div>
+
+We can compute the output of the first hidden layer by using the following:
+
+$$
+Y_\text{H1}=X_\text{Input}*W_\text{H1}+B_\text{H1}
+$$
+
+where $$X_\text{Input}$$ is the input or _activation_, $$W_\text{H1}$$ are the weights of the first hidden layer, and $$B_\text{H1}$$ are the biases of the first hidden layer.
+
+The goal here is to _quantize_ the inputs, weights, and biases to some lower precision e.g. 8-bit integers. By doing so, we can take advantage of integer operations which are much faster than floating point operations. After computing $$Y_\text{H1}$$, we have to _dequantize_ it before feeding it to the next layer.
+
+**Why do we have to dequantize?** Dequantization ensures that the information encoded in the output of the quantized layer is preserved and compatible with the expectations of subsequent layers in the network. Dequantization allows for smooth data representations by mapping from a discrete space to a continuous one.
+
+Overall, when implementing optimizations like quantization, the goal is to achieve resource efficiency (memory/computation) without sacrificing the network's performance.
+
+### Applying Quantization
+
+So what does this process actually look like? Well let's start with some random weights:
+
+<div className="flex h-[200px] items-center justify-center">
+  <Diagram src="./applied-quantization/diagram01" />
+</div>
+
+We can quantize these weights to 8-bit by mapping them to the range $$[-127,127]$$. Although we won't cover the mapping process here, the general idea is to find a scale factor that we can multiply with our floating point numbers to get an integer value bounded by the range mentioned previously. Note, we don't use $$128$$ for the sake of symmetry.
+
+<div className="flex h-[200px] items-center justify-center">
+  <Diagram src="./applied-quantization/diagram02" />
+</div>
+
+Notice that the largest value in the array maps to 127. If we had a number let's say $$-944.754$$ it would map to $$-127$$ since our range is symmetric around 0. This is great for balanced data since we can evenly distribute the floating point numbers across integer values, but may lead to a loss in precision and a performance hit for asymmetric data. Fortunately, there are multiple approaches to quantization that can solve these issues.
+
+### Applying Dequantization
+
+Finally, we can dequantize the weights. As you can see, the dequantized weights are quite similar to the original weights with a mean-squared error of $6.8\%$.
+
+<div className="flex h-[200px] items-center justify-center">
+  <Diagram src="./applied-quantization/diagram03" />
+</div>
+
+If you'd like to learn more, see [foundations of quantization](./foundations-of-quantization), where we explore different methods of quantization, look at quantization error, and see how an entire convolutional / fully-connected layer is quantized.
+
+## Methods
+
+### Post-Training Static Quantization (PTQ)
+
+### Post-Training Dynamic/Weight-only Quantization
+
+### Quantization-aware Training (QAT)
+
+## Recommendations
+
+## Applications
+
+### Dataset: Fashion-MNIST
+
+### Model: Simple CNN
+
+### Model: ResNet
+
+## Summary
+
+## Conclusion

@@ -1,0 +1,112 @@
+---
+title: 'Foundations of Quantization: Core Concepts and Derivations'
+date: '2024-02-14'
+lastmod: '2024-02-14'
+draft: true
+tags: ['python', 'math', 'quantization']
+authors: ['default']
+summary: Discusses the mathematical underpinnings of quantization.
+---
+
+In this post, we detail the core concepts and derivations underpinning quantization. If you are more interested in the practical applications of quantization, please refer to [Applied Quantization](./applied-quantization).
+
+<TOCInline toc={props.toc} toHeading={(2, 3)} asDisclosure />
+
+## Background
+
+??
+
+## Uniform Quantization
+
+<div className="flex w-full items-center justify-center">
+  <Diagram src="./foundations-of-quantization/diagram00" />
+</div>
+
+### Symmetric Quantization
+
+In symmetric quantization, we map the floating-point range to the quantized range with respect to $0$ - think along the lines of $[-100,100]$. To do so, we choose $\alpha = \max|x_f| = -\max(x_f)$ and $\max(x_f)$, where $x_f$ is some number in the floating-point range.
+
+Additionally, we choose $N_{bins} = 2^n$, where $n$ is the number of bits we want to quantize to. In order to derive our quantization range with respect to $0$, we simply place half the bins before $0$ and the other half after $0$.
+
+Example: Let's say we wanted an 8-bit quantization range. Then, the number of bins would be $N_{bins} = 2^8 = 256 \implies [0,255] \implies [-128,127]$. That is the "full range" symmetric around 0. However in practice, this range is generally "restricted" to $[-127,127]$. We can derive scaling factors to map from floating point to quantized for both ranges:
+
+$$
+\def\arraystretch{1.5}
+\begin{array}{c|c|c}
+& \text{Full Range} & \text{Restricted Range} \\ \hline
+\text{Quantized Range} & [-\frac{N_{bins}}{2},\frac{N_{bins}}{2}-1] & [-(\frac{N_{bins}}{2}-1),\frac{N_{bins}}{2}-1] \\ \hline
+\text{8-bit Example} & [-128,127] & [-127,127] \\ \hline
+\text{Scale Factor} & q_x=\frac{(2^n-1)/2}{\alpha} & q_x=\frac{2^{n-1}-1}{\alpha} \\
+\end {array}
+$$
+
+Finally, we can compute our symmetric quantized tensor clamped to our range $[a,b]$:
+
+$$
+x_q = \text{clamp}(\text{round}(q_xx_f);a;b)
+$$
+
+**Note**: Clamping is just a fancy way of setting any value outside of the range $[a,b]$ to $a$ or $b$. For example, if we have an interval of $[0,1]$, values smaller than 0 become 0, and values larger than 1 become 1. In reality, this is more of a technique to ensure that quantized values remain in the specific range.
+
+### Asymmetric Quantization
+
+Compared to symmetric quantization, asymmetric also known as _affine_ quantization has a few key differences:
+
+- Instead of mapping the floating point range $[-\alpha, \alpha]$ to some quantized range symmetric to $0$, we choose $[\alpha, \beta]$, where $\alpha=\min(x_f)$ and $\beta=\max(x_f)$
+- Since the mapping is no longer symmetric to $0$, we have to introduce a **zero-point** $z_{x}$ also known as _quantization bias_. This serves to actually represent $0$ in the quantized range.
+- Additionally, the quantized range is now represented by $[0,2^n-1]$.
+
+We can derive a scaling factor for asymmetric quantization:
+
+$$
+\def\arraystretch{1.5}
+\begin{array}{c|c}
+\text{Quantized Range} & [0,2^n-1] \\ \hline
+\text{8-bit Example} & [0, 255] \\ \hline
+\text{Scale Factor} & q_x=\frac{2^n-1}{\beta-\alpha} \\
+\end {array}
+$$
+
+To find the zero-point $z_{x}$, simply take the minimum value of $x_f$ i.e. $\alpha$ and scale it to its representation in the new quantized range, which is:
+
+$$
+z_x = \text{round}(q_x\alpha)
+$$
+
+Finally, we can compute our asymmetric quantized tensor $q_x$ adjusted for bias:
+
+$$
+x_q = \text{clamp}(\text{round}(q_xx_f)-z_x;0;2^n-1)
+$$
+
+### Non Uniform Quantization
+
+Here's an example of quantization using powers of two 1->2->4->8... and 0: https://arxiv.org/pdf/1702.03044.pdf
+
+Definition of non-uniform quantization
+
+https://arxiv.org/pdf/2103.13630.pdf
+
+$$
+Q(r) = X_i, if r belongs to [\delta_i, \delta_{i+1})
+$$
+
+where $$X_i$$ represents the discrete quantization level and ...
+
+talk about a few methods here, but we're not implementing them
+
+## Dequantization and error
+
+Dequantization of a symmetric quantization is as simple as computing the quotient of the quantized tensor $x_q$ and the scale factor $q_x$:
+
+$$\hat{x_f} = \frac{x_q}{q_x}$$
+
+Similarly, dequantization of an asymmetric quantization is as follows adjusting for the zero-point:
+
+$$\hat{x_f} = \frac{x_q+z_x}{q_x}$$
+
+However as expected, there is some error associated with the process of quantizing a tensor and then dequantizing it. We can compute that error using mean-squared error (MSE):
+
+$$
+\text{MSE} = \frac{1}{n}\displaystyle\sum(\hat{x_f}-x_f)^2
+$$

@@ -6,10 +6,17 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+<<<<<<< HEAD
   "grammarly.selectors": [
     {
       "language": "mdx",
       "scheme": "file"
     }
   ]
+=======
+  "[mdx]": {
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 75
+  }
+>>>>>>> 1fddac8 (init quantization posts)
 }
