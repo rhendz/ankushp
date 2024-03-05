@@ -18,13 +18,14 @@ In this post, we detail the core concepts and derivations underpinning quantizat
 
 ## Uniform Quantization
 
-<div className="flex w-full items-center justify-center">
-  <Diagram src="./foundations-of-quantization/diagram00" />
-</div>
-
 ### Symmetric Quantization
 
-In symmetric quantization, we map the floating-point range to the quantized range with respect to $0$ - think along the lines of $[-100,100]$. To do so, we choose $\alpha = \max|x_f| = -\max(x_f)$ and $\max(x_f)$, where $x_f$ is some number in the floating-point range.
+<Diagram
+  src="./foundations-of-quantization/diagram00"
+  caption="Illustration of symmetric quantization mapping to restricted range [-127, 127]."
+/>
+
+In symmetric quantization, we map the floating-point range $r$ to the quantized range $Q$ with respect to $0$ as shown in Figure 1. To do so, we choose $-\alpha = \beta = \max|x_f|$, where $x_f$ is some number in the floating-point range. Basically,
 
 Additionally, we choose $N_{bins} = 2^n$, where $n$ is the number of bits we want to quantize to. In order to derive our quantization range with respect to $0$, we simply place half the bins before $0$ and the other half after $0$.
 
@@ -43,12 +44,17 @@ $$
 Finally, we can compute our symmetric quantized tensor clamped to our range $[a,b]$:
 
 $$
-x_q = \text{clamp}(\text{round}(q_xx_f);a;b)
+Q(r) = \text{Int}(r/S) - Z
 $$
 
 **Note**: Clamping is just a fancy way of setting any value outside of the range $[a,b]$ to $a$ or $b$. For example, if we have an interval of $[0,1]$, values smaller than 0 become 0, and values larger than 1 become 1. In reality, this is more of a technique to ensure that quantized values remain in the specific range.
 
 ### Asymmetric Quantization
+
+<Diagram
+  src="./foundations-of-quantization/diagram01"
+  caption="Illustration of asymmetric quantization mapping to range [-128,127]."
+/>
 
 Compared to symmetric quantization, asymmetric also known as _affine_ quantization has a few key differences:
 
