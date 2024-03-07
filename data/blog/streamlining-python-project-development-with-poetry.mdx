@@ -1,0 +1,125 @@
+---
+title: 'Streamlining Python Project Development with Poetry'
+date: '2024-03-07'
+tags: ['python', 'tools', 'machine-learning', 'data-science']
+draft: false
+summary: Using pyenv and poetry to streamline project development with an example
+---
+
+## To Pip or Not to Pip
+
+To pip or not to pip, that is the question. If you have worked with python projects, you may have
+come across it's default package manager **pip**. Of course, there's nothing wrong with pip other than its
+limited dependency resolution, lack of dependency locking to ensure consistency across projects, and global installation...
+Hmm... Well there may be a few things not so great about pip, but it is still a widely used tool in the Python
+ecosystem and continues to evolve with improvements and community contributions. As you might have guessed,
+**Poetry** is here to save the day by addressing some of these shortcomings and will be crucial in streamlining development
+for your python projects.
+
+## What is Poetry?
+
+First and foremost, what even is Poetry and how is it better than pip? Poetry simplifies the process of
+managing project dependencies by providing a centralized approach to defining, installing, and updating them.
+In comparison, pip's depedency resolver may struggle with complex depedency trees or conflicting version requirements.
+Although pip does have `requirements.txt` to specify its dependencies, it pales in comparison to Poetry's `pyproject.toml` which
+allows for dependency constraints and resolution logic. Where pip would be used to install packages globally without the aid of additional tools,
+Poetry facilitates creating and managing virtual environments, ensuring consistent and isolated environments for each project.
+Finally, Poetry enables packaging Python projects with ease, allowing developers
+to create distributable packages for distribution and deployment.
+
+> Poetry is a python packaging and dependency management tool.
+
+Key features of Poetry:
+
+1. Centralized dependency management using `pyproject.toml`.
+2. Dependency resolution and lock files.
+3. Virtual environment management.
+4. Simplified package workflow.
+5. Versioning and publishing for packages.
+
+Although we won't focus on the packaging aspect of Poetry in this post, just know that Poetry is a
+powerful tool that simplifies managing your favorite dependencies like `numpy`, `pytorch`, and `matplotlib`. By now,
+I hope you have taken a liking to Poetry ;).
+
+<Image
+  src="/static/images/streamlining-python-project-development-with-poetry/pip-to-poetry.jpg"
+  alt="Meme about switching my pip based Python projects over to Poetry"
+  width="750"
+  height="500"
+/>
+
+## Installing PyEnv
+
+Please excuse this quick detour! Just how Poetry is used to manage our _Python_ project's dependencies. We can use
+**pyenv** to simplify Python version management. Now, why would this be useful? Let's say you're working on
+projects that require different Python versions or if you need to test compatibility across different Python versions. Pyenv
+allows you manage multiple Python versions, easily switch between them, and avoid system-level changes by installing Python globally.
+
+If you're convinced, we'll install pyenv:
+
+### Linux/macOS
+
+Run their automatic installer in your shell:
+
+```bash
+curl https://pyenv.run | bash
+```
+
+I'll show you how to setup your shell environment for pyenv so that is available for use. Today, we'll continue with
+using `bash` as our shell example. If you're unsure of what shell you have, check by using `echo $SHELL`. In the case it's `bash`, run the
+following to modify `~/.bashrc`:
+
+```bash
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+```
+
+For other shells and optionally adding pyenv to your login shell, please refer to [setting up your shell environment for pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv).
+
+Now you can restart your shell by using `source ~/.bashrc` and then test out your pyenv installation by typing `pyenv`:
+
+```shell
+pyenv 2.3.25
+Usage: pyenv <command> [<args>]
+
+Some useful pyenv commands are:
+--version Display the version of pyenv
+activate Activate virtual environment
+commands List all available pyenv commands
+...
+```
+
+Now, we can install python! Let's install 3.12, which is the latest release at the time of writing this post and configure it as the global version:
+
+```bash
+pyenv install 3.12
+pyenv global 3.12
+pyenv version
+```
+
+### Windows
+
+Unfortunately, Pyenv does not officially support Windows outside of WSL. However, there is a [pyenv-win](https://github.com/pyenv-win/pyenv-win) fork that may be of interest.
+
+For more information on installing pyenv, checkout their github repo [pyenv](https://github.com/pyenv/pyenv).
+
+## Installing Poetry
+
+Regardless of whether or not you installed pyenv (which I recommend you do), we're finally ready to install Poetry!
+
+### Linux/macOS
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+### Windows (Powershell)
+
+```bash
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+```
+
+That's it! You can test out your installation by typing `poetry --version`.
+
+## Walkthrough: Setting Up an Example Project
