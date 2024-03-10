@@ -1,5 +1,5 @@
 ---
-title: 'Accelerating Your Python Projects with Poetry'
+title: 'Accelerating Your Python Projects with Pyenv and Poetry'
 date: '2024-03-07'
 tags: ['python', 'tools']
 draft: false
@@ -110,14 +110,14 @@ For other shells and optionally adding pyenv to your login shell, please refer t
 
 Now you can restart your shell by using `source ~/.bashrc` and then test out your pyenv installation by typing `pyenv`:
 
-```shell
+```text
 pyenv 2.3.25
 Usage: pyenv <command> [<args>]
 
 Some useful pyenv commands are:
---version Display the version of pyenv
-activate Activate virtual environment
-commands List all available pyenv commands
+    --version Display the version of pyenv
+    activate Activate virtual environment
+    commands List all available pyenv commands
 ...
 ```
 
@@ -134,11 +134,11 @@ pyenv version
 
 Unfortunately, pyenv does not officially support Windows outside of WSL. However, there is a [pyenv-win](https://github.com/pyenv-win/pyenv-win) fork that may be of interest.
 
-For more information on installing pyenv, checkout their github repo [pyenv](https://github.com/pyenv/pyenv).
+For more information on installing pyenv and what it can do, checkout their github repo [pyenv](https://github.com/pyenv/pyenv).
 
 ## Installing Poetry
 
-Regardless of whether or not you installed pyenv (which I recommend you do), we're finally ready to install Poetry!
+Now that you have `pyenv`, we're ready to install Poetry!
 
 ### Linux/macOS
 
@@ -148,10 +148,184 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 ### Windows (Powershell)
 
-```bash
+```powershell
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 ```
 
 That's it! You can test out your installation by typing `poetry --version`.
 
-## Example:
+## Image Processing Toolkit (Example)
+
+Let's say your a data scientist or a computer vision engineer working with images and you decided to build
+your own image processing toolkit. In the first part of this example, I show you how to initialize and install a _Poetry_
+project from scratch. In the second part
+
+### I. Initialization and Installation
+
+We can use poetry to initialize our project:
+
+```bash
+poetry new image-processing-toolkit
+```
+
+This will generate the `image-processing-toolkit` directory with the following items:
+
+```text
+image-processing-toolkit/
+|-- README.md
+|-- image_processing_toolkit
+|   `-- __init__.py
+|-- pyproject.toml
+`-- tests
+    `-- __init__.py
+```
+
+Let's take a look at the internals of a Poetry project `pyproject.toml`:
+
+```toml
+[tool.poetry]
+name = "image-processing-toolkit"
+version = "0.1.0"
+description = ""
+authors = ["Ankush Patel <ap@ankushp.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+Under `[tool.poetry]`, we have a few descriptors such as `name`, `version`, etc. defining common elements of our project.
+Here, we can additionally specify your packages to include. For example, we can add `packages = [{include = "image-processing-toolkit"}]`, which
+will contain the source files of our project.
+
+Oftentimes, you will only want to use Poetry for dependency management. In this case, we can toggle the default package mode to off:
+
+```toml
+[tool.poetry]
+package-mode = false
+```
+
+Note, Poetry has two operating modes: **package mode** (default) and **non-package mode**. Depending on which mode you use,
+some fields become optional. See [pyproject](https://python-poetry.org/docs/pyproject/) for more details of what fields you can configure
+in `pyproject.toml`.
+
+In our case, we'll move forward with the default operating mode.
+
+Before we design our image processing toolkit, it would be a good idea to add a few packages:
+
+```bash
+poetry add numpy opencv-python matplotlib
+```
+
+We can also add some developer dependencies to help improve our developer experience:
+
+```bash
+poetry add ruff pytest jupyter --group dev
+```
+
+`ruff` is an extremely fast Python linter and formatter written in Rust and `pytest` is a testing framework. Additionally,
+we add `jupyter` to later add notebooks, showcasing examples of our image processing toolkit.
+
+At this point, your `pyproject.toml` file should look something like this:
+
+```toml
+[tool.poetry]
+name = "image-processing-toolkit"
+version = "0.1.0"
+description = ""
+authors = ["Ankush Patel <ap@ankushp.com>"]
+readme = "README.md"
+packages = [{include = "image_processing_toolkit"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.4"
+opencv-python = "^4.9.0.80"
+matplotlib = "^3.8.3"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.3.2"
+pytest = "^8.1.1"
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+Before we install our poetry project, I recommend configuring Poetry to install our virtual environment `.venv` inside of our project.
+
+```bash
+poetry config virtualenvs.in-project true
+poetry install
+```
+
+Note, if you would prefer the config setting to be per project, you can configure it in a `poetry.toml` file:
+
+```toml
+[virtualenvs]
+create = true
+in-project = true
+```
+
+Great! You have completed the first part of initializing and installing your _Poetry_ project. You can activate your virtual environment,
+by typing `poetry shell` and you can run the following to confirm that you've installed everything correctly:
+
+```bash
+python -c "import image_processing_toolkit; print(image_processing_toolkit)"
+```
+
+If the above prints out the `image_processing_toolkit` module without errors, amazing! All that's left to do is build the toolkit, package, and publish!
+
+### II. Packaging and Publishing
+
+Since the point of this post is to demonstrate the usage of **Poetry**, we won't be too concerned about
+the actual content of the project. Therefore, I went ahead and added the _source code_ under `image_processing_toolkit`, tests under `tests`,
+and an `example.ipynb` under `notebooks`. There's also an additional `data` directory which contains an image used by `example.ipynb`, which you could
+easily swap out with other images if you want to mess around with some of the functions.
+
+You can also delete the project that we made in the first part, since we will be effectively cloning over the same project.
+Go ahead and clone the Github repository and install it: [Image Processing Toolkit](https://github.com/rhendz/image-processing-toolkit).
+
+```bash
+git clone https://github.com/rhendz/image-processing-toolkit.git
+cd image-processing-toolkit
+poetry install
+```
+
+You may have noticed a new file `poetry.lock`. This file is important for ensuring that every time you install dependencies, the exact versions specified in the lock
+file are used. Furthermore, by _locking_ the dependencies we can ensure _reproducibility_ by maintaining an environment that is consistent
+across different machines. Additionally, Poetry first checks the lock file to see if the required packages are
+already installed, leading to faster dependency resolution.
+
+Go ahead and run `poetry run pytest`, to make sure everything is installed and working correctly.
+
+At this point, you should be able to run the jupyter notebook. There's three ways to do this, pick whichever you prefer:
+
+1. Install the `Jupyter` extension in VSCode and select the `.venv` kernel.
+2. Open `poetry shell` to activate your virtual environment and run `jupyter notebook`
+3. Run `poetry run jupyter notebook`, which allows you to run comannds without activating your virtual environment.
+
+Now that you've had some time to play around with the project, let's build and package our project to get it ready for distribution:
+
+```bash
+poetry build
+```
+
+You'll notice that a new distribution folder `dist` has been created containing our source distribution `image_processing_toolkit-0.1.0.tar.gz` and
+wheels file `image_processing_toolkit-0.1.0-py3-none-any.whl`.
+
+Now we can publish our work to PyPI or a private repository via:
+
+```bash
+poetry publish
+```
+
+### III. Tying Up Loose Ends
+
+Let's make our package more accessible to other tools like `pip` and `conda`? Actually do we
+even need to do that since poetry is just a developer tool and does not affect the end package.
