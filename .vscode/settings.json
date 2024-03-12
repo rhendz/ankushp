@@ -5,5 +5,11 @@
   "editor.formatOnSave": true,
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "grammarly.selectors": [
+    {
+      "language": "mdx",
+      "scheme": "file"
+    }
+  ]
 }
