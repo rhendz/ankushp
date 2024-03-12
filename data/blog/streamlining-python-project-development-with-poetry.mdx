@@ -96,7 +96,7 @@ Run their automatic installer in your shell:
 curl https://pyenv.run | bash
 ```
 
-I'll show you how to setup your shell environment for pyenv so that is available for use. Today, we'll continue with
+I'll show you how to setup your shell environment for pyenv so that it is available for use. Today, we'll continue with
 using `bash` as our shell example. If you're unsure of what shell you have, check by using `echo $SHELL`. In the case it's `bash`, run the
 following to modify `~/.bashrc`:
 
@@ -157,8 +157,9 @@ That's it! You can test out your installation by typing `poetry --version`.
 ## Image Processing Toolkit (Example)
 
 Let's say your a data scientist or a computer vision engineer working with images and you decided to build
-your own image processing toolkit. In the first part of this example, I show you how to initialize and install a _Poetry_
-project from scratch. In the second part
+your own image processing toolkit. In the first part, I'll show you how to initialize and install a _Poetry_
+project from scratch. We will learn how to package and publish the toolkit in the second part. Third and last,
+we will track dependencies, checking for outdated ones and updating if necessary.
 
 ### I. Initialization and Installation
 
@@ -257,6 +258,9 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 ```
 
+Although not entirely covered here, Poetry allows you to specify [version constraints](https://python-poetry.org/docs/dependency-specification/) for your dependencies.
+Here the `python = "^3.12"` means versions `>=3.12.0 and <3.13.0` are allowed.
+
 Before we install our poetry project, I recommend configuring Poetry to install our virtual environment `.venv` inside of our project.
 
 ```bash
@@ -319,13 +323,43 @@ poetry build
 You'll notice that a new distribution folder `dist` has been created containing our source distribution `image_processing_toolkit-0.1.0.tar.gz` and
 wheels file `image_processing_toolkit-0.1.0-py3-none-any.whl`.
 
-Now we can publish our work to PyPI or a private repository via:
+Now we can publish our work to PyPI, Python's official third-party software repository:
 
 ```bash
+poetry config pypi-token.pypi <your-pypi-token>
 poetry publish
 ```
 
-### III. Tying Up Loose Ends
+Additionally, you can combine building and publishing in one step via `poetry publish --build`.
 
-Let's make our package more accessible to other tools like `pip` and `conda`? Actually do we
-even need to do that since poetry is just a developer tool and does not affect the end package.
+For more information on configuration, see [Making a PyPI API token](https://pypi.org/help/#apitoken).
+
+### III. Tracking Dependencies
+
+Let's go over a few useful commands that help _track_ your project's dependencies. For example, `poetry show` will show you
+all the the packages installed by Poetry's runtime environment (including sub dependencies). If you're only interested in looking
+at the the top-level dependencies i.e. those defined in the `pyproject.toml`, you can use `poetry show --top-level`.
+
+If you want to view the dependency tree for a particular package say `matplotlib`, you can use `poetry show --tree matplotlib`:
+
+```text
+matplotlib 3.8.3 Python plotting package
+├── contourpy >=1.0.1
+│   └── numpy >=1.20,<2.0
+├── cycler >=0.10
+├── fonttools >=4.22.0
+├── kiwisolver >=1.3.1
+├── numpy >=1.21,<2
+├── packaging >=20.0
+├── pillow >=8
+├── pyparsing >=2.3.1
+└── python-dateutil >=2.7
+    └── six >=1.5
+```
+
+Checking for outdated dependencies is as simple as using `poetry show --outdated` and to update them `poetry update` or `poetry update [<packages>...]` to
+update specific packages.
+
+As a bonus, you can use `poetry list` to see all available commands and `poetry <command> --help` to see specific details for a command.
+
+# Wrapping Up
