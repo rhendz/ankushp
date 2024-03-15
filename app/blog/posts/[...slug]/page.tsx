@@ -43,13 +43,35 @@ export async function generateMetadata({
   const publishedAt = new Date(post.date).toISOString();
   const modifiedAt = new Date(post.lastmod || post.date).toISOString();
   const authors = authorDetails.map((author) => author.name);
-  let imageList = [siteMetadata.socialBanner];
+
+  let og = new URL("/api/og", siteMetadata.siteUrl);
+  og.searchParams.set("title", post.title);
+
+  let imageList: string[] = [];
   if (post.images) {
     imageList = typeof post.images === "string" ? [post.images] : post.images;
+
+    // We map og images to the image list, dynamically formatted images
+    imageList = imageList.map((img) => {
+      let imageUrl =
+        img && img.includes("http") ? img : siteMetadata.siteUrl + img;
+      let ogImageUrl = og;
+      ogImageUrl.searchParams.set("image-src", imageUrl);
+      return ogImageUrl.toString();
+    });
   }
+
+  // Add social banner as a back up image
+  if (imageList) {
+    imageList.push(siteMetadata.socialBanner);
+  } else {
+    imageList = [siteMetadata.socialBanner];
+  }
+
+  // Ensure imageList is open graph compliant
   const ogImages = imageList.map((img) => {
     return {
-      url: img && img.includes("http") ? img : siteMetadata.siteUrl + img,
+      url: img,
     };
   });
 

@@ -10,7 +10,7 @@ const siteMetadata = {
   siteUrl: 'https://ankushp.com',
   siteRepo: 'https://github.com/rhendz/ankushp',
   siteLogo: '/images/logo.png',
-  socialBanner: '/images/twitter-card.png',
+  socialBanner: '/images/social-banner.png',
   // mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'ap@ankushp.com',
   github: 'https://github.com/rhendz',
