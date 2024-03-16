@@ -3,8 +3,7 @@ const siteMetadata = {
   title: 'Ankush Patel',
   author: 'Ankush Patel',
   headerTitle: 'Ankush Patel',
-  description:
-    'Ankush Patel is a proficient ML engineer, dedicated to crafting scalable and engaging machine learning applications. With a robust academic foundation and extensive professional experience, he possesses strong programming skills, adept team collaboration abilities, and entrepreneurial acumen.',
+  description: 'ML engineer pioneering human-centered AI solutions',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
