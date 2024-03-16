@@ -62,9 +62,7 @@ export async function generateMetadata({
   }
 
   // Add social banner as a back up image
-  if (imageList) {
-    imageList.unshift(siteMetadata.socialBanner);
-  } else {
+  if (!imageList) {
     imageList = [siteMetadata.socialBanner];
   }
 
