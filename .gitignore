@@ -33,3 +33,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# production
+*.xml
+
+# rss feed
+/public/feed.xml
+
+# search
+/public/search.json
+
+# Contentlayer
+.contentlayer

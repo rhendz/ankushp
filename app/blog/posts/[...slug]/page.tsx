@@ -44,7 +44,7 @@ export async function generateMetadata({
   const modifiedAt = new Date(post.lastmod || post.date).toISOString();
   const authors = authorDetails.map((author) => author.name);
 
-  let og = new URL("/api/og", siteMetadata.siteUrl);
+  const og = new URL("/api/og", siteMetadata.siteUrl);
   og.searchParams.set("title", post.title);
 
   let imageList: string[] = [];
@@ -53,9 +53,9 @@ export async function generateMetadata({
 
     // We map og images to the image list, dynamically formatted images
     imageList = imageList.map((img) => {
-      let imageUrl =
+      const imageUrl =
         img && img.includes("http") ? img : siteMetadata.siteUrl + img;
-      let ogImageUrl = og;
+      const ogImageUrl = og;
       ogImageUrl.searchParams.set("image-src", imageUrl);
       return ogImageUrl.toString();
     });

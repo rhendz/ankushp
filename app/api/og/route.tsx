@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const imageSource = searchParams.get("image-src");
 
     if (!title || !imageSource) {
-      throw Error("No valid title and/or imageSource!");
+      throw new Error("Need to input valid title and/or image source!");
     }
 
     const interBold = await fetch(
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
             {/* Image */}
             <img
               src={imageSource}
-              alt="banner image"
+              alt="blog post banner"
               width="1200px"
               height="630px"
             />
@@ -109,8 +109,10 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log(`${e}`);
+    }
     return new Response(`Failed to generate the image`, {
       status: 500,
     });
