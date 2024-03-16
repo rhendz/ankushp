@@ -4,15 +4,43 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
+const key = crypto.subtle.importKey(
+  "raw",
+  new TextEncoder().encode(process.env.OG_API_KEY),
+  { name: "HMAC", hash: { name: "SHA-256" } },
+  false,
+  ["sign"],
+);
+
+function toHex(arrayBuffer: ArrayBuffer) {
+  return Array.prototype.map
+    .call(new Uint8Array(arrayBuffer), (n) => n.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
+    const token = searchParams.get("token");
     const title = searchParams.get("title");
     const imageSource = searchParams.get("image-src");
 
     if (!title || !imageSource) {
       throw new Error("Need to input valid title and/or image source!");
+    }
+
+    // Verify token
+    const verifyToken = toHex(
+      await crypto.subtle.sign(
+        "HMAC",
+        await key,
+        new TextEncoder().encode(title),
+      ),
+    );
+
+    if (token !== verifyToken) {
+      return new Response("Invalid token.", { status: 401 });
     }
 
     const interBold = await fetch(
