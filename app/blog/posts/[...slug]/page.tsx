@@ -16,6 +16,7 @@ import PostBanner from "@/layouts/post-banner";
 import { Metadata } from "next";
 import siteMetadata from "@/data/siteMetadata";
 import { notFound } from "next/navigation";
+import { createHmac } from "node:crypto";
 
 const defaultLayout = "PostLayout";
 const layouts = {
@@ -23,6 +24,18 @@ const layouts = {
   PostLayout,
   PostBanner,
 };
+
+function getToken(id: string): string {
+  // Check if process.env.OG_API_KEY is defined
+  if (process.env.OG_API_KEY === undefined) {
+    throw new Error("OG_API_KEY environment variable is not defined");
+  }
+
+  const hmac = createHmac("sha256", process.env.OG_API_KEY);
+  hmac.update(id, "utf-8");
+  const token = hmac.digest("hex");
+  return token;
+}
 
 export async function generateMetadata({
   params,
@@ -44,8 +57,8 @@ export async function generateMetadata({
   const modifiedAt = new Date(post.lastmod || post.date).toISOString();
   const authors = authorDetails.map((author) => author.name);
 
-  const og = new URL("/api/og", siteMetadata.siteUrl);
-  og.searchParams.set("title", post.title);
+  const ogAPI = new URL("/api/og", siteMetadata.siteUrl);
+  ogAPI.searchParams.set("title", post.title);
 
   let imageList: string[] = [];
   if (post.images) {
@@ -55,9 +68,9 @@ export async function generateMetadata({
     imageList = imageList.map((img) => {
       const imageUrl =
         img && img.includes("http") ? img : siteMetadata.siteUrl + img;
-      const ogImageUrl = og;
-      ogImageUrl.searchParams.set("image-src", imageUrl);
-      return ogImageUrl.toString();
+      ogAPI.searchParams.set("image-src", imageUrl);
+      ogAPI.searchParams.set("token", getToken(post.title + imageUrl));
+      return ogAPI.toString();
     });
   }
 

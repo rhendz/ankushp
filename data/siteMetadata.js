@@ -7,7 +7,10 @@ const siteMetadata = {
     'Ankush Patel is a proficient ML engineer, dedicated to crafting scalable and engaging machine learning applications. With a robust academic foundation and extensive professional experience, he possesses strong programming skills, adept team collaboration abilities, and entrepreneurial acumen.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://ankushp.com',
+  siteUrl:
+    process.env.NODE_ENV === 'production'
+      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_VERCEL_URL,
   siteRepo: 'https://github.com/rhendz/ankushp',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/social-banner.png',
