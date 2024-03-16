@@ -59,7 +59,6 @@ export async function generateMetadata({
 
   const ogAPI = new URL("/api/og", siteMetadata.siteUrl);
   ogAPI.searchParams.set("title", post.title);
-  ogAPI.searchParams.set("token", getToken(post.title));
 
   let imageList: string[] = [];
   if (post.images) {
@@ -69,9 +68,9 @@ export async function generateMetadata({
     imageList = imageList.map((img) => {
       const imageUrl =
         img && img.includes("http") ? img : siteMetadata.siteUrl + img;
-      const ogImageRequest = ogAPI;
-      ogImageRequest.searchParams.set("image-src", imageUrl);
-      return ogImageRequest.toString();
+      ogAPI.searchParams.set("image-src", imageUrl);
+      ogAPI.searchParams.set("token", getToken(post.title + imageUrl));
+      return ogAPI.toString();
     });
   }
 

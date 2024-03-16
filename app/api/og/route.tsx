@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       await crypto.subtle.sign(
         "HMAC",
         await key,
-        new TextEncoder().encode(title),
+        new TextEncoder().encode(title + imageSource),
       ),
     );
 
