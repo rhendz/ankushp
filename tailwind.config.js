@@ -27,7 +27,7 @@ module.exports = {
         primary: 'rgb(var(--color-primary) / <alpha-value>)',
         secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
         accent: 'rgb(var(--color-accent) / <alpha-value>)',
-        gray: colors.green,
+        gray: colors.gray,
       },
       container: {
         padding: {
