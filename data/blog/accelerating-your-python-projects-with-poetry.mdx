@@ -1,6 +1,6 @@
 ---
 title: 'Accelerating Your Python Projects with Poetry'
-date: '2024-03-07'
+date: '2024-03-18'
 tags: ['python', 'tools']
 draft: false
 summary: 10x your Python project developer experience with Poetry - example project and Poetry workflow included!
@@ -11,7 +11,7 @@ To pip or not to pip, that is the question. If you have worked with Python proje
 come across its default package manager **pip**. Of course, there's nothing wrong with pip but it
 can be _lacking_ in certain areas:
 
-- **Limited dependency resolution** in regard to complex dependency trees or conflicting version requirements
+- **Limited dependency resolution** with complex dependency trees or conflicting version requirements
 - **Lack of dependency locking** to ensure consistency across project installations
 - **Pip globally installs packages** without using additional tools like `virtualenv`, leading to conflicting package versions across projects
 
@@ -89,8 +89,8 @@ We'll run the automatic installer in our shell:
 curl https://pyenv.run | bash
 ```
 
-Let's setup our shell environment for pyenv. Today, we'll use
-`bash` as our shell example. Note, you can check what shell you have by using `echo $SHELL`. If you're using `bash`, run the
+Let's set up our shell environment for pyenv. Today, we'll use
+`bash` as our shell example. Note, that you can check what shell you have by using `echo $SHELL`. If you're using `bash`, run the
 following to modify `~/.bashrc`:
 
 ```bash
@@ -229,7 +229,7 @@ Oftentimes, you will only want to use Poetry for dependency management. In this 
 package-mode = false
 ```
 
-Note, Poetry has two operating modes: **package mode** (default) and **non-package mode**. Depending on which mode you use,
+Note, that Poetry has two operating modes: **package mode** (default) and **non-package mode**. Depending on which mode you use,
 some fields become optional. See [pyproject](https://python-poetry.org/docs/pyproject/) for more details of what fields you can configure
 in `pyproject.toml`.
 
@@ -308,7 +308,7 @@ We can close the shell via `exit`. Alternatively, you can run commands in the co
 
 Since the point of this post is to demonstrate the usage of Poetry, we won't be too concerned about
 the actual content of the project. Therefore, I went ahead and added the _source code_ under `image_processing_toolkit`, tests under `tests`,
-and an `example.ipynb` under `notebooks`. There's also an additional `data` directory which contains an image used by `example.ipynb`, which you could
+and an `example.ipynb` under `notebooks`. There's also an additional `data` directory that contains an image used by `example.ipynb`, which you could
 easily swap out with other images if you want to mess around with some of the examples in `example.ipynb`.
 
 Let's go ahead and delete the project that we made in the first part since we will be effectively cloning the same project: `rm -rf image-processing-toolkit`.
@@ -379,7 +379,7 @@ matplotlib 3.8.3 Python plotting package
 Checking for outdated dependencies is as simple as using `poetry show --outdated` and updating them via `poetry update` or `poetry update [<packages>...]` to
 update specific packages.
 
-Note, you can use `poetry list` to see all available commands and `poetry <command> --help` to see specific details for a command.
+Note, that you can use `poetry list` to see all available commands and `poetry <command> --help` to see specific details for a command.
 
 # Conclusion
 
@@ -396,7 +396,7 @@ We applied these principles to an example developer experience in `image-process
 we were able to initialize and install our project. With that out of the way, we added some source code to the project along with tests and an example. We showed how to package and publish the project to PyPI. Finally, we demonstrated
 the usage of Poetry's _tracking_ capabilities for observing project dependencies and updating them.
 
-As with many tools, it would be apt to say that there is no one size fits all solution. For example, if you are working with dependencies outside of Python or reliant on existing
+As with many tools, it would be apt to say that there is no one-size-fits-all solution. For example, if you are working with dependencies outside of Python or reliant on existing
 infrastructure and tooling, Poetry may not be the best bet. As such, it is up to you to decide whether or not _Poetry_ is the tool for you.
 
 If you're interested in diving deeper into Python project management with Poetry, check out the [official Poetry documentation](https://python-poetry.org/docs/).
