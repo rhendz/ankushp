@@ -63,16 +63,17 @@ into setting Poetry up! :)
 
 ## Installing pyenv (Optional)
 
-If you're confident that you have installed Python efficiently, great! You can skip this section. However, if you don't mind taking a quick
-detour let's install _pyenv_. Just as _Poetry_ is used to manage our Python project's dependencies, we can use
-_pyenv_ to simplify Python version management.
+If you're up for a quick detour, let's install _pyenv_. Just as _Poetry_ is used to simplify package management, **pyenv**
+seamlessly manages multiple versions of Python on your system. This is particularly useful for projects requiring different Python versions or
+compatibility testing across various versions.
 
-**Why pyenv?**
+Installing Python through `apt`, `brew`, or `choco` works, but managing multiple versions isn't ideal.
+You'd need to specify versions like `python3.7` or `python3.11` in your application, adding complexity.
 
-**pyenv** simplifies managing multiple Python versions, enabling easy switching between them.
-This is particularly useful for projects requiring different Python versions or compatibility testing across various versions.
-
-If you're convinced, let's install pyenv!
+> "At a high level, pyenv intercepts Python commands using shim executables injected into your PATH,
+> determines which Python version has been specified by your application, and passes your commands along to the correct Python installation."
+>
+> &mdash; pyenv Authors
 
 <div className="flex items-center justify-center">
   <Image
@@ -83,6 +84,8 @@ If you're convinced, let's install pyenv!
   />
 </div>
 
+Let's take a look at installing _pyenv_:
+
 **Linux/macOS**
 
 Run their automatic installer in your shell:
@@ -91,8 +94,8 @@ Run their automatic installer in your shell:
 curl https://pyenv.run | bash
 ```
 
-I'll show you how to set up your shell environment for pyenv so that it is available for use. Today, we'll continue with
-using `bash` as our shell example. If you're unsure of what shell you have, check by using `echo $SHELL`. In the case it's `bash`, run the
+Let's take a look at setting up our shell environment for pyenv so that it is available for use. Today, we'll use
+`bash` as our shell example. Note, you can check what shell you have by using `echo $SHELL`. If you're using `bash`, run the
 following to modify `~/.bashrc`:
 
 ```bash
@@ -103,7 +106,7 @@ echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
 For other shells and optionally adding pyenv to your login shell, please refer to [setting up your shell environment for pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv).
 
-Now you can restart your shell by using `source ~/.bashrc` and then test out your pyenv installation by typing `pyenv`:
+Let's restart our shell by using `source ~/.bashrc` and test out our pyenv installation by typing `pyenv`:
 
 ```text
 pyenv 2.3.25
@@ -116,14 +119,28 @@ Some useful pyenv commands are:
 ...
 ```
 
-If you see something similar to the above, then we're ready to install python!
+If you see something similar to the above, then we're ready to install Python.
 Let's install 3.12, which is the latest release at the time of writing this post, and configure it as the global version:
 
 ```bash
 pyenv install 3.12
 pyenv global 3.12
-pyenv version
+python --version
 ```
+
+Our current version of Python is 3.12, which makes sense.
+
+Let's also install 3.10 to test out managing multiple versions of Python:
+
+```bash
+pyenv install 3.10
+mkdir test-3.10 && cd test-3.10
+pyenv local 3.10
+python --version
+rm -rf test-3.10
+```
+
+We use the same `python` command but we get different (but expected) versions of Python!
 
 **Windows**
 
