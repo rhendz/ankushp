@@ -45,25 +45,6 @@ module.exports = {
       },
       typography: ({ theme }) => ({
         DEFAULT: {
-          // css: {
-          //   a: {
-          //     color: theme('colors.accent/60'),
-          //     '&:hover': {
-          //       color: `${theme('colors.accent/70')}`,
-          //     },
-          //   },
-          //   'h1,h2': {
-          //     fontWeight: '700',
-          //     letterSpacing: theme('letterSpacing.tight'),
-          //     color: theme('colors.secondary/80')
-          //   },
-          //   'p > *': {
-          //     color: `${theme('colors.secondary/50')}`
-          //   },
-          //   code: {
-          //     color: theme('colors.indigo.500'),
-          //   },
-          // },
           css: {
             '--tw-prose-body': theme('colors.secondary/0.75'),
             '--tw-prose-headings': theme('colors.secondary/1.0'),
@@ -81,9 +62,8 @@ module.exports = {
             '--tw-prose-pre-bg': theme('colors.slate[800]'),
             '--tw-prose-th-borders': theme('colors.pink[300]'),
             '--tw-prose-td-borders': theme('colors.pink[200]'),
-            code: {
-              fontFamily: theme('fontFamily.mono'),
-            },
+            'blockquote p:first-of-type::before': false,
+            'blockquote p:first-of-type::after': false,
           },
         },
       }),

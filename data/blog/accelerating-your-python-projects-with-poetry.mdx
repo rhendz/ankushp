@@ -1,0 +1,403 @@
+---
+title: 'Accelerating Your Python Projects with Poetry'
+date: '2024-03-18'
+tags: ['python', 'tools']
+draft: false
+summary: 10x your Python project developer experience with Poetry - example project and Poetry workflow included!
+images: '/static/images/accelerating-your-python-projects-with-poetry/post-banner.jpg'
+---
+
+To pip or not to pip, that is the question. If you have worked with Python projects, you may have
+come across its default package manager **pip**. Of course, there's nothing wrong with pip but it
+can be _lacking_ in certain areas:
+
+- **Limited dependency resolution** with complex dependency trees or conflicting version requirements
+- **Lack of dependency locking** to ensure consistency across project installations
+- **Pip globally installs packages** without using additional tools like `virtualenv`, leading to conflicting package versions across projects
+
+Ok... so there may be a few things that are not so great about pip, but it is still a widely used tool in the Python
+ecosystem and continues to evolve with improvements and community contributions. As you might have guessed,
+_Poetry_ is here to address these shortcomings and will be crucial in accelerating development
+for your Python projects.
+
+<TOCInline toc={props.toc} toHeading={(2, 3)} asDisclosure />
+
+## What is Poetry?
+
+Now that we understand what pip is and are aware of some of its shortcomings, let's explore Poetry and how it addresses the challenges encountered with pip.
+
+**Poetry** simplifies the process of managing our projects by providing a centralized approach to defining, installing, and updating project dependencies.
+In comparison, pip's dependency resolver may struggle with complex dependency trees or conflicting version requirements, potentially leading to installation issues or
+project instability.
+
+While pip utilizes `requirements.txt` files for specifying dependencies, its capabilities are eclipsed by Poetry's utilization of `pyproject.toml`.
+This file format not only allows for the declaration of dependencies but also facilitates the inclusion of detailed constraints and resolution logic.
+By leveraging `pyproject.toml`, Poetry enables finer control over dependency versions, ensuring precise management and resolution.
+
+Where pip traditionally installs packages globally, potentially leading to version conflicts or dependency mismatches,
+Poetry offers a more sophisticated approach. With Poetry, the creation and management of virtual environments are seamlessly integrated into the workflow,
+ensuring that each project operates within its isolated environment.
+This practice not only fosters consistency but also mitigates potential conflicts, providing a reliable foundation for development and deployment.
+
+Furthermore, achieving seamless packaging and distribution of Python projects is not feasible with pip alone;
+additional tooling and manual steps are typically required such as the usage of `setuptools`.
+Poetry, on the other hand, provides built-in functionality for packaging and distributing projects.
+
+**Key features of Poetry:**
+
+- Centralized dependency management using `pyproject.toml`.
+- Dependency resolution and lock files.
+- Virtual environment management.
+- Simplified package workflow.
+- Versioning and publishing for packages.
+
+By now, you've probably heard enough about the convenience and efficiency that Poetry brings to Python project development. Let's get
+into setting Poetry up! :)
+
+<Image
+  src="/static/images/accelerating-your-python-projects-with-poetry/pip-to-poetry.jpg"
+  alt="Meme about switching my pip-based Python projects over to Poetry"
+  width="750"
+  height="500"
+/>
+
+## Installing pyenv (Optional)
+
+If you don't plan on using multiple versions of Python, please feel free to skip this section!
+
+However, if you're up for a quick detour, let's install _pyenv_. Just as _Poetry_ is used to simplify package management, **pyenv**
+seamlessly manages multiple versions of Python on your system. This is particularly useful for projects requiring different Python versions or
+compatibility testing across various versions.
+
+Installing Python through `apt`, `brew`, or `choco` works, but managing multiple versions isn't ideal.
+You'd end up having to specify different versions like `python3.7` or `python3.11` in your application, adding complexity.
+
+_pyenv_ in a nutshell:
+
+> "At a high level, pyenv intercepts Python commands using shim executables injected into your PATH,
+> determines which Python version has been specified by your application, and passes your commands along to the correct Python installation."
+>
+> &mdash; pyenv Authors
+
+Let's take a look at installing _pyenv_:
+
+**Linux/macOS**
+
+We'll run the automatic installer in our shell:
+
+```bash
+curl https://pyenv.run | bash
+```
+
+Let's set up our shell environment for pyenv. Today, we'll use
+`bash` as our shell example. Note, that you can check what shell you have by using `echo $SHELL`. If you're using `bash`, run the
+following to modify `~/.bashrc`:
+
+```bash
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+```
+
+For other shell environments, please refer to [setting up your shell environment for pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv).
+
+Let's restart our shell by using `source ~/.bashrc` and test out our pyenv installation by typing `pyenv`:
+
+```text
+pyenv 2.3.25
+Usage: pyenv <command> [<args>]
+
+Some useful pyenv commands are:
+    --version Display the version of pyenv
+    activate Activate virtual environment
+    commands List all available pyenv commands
+...
+```
+
+If you see something similar to the above, then we're ready to install Python.
+Let's install 3.12, which is the latest release at the time of writing this post, and configure it as the global version:
+
+```bash
+pyenv install 3.12
+pyenv global 3.12
+python --version
+```
+
+Our current version of Python is 3.12, which makes sense.
+
+Let's also install 3.10 to test out managing multiple versions of Python:
+
+```bash
+pyenv install 3.10
+mkdir test-3.10 && cd test-3.10
+pyenv local 3.10
+python --version
+rm -rf test-3.10
+```
+
+We use the same `python` command and get different, but expected, versions of Python.
+
+**Windows**
+
+Unfortunately, pyenv does not officially support Windows outside of WSL. However, there is a [pyenv-win](https://github.com/pyenv-win/pyenv-win) fork that may be of interest.
+
+For more information on installing pyenv, what it can do, and how it works, check out their GitHub repo [pyenv](https://github.com/pyenv/pyenv).
+
+<div className="flex items-center justify-center">
+  <Image
+    src="/static/images/accelerating-your-python-projects-with-poetry/pyenv-and-poetry.jpg"
+    alt="Meme about using pyenv and poetry"
+    width="524"
+    height="499"
+  />
+</div>
+
+## Installing Poetry
+
+Assuming you installed `pyenv` or have your own Python configuration, we're finally ready to install Poetry!
+
+**Linux/macOS**
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+**Windows (Powershell)**
+
+```powershell
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+```
+
+That's it! We can test out our installation by typing `poetry --version`.
+
+## Image Processing Toolkit (Example)
+
+Let's say you're a data scientist or a computer vision engineer working with images (and maybe you are) and you decided to build
+your own image processing toolkit (_imagine_). How can we use _Poetry_ to accelerate our Python project development? Well, we can break it down into a few steps:
+
+1. Take a look at how to initialize and install our project dependencies from scratch
+2. Learn how to package and publish our toolkit
+3. Understand how to track dependencies, checking for outdated ones and updating if necessary
+
+### I. Initialization and Installation
+
+We can use poetry to initialize our project:
+
+```bash
+poetry new image-processing-toolkit
+cd image-processing-toolkit
+```
+
+This will generate the `image-processing-toolkit` directory with the following items:
+
+```text
+image-processing-toolkit/
+├── README.md
+├── image_processing_toolkit
+│   ├── __init__.py
+├── pyproject.toml
+└── tests
+    ├── __init__.py
+```
+
+Let's take a look at the internals of a Poetry project `pyproject.toml`:
+
+```toml
+[tool.poetry]
+name = "image-processing-toolkit"
+version = "0.1.0"
+description = ""
+authors = ["Ankush Patel <ap@ankushp.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+Under `[tool.poetry]`, we have a few descriptors such as `name`, `version`, etc. defining common elements of our project.
+Here, we can additionally specify your packages to include. We'll go ahead and add `packages = [{include = "image-processing-toolkit"}]`, which
+contains the source files of our project. By doing so, we can _import_ our package like any other package in other areas of our project e.g. `notebooks` or `tests`.
+
+Oftentimes, you will only want to use Poetry for dependency management. In this case, you can toggle the default package mode to off by adding:
+
+```toml
+[tool.poetry]
+package-mode = false
+```
+
+Note, that Poetry has two operating modes: **package mode** (default) and **non-package mode**. Depending on which mode you use,
+some fields become optional. See [pyproject](https://python-poetry.org/docs/pyproject/) for more details of what fields you can configure
+in `pyproject.toml`.
+
+Before we design our image processing toolkit, it would be a good idea to add a few packages:
+
+```bash
+poetry add numpy opencv-python matplotlib
+```
+
+We can also add some developer dependencies to help improve our developer experience:
+
+```bash
+poetry add ruff pytest jupyter --group dev
+```
+
+`ruff` is an extremely fast Python linter and formatter written in Rust and `pytest` is a testing framework. Additionally,
+we add `jupyter` to enable notebooks, showcasing examples of our image processing toolkit.
+
+At this point, your `pyproject.toml` file should look something like this:
+
+```toml
+[tool.poetry]
+name = "image-processing-toolkit"
+version = "0.1.0"
+description = ""
+authors = ["Ankush Patel <ap@ankushp.com>"]
+readme = "README.md"
+packages = [{include = "image_processing_toolkit"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.4"
+opencv-python = "^4.9.0.80"
+matplotlib = "^3.8.3"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.3.2"
+pytest = "^8.1.1"
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+```
+
+Although not entirely covered here, Poetry allows you to specify [version constraints](https://python-poetry.org/docs/dependency-specification/) for your dependencies.
+Here the `python = "^3.12"` means versions `>=3.12.0 and <3.13.0` are allowed.
+
+Before we install our poetry project, I recommend configuring Poetry to install our virtual environment `.venv` inside of our project.
+
+```bash
+poetry config virtualenvs.in-project true
+poetry install
+```
+
+Note, if you would prefer the config setting to be per project, you can configure it in a `poetry.toml` file:
+
+```toml
+[virtualenvs]
+create = true
+in-project = true
+```
+
+Great! We have completed the first part of initializing and installing our _Poetry_ project. Now, we can activate our virtual environment,
+by typing `poetry shell` and we can run the following to confirm that we have installed everything correctly:
+
+```bash
+python -c "import image_processing_toolkit; print(image_processing_toolkit)"
+```
+
+If the above prints out the `image_processing_toolkit` module without errors, we are good to go! All that's left to do is build the toolkit, package, and publish.
+
+We can close the shell via `exit`. Alternatively, you can run commands in the context of your virtual environment by simply passing your command to `poetry run <command>`.
+
+### II. Packaging and Publishing
+
+Since the point of this post is to demonstrate the usage of Poetry, we won't be too concerned about
+the actual content of the project. Therefore, I went ahead and added the _source code_ under `image_processing_toolkit`, tests under `tests`,
+and an `example.ipynb` under `notebooks`. There's also an additional `data` directory that contains an image used by `example.ipynb`, which you could
+easily swap out with other images if you want to mess around with some of the examples in `example.ipynb`.
+
+Let's go ahead and delete the project that we made in the first part since we will be effectively cloning the same project: `rm -rf image-processing-toolkit`.
+Go ahead and clone the Github repository and install it: [Image Processing Toolkit](https://github.com/rhendz/image-processing-toolkit).
+
+```bash
+git clone https://github.com/rhendz/image-processing-toolkit.git
+cd image-processing-toolkit
+poetry install
+```
+
+You may have noticed a new file called `poetry.lock`. This file is important for ensuring that every time we install dependencies, the exact versions specified in the lock
+file are used. Furthermore, by _locking_ the dependencies we can ensure _reproducibility_ by maintaining an environment that is consistent
+across different machines. Additionally, Poetry first checks the lock file to see if the required packages are
+already installed, leading to faster dependency resolution.
+
+Let's go ahead and run `poetry run pytest`, to make sure everything is installed and working correctly.
+
+At this point, we should be able to run the jupyter notebook. There are three ways to do this, pick whichever you prefer:
+
+1. Install the `Jupyter` extension in VSCode, select the `.venv` kernel, and now you can run cells.
+2. Open `poetry shell` to activate your virtual environment and run `jupyter notebook`
+3. Run `poetry run jupyter notebook`.
+
+Feel free to mess around with the notebook. Once you're done, let's build and package our project to get it ready for distribution:
+
+```bash
+poetry build
+```
+
+Note that a new distribution folder called `dist` has been created containing our source distribution `image_processing_toolkit-0.1.0.tar.gz` and
+wheels file `image_processing_toolkit-0.1.0-py3-none-any.whl`.
+
+Now we can publish our work to PyPI, Python's official third-party software repository:
+
+```bash
+poetry config pypi-token.pypi <your-pypi-token>
+poetry publish
+```
+
+Additionally, you can combine building and publishing in one step via `poetry publish --build`.
+
+For more information on getting your token, see [Making a PyPI API token](https://pypi.org/help/#apitoken).
+
+### III. Tracking Dependencies
+
+Let's go over a few useful commands that help _track_ our project's dependencies. For example, `poetry show` will show us
+all the packages installed by Poetry's runtime environment (including sub-dependencies). If you're only interested in looking
+at the top-level dependencies i.e. those defined in the `pyproject.toml`, you can use `poetry show --top-level`.
+
+We can view the dependency tree for a particular package say `matplotlib`, by using `poetry show --tree matplotlib`:
+
+```text
+matplotlib 3.8.3 Python plotting package
+├── contourpy >=1.0.1
+│   └── numpy >=1.20,<2.0
+├── cycler >=0.10
+├── fonttools >=4.22.0
+├── kiwisolver >=1.3.1
+├── numpy >=1.21,<2
+├── packaging >=20.0
+├── pillow >=8
+├── pyparsing >=2.3.1
+└── python-dateutil >=2.7
+    └── six >=1.5
+```
+
+Checking for outdated dependencies is as simple as using `poetry show --outdated` and updating them via `poetry update` or `poetry update [<packages>...]` to
+update specific packages.
+
+Note, that you can use `poetry list` to see all available commands and `poetry <command> --help` to see specific details for a command.
+
+# Conclusion
+
+In this post, we discussed a robust Python packaging and dependency management tool - **Poetry**.
+By understanding the shortcomings of _pip_ as a package manager, we gained insight into how Poetry addresses these challenges by
+offering a centralized approach to managing dependencies. Additionally, Poetry positions itself as an all-in-one tool for Python project development, in which not only does it
+accel at managing dependencies but also:
+
+- Isolated and reproducible environments
+- Simplified packaging and publishing tools
+- Tracking and upgrading dependencies
+
+We applied these principles to an example developer experience in `image-processing-toolkit` end-to-end. By setting up our project with the appropriate project/developer dependencies and configuring our `pyproject.toml`,
+we were able to initialize and install our project. With that out of the way, we added some source code to the project along with tests and an example. We showed how to package and publish the project to PyPI. Finally, we demonstrated
+the usage of Poetry's _tracking_ capabilities for observing project dependencies and updating them.
+
+As with many tools, it would be apt to say that there is no one-size-fits-all solution. For example, if you are working with dependencies outside of Python or reliant on existing
+infrastructure and tooling, Poetry may not be the best bet. As such, it is up to you to decide whether or not _Poetry_ is the tool for you.
+
+If you're interested in diving deeper into Python project management with Poetry, check out the [official Poetry documentation](https://python-poetry.org/docs/).
+With Poetry, managing Python projects has never been easier!
