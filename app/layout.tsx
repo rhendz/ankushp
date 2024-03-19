@@ -57,6 +57,9 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const googleAnalyticsId =
+    siteMetadata.analytics?.googleAnalytics?.googleAnalyticsId;
+
   return (
     <html
       lang="en"
@@ -98,7 +101,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
       <body className="bg-primary text-secondary">
         <Providers>
-          <Analytics />
+          {googleAnalyticsId && (
+            <Analytics googleAnalyticsId={googleAnalyticsId} />
+          )}
           <SectionContainer>
             <div className="flex min-h-screen flex-col justify-between font-sans">
               <Header />

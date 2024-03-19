@@ -1,23 +1,25 @@
-'use client'
+import Script from 'next/script.js'
 
-import siteMetadata from '@/data/siteMetadata'
-import { GoogleAnalytics } from 'nextjs-google-analytics'
+export interface GoogleAnalyticsProps {
+  googleAnalyticsId: string
+}
 
-const isProduction = process.env.NODE_ENV === 'production'
-
-const Analytics = () => {
+const Analytics = ({ googleAnalyticsId }: GoogleAnalyticsProps) => {
   return (
     <>
-      {isProduction && siteMetadata.analytics && (
-        <>
-          {siteMetadata.analytics.googleAnalytics && (
-            <GoogleAnalytics
-              trackPageViews
-              gaMeasurementId={siteMetadata.analytics.googleAnalytics.googleAnalyticsId}
-            />
-          )}
-        </>
-      )}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+      />
+
+      <Script strategy="afterInteractive" id="ga-script">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${googleAnalyticsId}', {cookie_flags: 'SameSite=None;Secure'});
+        `}
+      </Script>
     </>
   )
 }
