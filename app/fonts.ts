@@ -9,10 +9,6 @@ export const fontSans = localFont({
 export const fontMono = localFont({
   src: [
     {
-      path: "../public/fonts/SourceCodePro-Italic-VariableFont_wght.ttf",
-      style: "italic",
-    },
-    {
       path: "../public/fonts/SourceCodePro-VariableFont_wght.ttf",
       style: "normal",
     },
