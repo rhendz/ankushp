@@ -6,6 +6,10 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[mdx]": {
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 75
+  },
 <<<<<<< HEAD
   "grammarly.selectors": [
     {
