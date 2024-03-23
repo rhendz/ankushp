@@ -1,0 +1,95 @@
+---
+title: 'Model Compression: Towards Smaller, Faster and Better Models'
+date: '2024-03-25'
+tags: ['machine learning', 'model compression', 'concepts', 'survey']
+draft: true
+summary: Overview of various machine learning model compression techniques.
+images: ''
+---
+
+As the sun dipped below the horizon, casting hues of pink and gold over the skyline of San Francisco, Sarah and Alex found themselves unwinding at their favorite bar after a
+long day of work. Sarah sat slumped over her drink with frustration visibly evident on her face.
+
+<Image
+  src="/static/images/model-compression/model-compression/goldengate-sf-sunset.jpg"
+  alt="Golden Gate San Francisco sunset"
+  width="968"
+  height="692"
+/>
+
+"Something on your mind, Sarah?" Alex asked, noticing her solemn expression.
+
+Sarah sighed heavily. 😔 "It's this darn model deployment issue.
+We've been working on this AI project for months now, and every time we try to deploy the model onto our target device, it crashes.
+The darn thing is just too large for the device to handle."
+
+Alex nodded sympathetically, taking a sip of his beer. 🍺 "Yeah, I've heard that's been a common problem lately. But have you considered applying model compression techniques?"
+
+Sarah raised an eyebrow, intrigued. "Model compression? What's that?" 🤔
+
+Alex leaned in, a mischievous glint in his eye. "Oh, it's like magic, Sarah.
+Model compression techniques allow you to shrink the size of your model without sacrificing performance.
+It's all about pruning away unnecessary connections and parameters, kind of like trimming the fat off a steak." ✨
+
+Sarah's eyes widened with interest. "That sounds too good to be true. How does it work?"
+
+"Well," Alex began, "there are several approaches to model compression, like pruning, quantization, and distillation.
+Pruning involves removing redundant connections or parameters from the network, while quantization reduces the precision of numerical values.
+And distillation transfers knowledge from a large, complex model to a smaller, simpler one."💡
+
+Sarah leaned back, processing this newfound information. "That sounds like it could be the solution to our deployment woes. Do you think we could give it a try?"
+
+Alex grinned, raising his glass in a toast. "Absolutely, Sarah. With model compression,
+we'll have that AI up and running on your device in no time. Here's to the magic of technology!" 🥂✨
+
+And as the clink of their glasses echoed through the bar,
+Sarah couldn't help but feel a renewed sense of hope and excitement for the possibilities that model compression could unlock for their project. 🌟🚀
+
+<TOCInline toc={props.toc} toHeading={(2, 3)} asDisclosure />
+
+# What is Model Compression?
+
+**The Problem**
+
+Modern models, especially those in
+generative AI, can be _huge_. Oftentimes, these models are well within the domain of billions of parameters. Take for example a relatively small LLM: Llama-2-7b. A quick back-of-the-hand
+calculation shows that loading this model into memory (assuming fp32) for inference requires significant resources:
+
+$$
+7*10^9*4 \text{B} * \frac{1 \text{GB}}{10^9 \text{B}} = 28\text{GB}
+$$
+
+This is not a problem if your system is backed by a large GPU data center, however, if you are trying to deploy your model onto a resource-constrained device like a phone, embedded system, or edge device
+you might run into some trouble. So what can we do?
+
+**The Solution**
+
+Fortunately for us, quite a few techniques have been developed under the umbrella of _model compression_ that seek to solve these issues.
+In a nutshell, **model compression** refers to a set of techniques that are used to:
+
+- Reduce memory footprint
+- Increase inference speed
+- Lower energy consumption
+- Enable edge computing
+- Save money 💸
+
+This post is the first in a series of posts that will seek to unravel various model compression techniques. In this initial post, we will take a peek at model compression in the wild, take a look at model compression techniques
+from a bird's-eye view, and finally, compare the techniques.
+
+# Model Compression in the Wild
+
+# Model Compression Techniques
+
+## Pruning
+
+## Quantization
+
+## Low-Rank Factorization
+
+## Knowledge Distillation
+
+## Lightweight Model Design
+
+# Comparing Techniques: Usage and Metrics
+
+# Conclusion
