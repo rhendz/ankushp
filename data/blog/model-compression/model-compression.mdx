@@ -59,8 +59,8 @@ $$
 7*10^9*4 \text{B} * \frac{1 \text{GB}}{10^9 \text{B}} = 28\text{GB}
 $$
 
-This is not a problem if your system is backed by a large GPU data center, however, if you are trying to deploy your model onto a resource-constrained device like a phone, embedded system, or edge device
-you might run into some trouble. So what can we do?
+This is not a problem if your system is backed by a large GPU data center, but what if it isn't? What if you wanted to deploy your model onto a resource-constrained device like a phone, embedded system, or edge device?
+Attempting to do so may be impossible given the memory limits of the device. So what can we do?
 
 **The Solution**
 
@@ -73,10 +73,22 @@ In a nutshell, **model compression** refers to a set of techniques that are used
 - Enable edge computing
 - Save money 💸
 
-This post is the first in a series of posts that will seek to unravel various model compression techniques. In this initial post, we will take a peek at model compression in the wild, take a look at model compression techniques
-from a bird's-eye view, and finally, compare the techniques.
+This post is the first in a series of posts that will seek to unravel various model compression techniques.
+In this initial post, we will take a look at model compression techniques
+from a bird's-eye view and compare the techniques. But first, it may help to build a mental image of what _model compression_ is.
 
-# Model Compression in the Wild
+<div className="flex items-center justify-center">
+  <Image
+    src="/static/images/model-compression/model-compression/lena.gif"
+    alt="Lena at different color depths"
+    width="512"
+    height="512"
+  />
+</div>
+
+This graphic shows us that we are effectively communicating the same image across various color depths,
+but there is a tradeoff. 24-bit while nice, colorful, and _informative_, results in additional memory consumption.
+In contrast, 1-bit while saving us a great deal of memory, may lose out on more intricate details.
 
 # Model Compression Techniques
 
