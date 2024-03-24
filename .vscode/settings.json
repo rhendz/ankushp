@@ -11,5 +11,7 @@
       "language": "mdx",
       "scheme": "file"
     }
-  ]
+  ],
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "editor.acceptSuggestionOnEnter": "off"
 }
