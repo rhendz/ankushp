@@ -47,7 +47,7 @@ we'll have that AI up and running on your device in no time. Here's to the magic
 And as the clink of their glasses echoed through the bar,
 Sarah couldn't help but feel a renewed sense of hope and excitement for the possibilities that model compression could unlock for their project. 🌟🚀
 
-<TOCInline toc={props.toc} toHeading={(2, 3)} asDisclosure />
+<TOCInline toc={props.toc} asDisclosure />
 
 # What is Model Compression?
 
@@ -94,7 +94,64 @@ In contrast, 1-bit while saving us a great deal of memory, may lose out on more 
 
 # Model Compression Techniques
 
+Yo what's good
+
 ## Pruning
+
+Our first technique is _pruning_. **Pruning** is a technique used to reduce the size of a neural network model by identifying
+and removing redundant connections/synapses, neurons, or entire layers. This is showcased in the graphic below, where both synapses and neurons are pruned.
+The goal of pruning is to create a more _compact_ and _efficient_ model while maintaining or even improving its predictive performance.
+
+_INSERT IMAGE_
+
+There are three dimensions that describe aspects of pruning: form, scope, and method.
+
+### Form: Structured vs. Unstructured
+
+The _form_ describes the pattern of pruning within the model. **Structured pruning** focuses on removing entire structures like neurons, channels, or layers, maintaining the model's overall
+architecture. On the other hand, **unstructured pruning** removes individual weights/synapses, resulting in a sparse weights.
+
+Although unstructured pruning may achieve higher compression rates, it can be more challenging to implement efficiently, especially on hardware without native support for irregularly sparse tensors (matrices with lots of random 0's).
+
+### Scope: Global vs. Local
+
+The _scope_ refers to the extent to which pruning is applied within the model. **Global pruning** is pruning across the entire neural network architecture, whereas **local pruning** as the name suggests is pruning over specific regions or parts of the architecture.
+
+**Global Pruning**
+
+_Pros:_
+
+- Achieves higher compression rates
+- Simplifies model architecture
+- Better for hardware optimization
+
+_Cons:_
+
+- Risk of over-pruning
+- Potential loss of performance
+- Lack of fine-grained control
+
+**Local Pruning**
+
+_Pros:_
+
+- Fine-grained control over model sparsity
+- Potential for performance preservation
+- Flexibility in implementation
+
+_Cons:_
+
+- Limited compression rates
+- Increase computational complexity
+- Risk of overfitting
+
+Global pruning can achieve significant model compression by removing redundant or less important structural components, however, it may lead to over-pruning or loss of important information if not carefully controlled. On the other hand, local pruning offers fine-grained control over what we
+want to prune, leading to the pruning of some componenents and the preservation of others. This can be important if we have sensitive regions of the model, where we must preserve important representations. Note, local pruning has limited compression and is more prone to overfitting when compared to
+global pruning.
+
+Hmmm... perhaps it would be better to discuss the pros and cons of each method in a later post and instead focus on the bigger picture and definitions. Talk about pruning in general!
+
+### Method: Iterative vs. One-Shot
 
 ## Quantization
 
