@@ -80,7 +80,7 @@ This post is the first in a series of posts that will seek to unravel various mo
 In this initial post, we will take a look at model compression techniques
 from a bird's-eye view and compare the techniques. But first, it may help to build a mental image of what _model compression_ is.
 
-<FormattedImage>
+<FormattedImage caption="Color quantization">
   <Image
     src="/static/images/model-compression/model-compression/lena.gif"
     alt="Lena at different color depths"
@@ -126,6 +126,36 @@ Although we won't get into the nitty-gritty of what each of these criteria does,
 prune the network. Note, that pruning can be applied both during training and after training. It can even be applied before training!
 
 ## Quantization
+
+**Quantization** is a method used to approximate a neural network in some high precision format using floating-point (e.g. fp32) to some low bit width format (e.g. int8).
+One such example is shown below, where we _map_ the 32-bit floating point range to an 8-bit integer range [-128,127].
+
+<Diagram src="./model-compression/diagram01" caption="Quantized weight matrix: fp32 to int8" />
+
+This may bring to mind the _gif_ from earlier in the post! There we used _color quantization_, a technique in the world of image processing, to reduce the number of colors that represent an image.
+Quantization applied to neural networks is not so different. Here we are trying to reduce the amount of precision used to represent the neural network to save a
+lot of memory at the cost of little to no performance.
+
+So how does this all work? We employ a mapping technique:
+
+<FormattedImage caption="Comparison between uniform quantization (left) and non-uniform quantization (right)">
+  <Image
+    src="/static/images/model-compression/model-compression/quantization-levels.png"
+    alt="Quantization levels showcasing uniform and non-uniform quantization"
+    width="640"
+    height="281"
+  />
+</FormattedImage>
+
+Real values in the continuous domain $$r$$ are mapped into discrete, low-precision values in the
+quantized domain $$Q$$ [@Gholami2021-la, Figure 1]. On the left, we see **uniform quantization** where floats are converted over to uniformly spaced discrete values e.g. $$[...,-1,0,1,2,...]$$.
+Uniformity, however, may fail to capture the distribution of floats once quantized.
+This is where **non-uniform quantization** comes in to offer a method of quantizing values with non-uniform spacing e.g. $$[...,-20,-10,-1,0,1,5,25,30,...]$$.
+
+With a mapping technique in place, we can fine-tune existing models:
+
+- Post-Training Quantization (PTQ) as its name implies is performed after training some model. It is efficient in situations where data is limited or unlabeled.
+- Quantization-Aware Training:
 
 ## Low-Rank Factorization
 

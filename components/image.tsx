@@ -3,7 +3,13 @@ import NextImage, { ImageProps } from 'next/image'
 
 const Image = ({ ...rest }: ImageProps) => <NextImage {...rest} />
 
-export const FormattedImage = ({ children, formatStyle }) => {
+interface FormattedImageProps {
+  children: React.ReactNode
+  caption?: string
+  formatStyle?: React.CSSProperties
+}
+
+export const FormattedImage = ({ children, caption, formatStyle }) => {
   const defaultStyle: React.CSSProperties = {
     margin: '32px auto',
     boxSizing: 'content-box',
@@ -26,7 +32,12 @@ export const FormattedImage = ({ children, formatStyle }) => {
     })
   })
 
-  return <div style={mergedStyles}>{formattedImages}</div>
+  return (
+    <div className="flex-1 flex-col items-center justify-center py-8">
+      <div style={mergedStyles}>{formattedImages}</div>
+      <p className="text-center">{caption && <span className="italic">{caption}</span>}</p>
+    </div>
+  )
 }
 
 export default Image
