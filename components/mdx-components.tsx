@@ -5,11 +5,13 @@ import type { MDXComponents } from 'mdx/types'
 import Image, { FormattedImage } from './image'
 import CustomLink from './link'
 import TableWrapper from './table-wrapper'
+import Diagram from './blog-diagrams/diagram'
 
 import Pre from './pre'
 
 export const components: MDXComponents = {
   Image,
+  Diagram,
   FormattedImage,
   TOCInline,
   a: CustomLink,

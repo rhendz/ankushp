@@ -101,7 +101,7 @@ Our first technique, **pruning** is used to reduce the size of a neural network 
 and removing redundant connections/synapses, neurons, or entire layers. This is showcased in the graphic below, where both synapses and neurons are pruned.
 The goal of pruning is to create a more _compact_ and _efficient_ model while maintaining or even improving its predictive performance.
 
-_INSERT IMAGE_
+<Diagram src="./model-compression/diagram00" caption="Synaptic and neuronal pruning" />
 
 **Types of Pruning:**
 
@@ -117,10 +117,13 @@ As a result, structured pruning requires no special acceleration support for mat
 According to @Cheng2023-gk, there are a few commonly used _pruning criteria_ that are used to evaluate the importance of
 weights (or neurons, filters, etc.):
 
-- Magnitude-based Pruning:
-- $l_p$ Norm:
-- Sensitivity and/or Saliency:
-- Loss Change:
+- Magnitude-based Pruning
+- $l_p$ Norm
+- Sensitivity and/or Saliency
+- Loss Change
+
+Although we won't get into the nitty-gritty of what each of these criteria does, they are centered around assigning some sort of importance factor to the weight, neuron, or filter. We can use this factor to
+prune the network. Note, that pruning can be applied both during training and after training. It can even be applied before training!
 
 ## Quantization
 
