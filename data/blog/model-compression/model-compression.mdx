@@ -5,6 +5,7 @@ tags: ['machine learning', 'model compression', 'concepts', 'survey']
 draft: true
 summary: Overview of various machine learning model compression techniques.
 images: ''
+bibliography: '/citations/model-compression.bib'
 ---
 
 As the sun dipped below the horizon, casting hues of pink and gold over the skyline of San Francisco, Sarah and Alex found themselves unwinding at their favorite bar after a
@@ -94,8 +95,6 @@ In contrast, 1-bit while saving us a great deal of memory, may lose out on more 
 
 # Model Compression Techniques
 
-Yo what's good
-
 ## Pruning
 
 Our first technique, **pruning** is used to reduce the size of a neural network model by identifying
@@ -104,20 +103,24 @@ The goal of pruning is to create a more _compact_ and _efficient_ model while ma
 
 _INSERT IMAGE_
 
-Three dimensions describe aspects of pruning configuration: form, scope, and strategy.
+**Types of Pruning:**
 
-The _form_ describes the pattern of pruning within the model. **Structured pruning** focuses on removing entire structures like neurons, channels, or layers, maintaining the model's overall
-architecture. On the other hand, **unstructured pruning** removes individual weights/synapses, resulting in sparse weights.
+**Unstructured Pruning** aims to remove individual weights/connections in a network. Although the finest-grained method in pruning, this results in
+irregular sparse matrices since weights can be removed from anywhere. The upside to this process is highly compressed networks with a downside requiring software/hardware support
+for accelerating operations with these types of matrices. In other words, unstructured pruning is a _specific speedup_, dependent on the underlying acceleration software/hardware.
 
-The locality of pruning operations are described by _scope_. Our first choice is performing **local pruning**, which is pruning on a specific part of our network. On the other hand,
-**global pruning**, operates on the entire architecture.
+**Structured Pruning** focuses on removing larger structures such as neurons, channels, filters, or even layers. This keeps the matrices predictable (regular sparse matrix) since rows or columns are set to 0.
+As a result, structured pruning requires no special acceleration support for matrix operations. This form of pruning is also known as _universal speedup_.
 
-The _strategy_ dictates the process of pruning. Here we have two options: **one-shot** and **iterative**, which are self-explanatory.
+**Pruning Criteria:**
 
-Once we have configured a pruning schema, we apply a _pruning mode_ to govern the process of pruning:
+According to @Cheng2023-gk, there are a few commonly used _pruning criteria_ that are used to evaluate the importance of
+weights (or neurons, filters, etc.):
 
-- Magnitude: removing weights/synapses below a certain threshold
-- Activation: removing neurons that have consistently low activations
+- Magnitude-based Pruning:
+- $l_p$ Norm:
+- Sensitivity and/or Saliency:
+- Loss Change:
 
 ## Quantization
 
