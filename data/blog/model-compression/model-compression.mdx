@@ -127,14 +127,17 @@ prune the network. Note, that pruning can be applied both during training and af
 
 ## Quantization
 
-**Quantization** is a method used to approximate a neural network in some high precision format using floating-point (e.g. fp32) to some low bit width format (e.g. int8).
-One such example is shown below, where we _map_ the 32-bit floating point range to an 8-bit integer range [-128,127].
-
-<Diagram src="./model-compression/diagram01" caption="Quantized weight matrix: fp32 to int8" />
+**Quantization** is a method used to approximate a neural network of high precision format e.g. fp32 by using a low bit format e.g. int8.
 
 This may bring to mind the _gif_ from earlier in the post! There we used _color quantization_, a technique in the world of image processing, to reduce the number of colors that represent an image.
 Quantization applied to neural networks is not so different. Here we are trying to reduce the amount of precision used to represent the neural network to save a
 lot of memory at the cost of little to no performance.
+
+One such example is shown below, where we _map_ 32-bit floating point weights to an 8-bit integer range [-128,127].
+
+<Diagram src="./model-compression/diagram01" caption="Quantized weight matrix: fp32 to int8" />
+
+This may seem like a small change but at scale the savings are enormous. Imagine quantizing a large fp32 neural network that is $$30 \text{GB}$$ to 8-bit the resulting network will be $$7.5 \text{GB}$$!
 
 So how does this all work? We employ a mapping technique:
 
@@ -147,17 +150,68 @@ So how does this all work? We employ a mapping technique:
   />
 </FormattedImage>
 
-Real values in the continuous domain $$r$$ are mapped into discrete, low-precision values in the
+In the figure above, real values in the continuous domain $$r$$ are mapped into discrete, low-precision values in the
 quantized domain $$Q$$ [@Gholami2021-la, Figure 1]. On the left, we see **uniform quantization** where floats are converted over to uniformly spaced discrete values e.g. $$[...,-1,0,1,2,...]$$.
+
 Uniformity, however, may fail to capture the distribution of floats once quantized.
 This is where **non-uniform quantization** comes in to offer a method of quantizing values with non-uniform spacing e.g. $$[...,-20,-10,-1,0,1,5,25,30,...]$$.
 
-With a mapping technique in place, we can fine-tune existing models:
+Note, the flat sections of the line represent _quantization levels_ and are discrete values
+that our floating point values will be mapped to.
 
-- Post-Training Quantization (PTQ) as its name implies is performed after training some model. It is efficient in situations where data is limited or unlabeled.
-- Quantization-Aware Training:
+With a mapping technique in place, we can fine-tune existing models using quantization methods:
+
+- Post-Training Quantization (PTQ)
+- Quantization-Aware Training (QAT)
+
+These techniques allow us to perform quantization either after training or during training. In short, PTQ is more simple than QAT and can be applied without
+making changes to the training process. However, PTQ may require re-calibration to stay robust against distribution drift. Although more complex to implement, QAT bakes quantization into
+the training process itself, leading the model to be more robust to quantization and mitigating any accuracy loss observed in PTQ.
 
 ## Low-Rank Factorization
+
+The core idea of **low-rank factorization** is to _approximate_ a given matrix by factoring it into two or more smaller matrices with significantly lower dimensions.
+
+Consider some weight matrix $$W$$ with $$m$$ input neurons and $$n$$ output neurons.
+You may recognize this as a fully connected layer.
+Well we can decompose this weights matrix into two smaller matrices $$U$$ and $$V$$
+of sizes $$m \times k$$ and $$k \times n$$, respectively. $$k$$ represents the rank (number of independent pieces of information) and is chosen to be much smaller than both $$m$$ and $$n$$. Summarized below:
+
+$$
+\underset{m \times n}{W} \approx \underset{m \times k}{U} \times \underset{k \times n}{V}
+$$
+
+Similarly, we can derive an expression to the filters within convolutional layers:
+
+$$
+\underset{h \times w \times c_{\text{in}} \times c_{\text{out}}}{W} \approx \underset{h \times w \times c_{\text{in}} \times k}{U} \times \underset{1 \times 1 \times k \times c_{\text{out}}}{V}
+$$
+
+, where $$h$$ and $$w$$ are the height and width of the input, $$c_{\text{in}}$$ and $$c_{\text{out}}$$ are the number of input and output channels, and $$k$$ is the rank.
+
+For example, consider a weights matrix of size $$1000 \times 1000$$ or $$1$$ million parameters.
+Well with $$k = 10$$, we can reduce the number of parameters to $$1000 \times 10 + 10 \times 1000 = 20,000$$ parameters. This is a $$50$$ times reduction in size!
+
+A few methods for finding low-rank factorizations:
+
+- Singular Value Decomposition
+- Principal Component Analysis
+- Gradient Descent
+
+Although the compression rate can be amazing, there are a few downsides to consider:
+
+- Sensitivity to Rank Selection - a rank too low can lead to underfitting, whereas a rank too high can lead to overfitting.
+- Potential Information Loss - critical information in the original matrix may be discarded or distorted during the factorization process.
+- Loss of Expressiveness - by reducing the rank of matrices, you're essentially limiting the model's capacity to represent complex relationships in the data.
+  This can be destructive in tasks where intricate patterns or fine details are crucial.
+
+A few interesting applications can be found in the space of LLMs:
+
+- _LoRA_ or Low-Rank Adaptation freezes pre-trained model weights and injects trainable rank decomposition
+  matrices into each layer of the transformer architecture, greatly reducing the number of trainable parameters for downstream tasks. LoRA enables us to reduce the number of
+  training parameters by $$10,000$$ times and the GPU memory requirement by $$3$$ times [@Hu2021-yz]. Essentially, we can fine-tune LLMs at a fraction of the original space and time complexity.
+- High-dimensional token embeddings play a huge role in capturing subtle semantic information and enhancing the modeling of complex language patterns. In, GPT-2 $$\approx 31\%$$ of model parameters belong to the embedding layer.
+  Authors of _TensorGPT_ compute token embeddings via distributed computation of matrix products, resulting in a compression factor of $$3.31$$ for the embedding layer [@Xu2023-rd].
 
 ## Knowledge Distillation
 
