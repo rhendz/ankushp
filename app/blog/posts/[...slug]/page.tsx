@@ -1,4 +1,5 @@
 import "css/prism.css";
+import "css/mermaid.css";
 import "katex/dist/katex.css";
 
 import { components } from "@/components/mdx-components";
