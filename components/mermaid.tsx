@@ -13,8 +13,7 @@ type MermaidProps = {
 
 const Mermaid = ({ chart }: MermaidProps): JSX.Element => {
   useEffect(() => mermaid.contentLoaded(), [])
-
-  return <div className="mermaid">{chart}</div>
+  return <div className="mermaid w-full">{chart}</div>
 }
 
 export default Mermaid
