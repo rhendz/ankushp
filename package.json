@@ -35,6 +35,7 @@
     "gray-matter": "^4.0.3",
     "image-size": "^1.1.1",
     "kbar": "^0.1.0-beta.45",
+    "lucide-react": "^0.464.0",
     "mermaid": "^11.4.1",
     "next": "^14.0.4",
     "next-contentlayer": "^0.3.4",
