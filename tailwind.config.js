@@ -67,6 +67,11 @@ module.exports = {
         '8xl': '3840px',
         // => @media (min-width: 3840px) { ... }
       },
+      maxWidth: {
+        '9xl': '96rem',
+        '11xl': '108rem',
+        '13xl': '116rem',
+      },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
         mono: ['var(--font-mono)', ...fontFamily.mono],
