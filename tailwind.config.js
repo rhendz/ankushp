@@ -36,8 +36,41 @@ module.exports = {
           lg: '4rem',
           xl: '5rem',
           '2xl': '6rem',
+          '4xl': '8rem',
+          '6xl': '10rem',
+          '8xl': '12rem',
         },
         center: true,
+      },
+      screens: {
+        sm: '640px',
+        // => @media (min-width: 640px) { ... }
+
+        md: '768px',
+        // => @media (min-width: 768px) { ... }
+
+        lg: '1024px',
+        // => @media (min-width: 1024px) { ... }
+
+        xl: '1280px',
+        // => @media (min-width: 1280px) { ... }
+
+        '2xl': '1536px',
+        // => @media (min-width: 1536px) { ... }
+
+        '4xl': '1920px',
+        // => @media (min-width: 1920px) { ... }
+
+        '6xl': '2560px',
+        // => @media (min-width: 2560px) { ... }
+
+        '8xl': '3840px',
+        // => @media (min-width: 3840px) { ... }
+      },
+      maxWidth: {
+        '9xl': '96rem',
+        '11xl': '108rem',
+        '13xl': '116rem',
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
