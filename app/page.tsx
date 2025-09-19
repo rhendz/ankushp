@@ -351,7 +351,7 @@ export default function Home() {
             Ankush Patel
           </h1>
           <h2 className="flex-initial whitespace-nowrap font-mono text-2xl text-content lg:text-4xl">
-            MLOps Engineer
+            AI Engineer
           </h2>
         </div>
       </div>
