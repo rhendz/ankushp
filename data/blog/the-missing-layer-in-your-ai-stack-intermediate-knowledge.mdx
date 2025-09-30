@@ -1,0 +1,167 @@
+---
+title: 'The Missing Layer in Your AI Stack: Intermediate Knowledge'
+date: '2025-09-29'
+tags: ['ai', 'architecture', 'caching', 'llm']
+draft: false
+summary: 'Most AI products hit a wall at scale. The solution is not just caching responses—it is building an Intermediate Knowledge Layer that stores the ingredients feeding your prompts.'
+images: '/static/images/intermediate-knowledge-layer/banner.jpg'
+---
+
+Every AI product starts the same way:
+
+1. Call an LLM
+2. Return the output  
+3. Ship fast
+
+And it works… until scale hits. Costs balloon, latency drags, and your answers start to wobble. At that point, most teams scramble to add caching — but caching final responses only gets you so far.
+
+## What You Actually Need
+
+What you actually need is an **Intermediate Knowledge Layer (IKL)**: a thin, versioned cache that sits between your data sources and your LLM, storing the ingredients (retrieval results, API responses, summaries) that feed your prompts.
+
+Think of IKL as your data warehouse for prompts:
+
+- **Structured, reusable, and timestamped artifacts**
+- **Different TTLs for different sources** (e.g. API = 5 minutes, docs = 24 hours)
+- **Cheap invalidation** when only one piece of context changes
+
+This gives you speed, consistency, and precision without duct-taping your prompt layer.
+
+## The Architecture
+
+Instead of this traditional flow:
+```
+Data Sources → LLM → Response
+```
+
+You get this optimized flow:
+```
+Data Sources → IKL → LLM → Response
+                ↑
+            (cached ingredients)
+```
+
+## Benefits
+
+- **Speed**: Skip expensive retrieval and API calls when ingredients are fresh
+- **Consistency**: Same inputs always produce the same context
+- **Cost Control**: Reduce redundant data fetching and processing
+- **Debugging**: Inspect exactly what context fed into each prompt
+- **Versioning**: Track how your knowledge evolves over time
+
+## Implementation Example
+
+Here's a lightweight implementation using FastAPI and Redis:
+
+```python
+from fastapi import FastAPI
+from redis import Redis
+import json
+import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional
+
+app = FastAPI()
+redis_client = Redis(host='localhost', port=6379, db=0)
+
+class IntermediateKnowledgeLayer:
+    def __init__(self, redis_client: Redis):
+        self.redis = redis_client
+    
+    def _generate_key(self, source: str, query: str) -> str:
+        """Generate a unique key for the knowledge artifact"""
+        content = f"{source}:{query}"
+        return f"ikl:{hashlib.md5(content.encode()).hexdigest()}"
+    
+    def store_knowledge(
+        self, 
+        source: str, 
+        query: str, 
+        data: Dict[Any, Any], 
+        ttl_seconds: int = 3600
+    ) -> str:
+        """Store knowledge artifact with TTL"""
+        key = self._generate_key(source, query)
+        
+        artifact = {
+            "source": source,
+            "query": query,
+            "data": data,
+            "timestamp": datetime.utcnow().isoformat(),
+            "ttl": ttl_seconds
+        }
+        
+        self.redis.setex(key, ttl_seconds, json.dumps(artifact))
+        return key
+    
+    def get_knowledge(self, source: str, query: str) -> Optional[Dict[Any, Any]]:
+        """Retrieve knowledge artifact if it exists and is fresh"""
+        key = self._generate_key(source, query)
+        cached = self.redis.get(key)
+        
+        if cached:
+            return json.loads(cached)
+        return None
+    
+    def invalidate_source(self, source: str):
+        """Invalidate all artifacts from a specific source"""
+        pattern = f"ikl:*"
+        for key in self.redis.scan_iter(match=pattern):
+            artifact = json.loads(self.redis.get(key))
+            if artifact.get("source") == source:
+                self.redis.delete(key)
+
+# Usage example
+ikl = IntermediateKnowledgeLayer(redis_client)
+
+@app.post("/query")
+async def process_query(query: str):
+    # Check for cached API data
+    api_data = ikl.get_knowledge("external_api", query)
+    if not api_data:
+        # Fetch from API and cache for 5 minutes
+        fresh_data = await fetch_from_external_api(query)
+        ikl.store_knowledge("external_api", query, fresh_data, ttl_seconds=300)
+        api_data = fresh_data
+    
+    # Check for cached document retrieval
+    doc_data = ikl.get_knowledge("documents", query)
+    if not doc_data:
+        # Retrieve documents and cache for 24 hours
+        fresh_docs = await retrieve_documents(query)
+        ikl.store_knowledge("documents", query, fresh_docs, ttl_seconds=86400)
+        doc_data = fresh_docs
+    
+    # Combine cached ingredients and send to LLM
+    context = combine_context(api_data, doc_data)
+    response = await call_llm_with_context(query, context)
+    
+    return {"response": response, "cached_sources": ["external_api", "documents"]}
+```
+
+> In production, you’ll want richer cache keys than this simple demo.
+> Include things like model version, temperature bucket, user scope, and a context version tag so you get high hit rates without mixing up results. 
+>
+
+## Key Patterns
+
+- **Source-Specific TTLs**: Different data sources need different refresh rates
+- **Granular Invalidation**: Update only what changed, not everything
+- **Artifact Versioning**: Track how your knowledge base evolves
+- **Context Composition**: Mix and match cached ingredients efficiently
+
+## When to Use IKL
+
+You need an Intermediate Knowledge Layer when:
+
+- Your AI app makes repeated calls to the same data sources
+- Context preparation is expensive (API calls, document retrieval, processing)
+- You need consistent responses for the same inputs
+- Debugging prompt context is becoming difficult
+- Costs are scaling faster than usage
+
+## The Bottom Line
+
+Most AI scaling problems aren't LLM problems—they're data problems. An Intermediate Knowledge Layer gives you the control and efficiency you need to build AI products that work at scale.
+
+Stop caching responses. Start caching knowledge.
