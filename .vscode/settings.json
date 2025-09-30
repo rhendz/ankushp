@@ -11,5 +11,9 @@
       "language": "mdx",
       "scheme": "file"
     }
-  ]
+  ],
+  "kiroAgent.configureMCP": "Disabled",
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }
