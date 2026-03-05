@@ -13,11 +13,22 @@ export async function generateMetadata({
   params: { tag: string };
 }): Promise<Metadata> {
   const tag = decodeURI(params.tag);
+  const tagUrl = `${siteMetadata.siteUrl}/blog/tags/${encodeURI(tag)}`;
+
   return genPageMetadata({
     title: tag,
     description: `${siteMetadata.title} ${tag} tagged content`,
+    openGraph: {
+      title: `${tag} | ${siteMetadata.title}`,
+      description: `${siteMetadata.title} ${tag} tagged content`,
+      url: tagUrl,
+      siteName: siteMetadata.title,
+      images: [siteMetadata.socialBanner],
+      locale: "en_US",
+      type: "website",
+    },
     alternates: {
-      canonical: "./",
+      canonical: tagUrl,
       types: {
         "application/rss+xml": `${siteMetadata.siteUrl}/blog/tags/${tag}/feed.xml`,
       },
