@@ -67,11 +67,22 @@ export const KBarSearchProvider: FC<{
           searchDocumentsPath.indexOf('://') > 0 || searchDocumentsPath.indexOf('//') === 0
             ? searchDocumentsPath
             : new URL(searchDocumentsPath, window.location.origin)
-        const res = await fetch(url)
-        const json = await res.json()
-        const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
-        setSearchActions(actions)
-        setDataLoaded(true)
+        try {
+          const res = await fetch(url)
+          if (!res.ok) {
+            setDataLoaded(true)
+            return
+          }
+
+          const json = await res.json()
+          const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
+          setSearchActions(actions)
+        } catch (error) {
+          // If search documents are unavailable (e.g. missing search.json in dev), keep UI functional.
+          console.warn('KBar search documents could not be loaded.', error)
+        } finally {
+          setDataLoaded(true)
+        }
       }
     }
     if (!dataLoaded && searchDocumentsPath) {
