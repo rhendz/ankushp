@@ -57,6 +57,10 @@ export async function generateMetadata({
   const publishedAt = new Date(post.date).toISOString();
   const modifiedAt = new Date(post.lastmod || post.date).toISOString();
   const authors = authorDetails.map((author) => author.name);
+  const postUrl = `${siteMetadata.siteUrl}/blog/posts/${post.slug}`;
+  const socialBanner = siteMetadata.socialBanner.includes("http")
+    ? siteMetadata.socialBanner
+    : `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
 
   const ogAPI = new URL("/api/og", siteMetadata.siteUrl);
   ogAPI.searchParams.set("title", post.title);
@@ -76,8 +80,8 @@ export async function generateMetadata({
   }
 
   // Add social banner as a back up image
-  if (!imageList) {
-    imageList = [siteMetadata.socialBanner];
+  if (imageList.length === 0) {
+    imageList = [socialBanner];
   }
 
   // Ensure imageList is open graph compliant
@@ -98,9 +102,12 @@ export async function generateMetadata({
       type: "article",
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
-      url: "./",
+      url: postUrl,
       images: ogImages,
       authors: authors.length > 0 ? authors : [siteMetadata.author],
+    },
+    alternates: {
+      canonical: postUrl,
     },
     twitter: {
       card: "summary_large_image",
