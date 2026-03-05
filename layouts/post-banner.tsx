@@ -9,15 +9,17 @@ import PageTitle from '@/components/page-title'
 import SectionContainer from '@/components/section-container'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
+import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
 
 interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
+  relatedPosts: RelatedPost[]
 }
 
-export default function PostMinimal({ content, next, prev, children }: LayoutProps) {
+export default function PostMinimal({ content, next, prev, relatedPosts, children }: LayoutProps) {
   const { slug, title, images } = content
   const displayImage =
     images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
@@ -40,6 +42,7 @@ export default function PostMinimal({ content, next, prev, children }: LayoutPro
             </div>
           </div>
           <div className="prose max-w-none py-4 dark:prose-invert">{children}</div>
+          <RelatedPosts posts={relatedPosts} />
           {siteMetadata.comments && (
             <div className="py-6 text-center text-gray-700 dark:text-gray-300" id="comment">
               <Comments slug={slug} />

@@ -8,15 +8,17 @@ import PageTitle from '@/components/page-title'
 import SectionContainer from '@/components/section-container'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
+import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
 
 interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
+  relatedPosts: RelatedPost[]
 }
 
-export default function PostLayout({ content, next, prev, children }: LayoutProps) {
+export default function PostLayout({ content, next, prev, relatedPosts, children }: LayoutProps) {
   const { path, slug, date, title } = content
 
   return (
@@ -42,6 +44,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
           <div className="grid-rows-[auto_1fr] divide-y divide-secondary/30 pb-8 xl:divide-y-0">
             <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10">{children}</div>
+              <RelatedPosts posts={relatedPosts} />
             </div>
             {siteMetadata.comments && (
               <div className="py-6 text-center text-secondary/80" id="comment">

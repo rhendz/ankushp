@@ -9,6 +9,7 @@ import Image from '@/components/image'
 import Tag from '@/components/tag'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
+import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
@@ -26,10 +27,18 @@ interface LayoutProps {
   authorDetails: CoreContent<Authors>[]
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
+  relatedPosts: RelatedPost[]
   children: ReactNode
 }
 
-export default function PostLayout({ content, authorDetails, next, prev, children }: LayoutProps) {
+export default function PostLayout({
+  content,
+  authorDetails,
+  next,
+  prev,
+  relatedPosts,
+  children,
+}: LayoutProps) {
   const { filePath, path, slug, date, title, tags } = content
   const basePath = path.split('/')[0]
 
@@ -93,6 +102,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
             </dl>
             <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
+              <RelatedPosts posts={relatedPosts} />
               <div className="py-6 text-sm text-secondary">
                 <Link href={discussUrl(path)} rel="nofollow">
                   Discuss on Twitter
