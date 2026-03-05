@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Contentlayer
 .contentlayer/
+
+# Codex local project config
+.codex/
