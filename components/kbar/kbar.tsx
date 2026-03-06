@@ -85,10 +85,13 @@ export const KBarSearchProvider: FC<{
           const json = await res.json()
           const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
           setSearchActions(actions)
-        } catch {
+        } catch (error) {
+          // If search documents are unavailable (e.g. missing search.json in dev), keep UI functional.
+          console.warn('KBar search documents could not be loaded.', error)
           setSearchActions([])
+        } finally {
+          setDataLoaded(true)
         }
-        setDataLoaded(true)
       }
     }
     if (!dataLoaded && searchDocumentsPath) {
