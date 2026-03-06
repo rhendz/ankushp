@@ -67,10 +67,27 @@ export const KBarSearchProvider: FC<{
           searchDocumentsPath.indexOf('://') > 0 || searchDocumentsPath.indexOf('//') === 0
             ? searchDocumentsPath
             : new URL(searchDocumentsPath, window.location.origin)
-        const res = await fetch(url)
-        const json = await res.json()
-        const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
-        setSearchActions(actions)
+        try {
+          const res = await fetch(url)
+          if (!res.ok) {
+            setSearchActions([])
+            setDataLoaded(true)
+            return
+          }
+
+          const contentType = res.headers.get('content-type') || ''
+          if (!contentType.includes('application/json')) {
+            setSearchActions([])
+            setDataLoaded(true)
+            return
+          }
+
+          const json = await res.json()
+          const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
+          setSearchActions(actions)
+        } catch {
+          setSearchActions([])
+        }
         setDataLoaded(true)
       }
     }
