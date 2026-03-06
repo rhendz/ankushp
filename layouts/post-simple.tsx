@@ -8,6 +8,7 @@ import PageTitle from '@/components/page-title'
 import SectionContainer from '@/components/section-container'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
+import NewsletterCta from '@/components/newsletter-cta'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -42,6 +43,9 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
           <div className="grid-rows-[auto_1fr] divide-y divide-secondary/30 pb-8 xl:divide-y-0">
             <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10">{children}</div>
+              <div className="py-6">
+                <NewsletterCta title="Want more posts like this?" />
+              </div>
             </div>
             {siteMetadata.comments && (
               <div className="py-6 text-center text-secondary/80" id="comment">

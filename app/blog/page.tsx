@@ -4,7 +4,7 @@ import siteMetadata from "@/data/siteMetadata";
 import { allBlogs } from "contentlayer/generated";
 import { sortPosts, allCoreContent } from "pliny/utils/contentlayer";
 import { formatDate } from "pliny/utils/formatDate";
-import NewsletterForm from "pliny/ui/NewsletterForm";
+import NewsletterCta from "@/components/newsletter-cta";
 
 const MAX_DISPLAY = 5;
 
@@ -89,11 +89,9 @@ const BlogHome = ({ posts }) => {
           </Link>
         </div>
       )}
-      {/* {siteMetadata.newsletter?.provider && (
-        <div className="flex items-center justify-center pt-4">
-          <NewsletterForm />
-        </div>
-      )} */}
+      <div className="pt-10">
+        <NewsletterCta />
+      </div>
     </>
   );
 };
