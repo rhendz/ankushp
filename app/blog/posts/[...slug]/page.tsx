@@ -14,6 +14,7 @@ import type { Authors, Blog } from "contentlayer/generated";
 import PostSimple from "@/layouts/post-simple";
 import PostLayout from "@/layouts/post-layout";
 import PostBanner from "@/layouts/post-banner";
+import type { RelatedPost } from "@/components/related-posts";
 import { Metadata } from "next";
 import siteMetadata from "@/data/siteMetadata";
 import { notFound } from "next/navigation";
@@ -25,6 +26,35 @@ const layouts = {
   PostLayout,
   PostBanner,
 };
+
+function getRelatedPosts(
+  currentPost: Blog,
+  posts: ReturnType<typeof allCoreContent>,
+): RelatedPost[] {
+  const currentTags = new Set(currentPost.tags ?? []);
+
+  return posts
+    .filter((post) => post.slug !== currentPost.slug)
+    .map((post) => {
+      const sharedTagCount = (post.tags ?? []).reduce((count, tag) => {
+        if (currentTags.has(tag)) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+
+      return { post, sharedTagCount };
+    })
+    .filter(({ sharedTagCount }) => sharedTagCount > 0)
+    .sort((a, b) => {
+      if (b.sharedTagCount !== a.sharedTagCount) {
+        return b.sharedTagCount - a.sharedTagCount;
+      }
+      return new Date(b.post.date).getTime() - new Date(a.post.date).getTime();
+    })
+    .slice(0, 3)
+    .map(({ post }) => ({ slug: post.slug, title: post.title }));
+}
 
 function getToken(id: string): string {
   // Check if process.env.OG_API_KEY is defined
@@ -57,6 +87,10 @@ export async function generateMetadata({
   const publishedAt = new Date(post.date).toISOString();
   const modifiedAt = new Date(post.lastmod || post.date).toISOString();
   const authors = authorDetails.map((author) => author.name);
+  const postUrl = `${siteMetadata.siteUrl}/blog/posts/${post.slug}`;
+  const socialBanner = siteMetadata.socialBanner.includes("http")
+    ? siteMetadata.socialBanner
+    : `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
 
   const ogAPI = new URL("/api/og", siteMetadata.siteUrl);
   ogAPI.searchParams.set("title", post.title);
@@ -76,8 +110,8 @@ export async function generateMetadata({
   }
 
   // Add social banner as a back up image
-  if (!imageList) {
-    imageList = [siteMetadata.socialBanner];
+  if (imageList.length === 0) {
+    imageList = [socialBanner];
   }
 
   // Ensure imageList is open graph compliant
@@ -98,9 +132,12 @@ export async function generateMetadata({
       type: "article",
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
-      url: "./",
+      url: postUrl,
       images: ogImages,
       authors: authors.length > 0 ? authors : [siteMetadata.author],
+    },
+    alternates: {
+      canonical: postUrl,
     },
     twitter: {
       card: "summary_large_image",
@@ -135,6 +172,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     return coreContent(authorResults as Authors);
   });
   const mainContent = coreContent(post);
+  const relatedPosts = getRelatedPosts(post, sortedCoreContents);
   const jsonLd = post.structuredData;
   jsonLd["author"] = authorDetails.map((author) => {
     return {
@@ -156,6 +194,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         authorDetails={authorDetails}
         next={next}
         prev={prev}
+        relatedPosts={relatedPosts}
       >
         <MDXLayoutRenderer
           code={post.body.code}
