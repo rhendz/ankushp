@@ -77,6 +77,8 @@ export async function GET(request: Request) {
             }}
           >
             {/* Image */}
+            {/* next/image is not supported inside next/og ImageResponse markup. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageSource}
               alt="blog post banner"
