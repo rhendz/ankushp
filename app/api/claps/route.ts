@@ -91,9 +91,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  let body: { slug?: string } = {};
+  let body: { slug?: string; amount?: number } = {};
   try {
-    body = (await request.json()) as { slug?: string };
+    body = (await request.json()) as { slug?: string; amount?: number };
   } catch {
     return createInvalidSlugResponse();
   }
@@ -102,6 +102,10 @@ export async function POST(request: NextRequest) {
   if (!slug) {
     return createInvalidSlugResponse();
   }
+  const amount =
+    typeof body.amount === "number" && Number.isFinite(body.amount)
+      ? Math.max(1, Math.min(10, Math.floor(body.amount)))
+      : 1;
 
   const visitorId = getVisitorId(request);
   const summary = await addClap({
@@ -109,6 +113,7 @@ export async function POST(request: NextRequest) {
     visitorId,
     ip: getClientIp(request),
     userAgent: request.headers.get("user-agent") || "unknown",
+    amount,
   });
 
   if (!summary.configured) {
