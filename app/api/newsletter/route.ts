@@ -17,6 +17,9 @@ interface ErrorDescriptor {
 }
 
 const userFacingUnavailableMessage = newsletterMessages.unavailable;
+const cacheHeaders = {
+  "Cache-Control": "public, max-age=300, stale-while-revalidate=600",
+};
 
 const errorByPath = {
   providerUnavailable: {
@@ -102,13 +105,16 @@ export async function GET() {
       responseStatus: 200,
     });
 
-    return NextResponse.json({
-      configured: false,
-      provider: status.provider,
-      message: descriptor.error,
-      category: descriptor.category,
-      code: descriptor.code,
-    });
+    return NextResponse.json(
+      {
+        configured: false,
+        provider: status.provider,
+        message: descriptor.error,
+        category: descriptor.category,
+        code: descriptor.code,
+      },
+      { headers: cacheHeaders },
+    );
   }
 
   logNewsletter("info", "newsletter.get.available", {
@@ -117,7 +123,10 @@ export async function GET() {
     responseStatus: 200,
   });
 
-  return NextResponse.json({ configured: true, provider: status.provider });
+  return NextResponse.json(
+    { configured: true, provider: status.provider },
+    { headers: cacheHeaders },
+  );
 }
 
 export async function POST(request: NextRequest) {

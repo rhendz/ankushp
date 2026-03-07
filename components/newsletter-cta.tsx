@@ -25,12 +25,50 @@ interface NewsletterStatusResponse {
   message?: string
 }
 
+const NEWSLETTER_STATUS_TTL_MS = 5 * 60 * 1000
+
+let newsletterStatusCache: { data: NewsletterStatusResponse; expiresAt: number } | null = null
+let newsletterStatusInFlight: Promise<NewsletterStatusResponse | null> | null = null
+
 async function parseJsonSafely<T>(response: Response): Promise<T | null> {
   try {
     return (await response.json()) as T
   } catch {
     return null
   }
+}
+
+async function getCachedNewsletterStatus(): Promise<NewsletterStatusResponse | null> {
+  const now = Date.now()
+  if (newsletterStatusCache && newsletterStatusCache.expiresAt > now) {
+    return newsletterStatusCache.data
+  }
+
+  if (newsletterStatusInFlight) {
+    return newsletterStatusInFlight
+  }
+
+  newsletterStatusInFlight = (async () => {
+    try {
+      const response = await fetch('/api/newsletter', { method: 'GET' })
+      const data = await parseJsonSafely<NewsletterStatusResponse>(response)
+
+      if (data) {
+        newsletterStatusCache = {
+          data,
+          expiresAt: Date.now() + NEWSLETTER_STATUS_TTL_MS,
+        }
+      }
+
+      return data
+    } catch {
+      return null
+    } finally {
+      newsletterStatusInFlight = null
+    }
+  })()
+
+  return newsletterStatusInFlight
 }
 
 interface NewsletterCtaProps {
@@ -65,8 +103,7 @@ export default function NewsletterCta({
     let ignore = false
     const getStatus = async () => {
       try {
-        const response = await fetch('/api/newsletter', { method: 'GET' })
-        const data = await parseJsonSafely<NewsletterStatusResponse>(response)
+        const data = await getCachedNewsletterStatus()
 
         if (!ignore && data?.configured === false) {
           setViewState('missing-config')
