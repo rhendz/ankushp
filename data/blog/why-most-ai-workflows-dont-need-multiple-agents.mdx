@@ -2,6 +2,7 @@
 title: 'Why Most AI Workflows Don’t Need Multiple Agents'
 date: '2025-06-11'
 lastmod: '2025-06-11'
+tags: ['agentic-workflows', 'orchestration', 'system-design']
 summary: 'Most AI workflows should start as clear, controlled workflows with tools and explicit state. Multi-agent structure only makes sense when specialization or parallelism truly helps.'
 ---
 
@@ -19,11 +20,15 @@ For most real workflows, the better default is simpler: one workflow, clear step
 
 If the job is “read this, decide, then act,” that usually does not require multiple agents. It requires a well-structured loop. The model needs the right tools, the right constraints, and a clean execution path. Breaking that into several agents too early often creates coordination overhead without creating real capability.
 
+## Process and Coordination
+
 The key distinction is this: multiple steps do not automatically imply multiple agents.
 
 A workflow can be sequential, conditional, and tool-using without becoming multi-agent. That matters because workflow complexity and agent complexity are not the same thing. One is about process. The other is about coordination between semi-independent actors.
 
 You should earn that coordination cost.
+
+## When Multiple Agents Help
 
 Multiple agents start to make sense when the work is genuinely separable: different roles need different instructions, different tools, different context windows, or different timing. They also make sense when parallelism creates real leverage, or when one agent can evaluate or constrain another in a way that improves the system materially.
 

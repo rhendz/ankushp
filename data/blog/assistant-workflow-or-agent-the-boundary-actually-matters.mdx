@@ -2,6 +2,7 @@
 title: 'Assistant, Workflow, or Agent? The Boundary Actually Matters'
 date: '2026-01-22'
 lastmod: '2026-01-22'
+tags: ['product-boundaries', 'agentic-workflows', 'orchestration']
 summary: 'A practical framing for separating assistants, workflows, and agents based on control, execution latitude, and architecture.'
 ---
 
@@ -15,6 +16,8 @@ A workflow is system-led, but path-bound. It may use an LLM inside the loop, but
 
 An agent is different because it has meaningful discretion. It is not just filling in steps. It is choosing actions, sequencing tools, and deciding how to move toward an outcome within some boundary.
 
+## What Actually Changes
+
 That is why the boundary actually matters. The real question is not whether the system feels smart. It is who decides, who acts, and how fixed the execution path is.
 
 Once you look at it that way, a lot of confusion clears up.
@@ -25,9 +28,9 @@ This is also why “agent” should not be the default prestige label. More auto
 
 So my default mental model is simple:
 
-Assistant helps.
-Workflow executes a defined path.
-Agent pursues a goal with bounded discretion.
+**Assistant** helps.
+**Workflow** executes a defined path.
+**Agent** pursues a goal with bounded discretion.
 
 <Caption caption='A quick boundary check: who drives execution, how fixed the path is, and how much discretion the system has.'>
   <Mermaid chart={`

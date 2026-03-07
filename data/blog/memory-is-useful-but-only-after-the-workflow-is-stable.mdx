@@ -2,6 +2,7 @@
 title: 'Memory Is Useful — But Only After the Workflow Is Stable'
 date: '2025-10-07'
 lastmod: '2025-10-07'
+tags: ['memory', 'agentic-workflows', 'system-design']
 summary: 'Memory helps only after a workflow is clear and reliable. Otherwise it preserves inconsistency and makes a shaky AI system harder to understand.'
 ---
 
@@ -14,6 +15,8 @@ The core issue is sequencing.
 If a workflow is not yet stable, memory does not fix it. It stores inconsistency. The system now has more context, but that context includes bad assumptions, noisy intermediate outputs, and unclear handoffs. Instead of one unreliable run, you get unreliable behavior with persistence.
 
 That is usually a worse product surface.
+
+## Workflow First, Memory Second
 
 A better way to think about it is this: workflow first, memory second.
 

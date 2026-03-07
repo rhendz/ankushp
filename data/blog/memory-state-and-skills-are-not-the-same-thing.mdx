@@ -2,6 +2,7 @@
 title: 'Memory, State, and Skills Are Not the Same Thing'
 date: '2026-02-09'
 lastmod: '2026-02-09'
+tags: ['memory', 'system-design', 'tooling']
 summary: 'Memory, state, and skills solve different problems in AI systems. Blurring them leads to muddled architecture, confusing product behavior, and weaker workflows.'
 ---
 
@@ -16,6 +17,8 @@ Memory is retained information. It is what the system carries forward across int
 State is current execution context. It is what the system needs in order to continue a live workflow correctly: which step it is on, what tool just ran, what inputs are pending, what failed, and what should happen next.
 
 Skills are reusable capabilities. They are not remembered facts or temporary workflow data. A skill is a repeatable way of doing something: summarize a document, classify an email, reconcile a record, extract fields from a form, generate a SQL query, route a request.
+
+## Different Layers, Different Jobs
 
 The distinction matters because these parts belong in different layers of the system.
 
