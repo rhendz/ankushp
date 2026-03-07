@@ -1,0 +1,71 @@
+name: Chore / Maintenance
+description: Non-user-facing work (refactor, tooling, docs, CI, cleanup).
+title: "chore: "
+labels:
+  - chore
+body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Category
+      options:
+        - Tooling
+        - CI/CD
+        - Refactor
+        - Dependencies
+        - Docs
+        - Cleanup
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      placeholder: |
+        In scope:
+        - ...
+        Out of scope:
+        - ...
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What outcome are we targeting?
+      placeholder: Improve...
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Blockers
+      placeholder: None
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      placeholder: Lint/build/tests/manual verification expected.
+    validations:
+      required: true
