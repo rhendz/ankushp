@@ -18,6 +18,7 @@ env:
   CI: true
   NEXT_TELEMETRY_DISABLED: 1
   NEXT_PUBLIC_SITE_URL: https://ankushp.com
+  OG_API_KEY: ci-build-og-key
 
 jobs:
   lint:
