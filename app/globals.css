@@ -26,3 +26,17 @@
     --color-accent: 251 54 64; /* imperial red */
   }
 }
+
+@keyframes clap-burst {
+  0% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y))) scale(1.1);
+  }
+}
