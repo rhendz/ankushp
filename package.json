@@ -5,11 +5,14 @@
   "scripts": {
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
-    "prebuild": "cross-env INIT_CWD=$PWD contentlayer build || true && node scripts/patch-contentlayer-json-imports.mjs",
+    "prebuild": "node scripts/run-contentlayer-build.mjs",
     "build": "cross-env INIT_CWD=$PWD SKIP_CONTENTLAYER=true next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
-    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"
+    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
+    "blog:handoff:validate": "node scripts/blog-handoff-import.mjs validate",
+    "blog:handoff:import": "node scripts/blog-handoff-import.mjs import",
+    "blog:handoff:smoke": "node scripts/blog-handoff-import.mjs validate scripts/blog-handoff/samples/valid-collaborator-handoff.md"
   },
   "dependencies": {
     "@next/bundle-analyzer": "14.0.3",
