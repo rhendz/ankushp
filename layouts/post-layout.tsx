@@ -11,10 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
-
-const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
-const discussUrl = (path) =>
-  `https://mobile.twitter.com/search?q=${encodeURIComponent(`${siteMetadata.siteUrl}/${path}`)}`
+import PostEngagementRail from '@/components/post-engagement-rail'
 
 const postDateTemplate: Intl.DateTimeFormatOptions = {
   weekday: 'long',
@@ -40,7 +37,7 @@ export default function PostLayout({
   relatedPosts,
   children,
 }: LayoutProps) {
-  const { filePath, path, slug, date, title, tags } = content
+  const { path, slug, date, title, tags } = content
   const basePath = path.split('/')[0]
 
   return (
@@ -101,18 +98,16 @@ export default function PostLayout({
                 </ul>
               </dd>
             </dl>
-            <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
-              <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
-              <RelatedPosts posts={relatedPosts} />
-              <div className="py-6">
-                <NewsletterCta title="Enjoyed this post?" />
+            <div className="xl:col-span-3 xl:row-span-2 xl:pb-0">
+              <div className="prose max-w-none pb-4 pt-10 dark:prose-invert">{children}</div>
+              <div className="pb-3 pt-1">
+                <PostEngagementRail slug={slug} />
               </div>
-              <div className="py-6 text-sm text-secondary">
-                <Link href={discussUrl(path)} rel="nofollow">
-                  Discuss on Twitter
-                </Link>
-                {` • `}
-                <Link href={editUrl(filePath)}>View on GitHub</Link>
+              <div className="pt-2">
+                <RelatedPosts posts={relatedPosts} />
+              </div>
+              <div className="pb-12 pt-10 md:pb-8">
+                <NewsletterCta title="Enjoyed this post?" className="mx-0 max-w-none p-5 sm:p-6" />
               </div>
               {siteMetadata.comments && (
                 <div className="py-6 text-center text-secondary/70" id="comment">
