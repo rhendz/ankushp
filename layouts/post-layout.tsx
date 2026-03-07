@@ -11,6 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
+import ClapButton from '@/components/clap-button'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
@@ -104,6 +105,7 @@ export default function PostLayout({
             <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
               <RelatedPosts posts={relatedPosts} />
+              <ClapButton slug={slug} />
               <div className="py-6">
                 <NewsletterCta title="Enjoyed this post?" />
               </div>

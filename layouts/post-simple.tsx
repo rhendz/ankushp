@@ -10,6 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
+import ClapButton from '@/components/clap-button'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -46,6 +47,7 @@ export default function PostLayout({ content, next, prev, relatedPosts, children
             <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose max-w-none pb-8 pt-10">{children}</div>
               <RelatedPosts posts={relatedPosts} />
+              <ClapButton slug={slug} />
               <div className="py-6">
                 <NewsletterCta title="Want more posts like this?" />
               </div>

@@ -11,6 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
+import ClapButton from '@/components/clap-button'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -44,6 +45,7 @@ export default function PostMinimal({ content, next, prev, relatedPosts, childre
           </div>
           <div className="prose max-w-none py-4 dark:prose-invert">{children}</div>
           <RelatedPosts posts={relatedPosts} />
+          <ClapButton slug={slug} />
           <div className="py-6">
             <NewsletterCta title="Want more updates?" />
           </div>
