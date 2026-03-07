@@ -1,0 +1,67 @@
+---
+title: 'Memory, State, and Skills Are Not the Same Thing'
+date: '2026-02-09'
+lastmod: '2026-02-09'
+summary: 'Memory, state, and skills solve different problems in AI systems. Blurring them leads to muddled architecture, confusing product behavior, and weaker workflows.'
+---
+
+A lot of AI product language gets sloppy around memory.
+
+Teams say a system “needs memory” when they really mean one of three very different things: it should remember something from before, keep track of what is happening right now, or know how to perform a reusable task.
+
+Those are not the same thing.
+
+Memory is retained information. It is what the system carries forward across interactions: user preferences, prior decisions, durable facts, saved context, or learned patterns worth reusing later.
+
+State is current execution context. It is what the system needs in order to continue a live workflow correctly: which step it is on, what tool just ran, what inputs are pending, what failed, and what should happen next.
+
+Skills are reusable capabilities. They are not remembered facts or temporary workflow data. A skill is a repeatable way of doing something: summarize a document, classify an email, reconcile a record, extract fields from a form, generate a SQL query, route a request.
+
+The distinction matters because these parts belong in different layers of the system.
+
+If you store workflow progress as “memory,” you make temporary execution details feel more durable than they should be. If you treat skills like memory, you confuse stored information with reusable behavior. If you treat memory like state, you end up dragging old context into places where the real need is just clean runtime tracking.
+
+That is how systems get harder to debug and harder to improve.
+
+<Caption caption='Memory retains, state coordinates the current run, and skills package reusable capability.'>
+  <Mermaid chart={`
+flowchart TB
+    T["Memory, State, and Skills"]
+
+    T --> M["Memory<br/>Retained information"]
+    T --> S["State<br/>Runtime context"]
+    T --> K["Skills<br/>Reusable capability"]
+
+    M --> MQ["What should this system retain?"]
+    S --> SQ["What is happening right now?"]
+    K --> KQ["What can this system reliably do again?"]
+
+    classDef top fill:#F9FAFB,stroke:#D1D5DB,stroke-width:1.5px,color:#111827;
+    classDef memory fill:#EDE9FE,stroke:#8B5CF6,stroke-width:2px,color:#111827;
+    classDef state fill:#E0F2FE,stroke:#0EA5E9,stroke-width:2px,color:#111827;
+    classDef skills fill:#DCFCE7,stroke:#10B981,stroke-width:2px,color:#111827;
+    classDef detail fill:#FFFFFF,stroke:#D1D5DB,stroke-width:1px,color:#374151;
+
+    class T top;
+    class M memory;
+    class S state;
+    class K skills;
+    class MQ,SQ,KQ detail;
+`}/>
+</Caption>
+
+A simple mental model helps:
+
+Memory answers: what should this system retain?
+State answers: what is happening right now?
+Skills answer: what can this system reliably do again?
+
+Once you separate those questions, better design choices follow. You stop stuffing everything into a vague “memory layer.” You become more precise about what should persist, what should expire, and what should be packaged as capability instead of context.
+
+This is also a product issue, not just an architecture issue. When these concepts blur together, product surfaces get confusing. Users cannot tell whether the system is remembering them, tracking a task, or invoking a reusable capability behind the scenes. The result feels magical in demos and messy in real use.
+
+So before adding “memory” to an AI system, ask a more basic question:
+
+Is the real need recall, runtime coordination, or reusable capability?
+
+A lot of design confusion disappears once those three stop sharing the same name.

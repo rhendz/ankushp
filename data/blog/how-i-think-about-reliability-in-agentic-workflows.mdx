@@ -1,0 +1,28 @@
+---
+title: 'How I Think About Reliability in Agentic Workflows'
+date: '2025-11-19'
+lastmod: '2025-11-19'
+summary: 'A short post on reliability in agentic workflows: make mistakes visible, bounded, and recoverable instead of optimizing for intelligence theater.'
+---
+
+When I look at an agentic workflow, I do not first ask how intelligent it feels.
+
+I ask how it fails.
+
+That is usually the better reliability test.
+
+A lot of agent demos look impressive because the model can reason across steps, call tools, and recover from small mistakes. But workflow reliability is not the same thing as model fluency. A workflow becomes reliable when its behavior is easy to understand, easy to inspect, and hard to let drift into silent failure.
+
+My default mental model is simple: reliability means mistakes are visible, bounded, and recoverable.
+
+Visible means I can see what step the workflow is in, what it tried to do, and why it made a decision. If I cannot inspect the chain of actions, I do not have a reliable system. I have a black box that sometimes works.
+
+Bounded means the workflow has constraints around what it is allowed to do, what tools it can use, and when it should stop. This matters because agent failures are rarely dramatic at first. More often, they look like small wrong actions, unnecessary retries, or a confident step taken on weak context. Good reliability design reduces the blast radius before it tries to increase autonomy.
+
+Recoverable means the workflow can fail without creating a mess. Maybe it falls back to a simpler path. Maybe it asks for clarification. Maybe it escalates to a human. The point is not to eliminate failure. The point is to make failure survivable.
+
+This is why I trust simple, explicit workflows more than clever ones. A workflow with clear stages, narrow tool permissions, checkpoints, and good logging will usually beat a more autonomous setup that is harder to inspect. The smarter-looking system often gets more attention. The more legible system is usually the one I would actually ship.
+
+So when I think about reliability in agentic workflows, I am not thinking about whether the agent seems capable on a good day. I am thinking about whether the workflow behaves well on a bad one.
+
+That is the standard that matters.
