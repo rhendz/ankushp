@@ -5,7 +5,7 @@
   "scripts": {
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
-    "prebuild": "cross-env INIT_CWD=$PWD contentlayer build || true && node scripts/patch-contentlayer-json-imports.mjs",
+    "prebuild": "node scripts/run-contentlayer-build.mjs && node scripts/patch-contentlayer-json-imports.mjs",
     "build": "cross-env INIT_CWD=$PWD SKIP_CONTENTLAYER=true next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
