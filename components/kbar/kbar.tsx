@@ -9,8 +9,7 @@ import { formatDate } from '../utils/formate-date'
 export interface KBarSearchProps {
   searchDocumentsPath: string | false
   defaultActions?: Action[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSearchDocumentsLoad?: (json: any) => Action[]
+  onSearchDocumentsLoad?: (json: unknown) => Action[]
 }
 
 export interface KBarConfig {
@@ -46,6 +45,25 @@ export const KBarSearchProvider: FC<{
   const previousFocusedElementRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
+    const isSearchDocumentArray = (value: unknown): value is CoreContent<MDXDocument>[] => {
+      if (!Array.isArray(value)) {
+        return false
+      }
+
+      return value.every((item) => {
+        if (typeof item !== 'object' || item === null) {
+          return false
+        }
+
+        const candidate = item as Partial<CoreContent<MDXDocument>>
+        return (
+          typeof candidate.path === 'string' &&
+          typeof candidate.title === 'string' &&
+          typeof candidate.date === 'string'
+        )
+      })
+    }
+
     const mapPosts = (posts: CoreContent<MDXDocument>[]) => {
       const actions: Action[] = []
       for (const post of posts) {
@@ -83,8 +101,12 @@ export const KBarSearchProvider: FC<{
             return
           }
 
-          const json = await res.json()
-          const actions = onSearchDocumentsLoad ? onSearchDocumentsLoad(json) : mapPosts(json)
+          const json: unknown = await res.json()
+          const actions = onSearchDocumentsLoad
+            ? onSearchDocumentsLoad(json)
+            : isSearchDocumentArray(json)
+              ? mapPosts(json)
+              : []
           setSearchActions(actions)
         } catch (error) {
           // If search documents are unavailable (e.g. missing search.json in dev), keep UI functional.
