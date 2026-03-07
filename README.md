@@ -20,26 +20,14 @@ CI command used in GitHub Actions:
 npm run test:smoke:ci
 ```
 
-CI also installs Chromium with:
+CI installs Chromium with:
 
 ```bash
 npx playwright install --with-deps chromium
 ```
 
-## Required CI checks
+## Operations runbooks
 
-This repository enforces pull request quality checks through GitHub Actions in `.github/workflows/required-checks.yml`.
+For operator/workflow guidance (CI checks, newsletter API observability, and content handoff), use:
 
-Checks run on every pull request:
-
-- `lint`: runs `npm run lint`
-- `build`: runs `npm run build`
-- `test`: runs `npm run test` only when a `test` script exists in `package.json`
-
-### Branch protection setup
-
-To enforce clear pass/fail gates before merge, configure GitHub branch protection for `main` with these required status checks:
-
-- `lint`
-- `build`
-- `test`
+- `docs/runbooks/README.md`
