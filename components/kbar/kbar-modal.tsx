@@ -10,6 +10,12 @@ import {
   Action,
   useRegisterActions,
 } from 'kbar'
+import {
+  KBAR_DIALOG_DESCRIPTION_ID,
+  KBAR_DIALOG_ID,
+  KBAR_DIALOG_LABEL_ID,
+  KBAR_SEARCH_LABEL,
+} from './constants'
 
 export const KBarModal = ({ actions, isLoading }: { actions: Action[]; isLoading: boolean }) => {
   useRegisterActions(actions, [actions])
@@ -21,7 +27,21 @@ export const KBarModal = ({ actions, isLoading }: { actions: Action[]; isLoading
         className="bg-primary/50 p-4 backdrop-blur backdrop-filter"
       >
         <KBarAnimator className="w-full max-w-xl">
-          <div className="overflow-hidden rounded-2xl border border-secondary/20 bg-primary/70">
+          <div
+            id={KBAR_DIALOG_ID}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={KBAR_DIALOG_LABEL_ID}
+            aria-describedby={KBAR_DIALOG_DESCRIPTION_ID}
+            className="overflow-hidden rounded-2xl border border-secondary/20 bg-primary/70"
+          >
+            <h2 id={KBAR_DIALOG_LABEL_ID} className="sr-only">
+              Command menu
+            </h2>
+            <p id={KBAR_DIALOG_DESCRIPTION_ID} className="sr-only">
+              Search and navigate blog content. Use arrow keys to move through results and Enter to
+              select.
+            </p>
             <div className="flex items-center space-x-4 p-4">
               <span className="block w-5">
                 <svg
@@ -41,6 +61,7 @@ export const KBarModal = ({ actions, isLoading }: { actions: Action[]; isLoading
               </span>
               <KBarSearch
                 data-testid="kbar-search-input"
+                aria-label={KBAR_SEARCH_LABEL}
                 className="h-8 w-full border-none border-transparent bg-transparent text-secondary placeholder-secondary/50 outline-none focus:ring-2 focus:ring-accent/70"
               />
               <kbd className="inline-block whitespace-nowrap rounded border border-secondary/70 px-1.5 align-middle text-xs font-medium leading-4 tracking-wide text-secondary/70">

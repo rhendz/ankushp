@@ -1,0 +1,5 @@
+export const KBAR_DIALOG_ID = 'kbar-command-menu'
+export const KBAR_DIALOG_LABEL_ID = 'kbar-command-menu-label'
+export const KBAR_DIALOG_DESCRIPTION_ID = 'kbar-command-menu-description'
+export const KBAR_TRIGGER_LABEL = 'Open command menu'
+export const KBAR_SEARCH_LABEL = 'Search commands'

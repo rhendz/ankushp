@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, ReactNode } from 'react'
+import { useState, useEffect, FC, ReactNode, useRef } from 'react'
 import type { Action } from 'kbar'
 import { KBarProvider } from 'kbar'
 import { useRouter } from 'next/navigation.js'
@@ -43,6 +43,7 @@ export const KBarSearchProvider: FC<{
   const { searchDocumentsPath, defaultActions, onSearchDocumentsLoad } = kbarConfig
   const [searchActions, setSearchActions] = useState<Action[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
+  const previousFocusedElementRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     const mapPosts = (posts: CoreContent<MDXDocument>[]) => {
@@ -101,8 +102,29 @@ export const KBarSearchProvider: FC<{
     }
   }, [defaultActions, dataLoaded, router, searchDocumentsPath, onSearchDocumentsLoad])
 
+  const handleOpen = () => {
+    if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+      previousFocusedElementRef.current = document.activeElement
+    }
+  }
+
+  const handleClose = () => {
+    if (previousFocusedElementRef.current?.isConnected) {
+      previousFocusedElementRef.current.focus()
+    }
+    previousFocusedElementRef.current = null
+  }
+
   return (
-    <KBarProvider actions={defaultActions}>
+    <KBarProvider
+      actions={defaultActions}
+      options={{
+        callbacks: {
+          onOpen: handleOpen,
+          onClose: handleClose,
+        },
+      }}
+    >
       <KBarModal actions={searchActions} isLoading={!dataLoaded} />
       {children}
     </KBarProvider>
