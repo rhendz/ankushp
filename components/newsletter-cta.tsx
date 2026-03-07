@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import siteMetadata from '@/data/siteMetadata'
+import { newsletterMessages } from '@/lib/newsletter-messages'
 
 type ViewState = 'idle' | 'success' | 'error' | 'missing-config'
 
@@ -15,10 +16,9 @@ const supportedProviders = new Set([
   'emailoctopus',
 ])
 
-const defaultErrorMessage = 'Unable to subscribe right now. Please try again later.'
-const defaultMissingConfigMessage =
-  'Newsletter subscriptions are temporarily unavailable. You can still read all posts.'
-const emailValidationMessage = 'Please enter a valid email address (for example, name@example.com).'
+const defaultErrorMessage = newsletterMessages.subscribeError
+const defaultMissingConfigMessage = newsletterMessages.unavailable
+const emailValidationMessage = newsletterMessages.emailValidation
 
 interface NewsletterStatusResponse {
   configured?: boolean
@@ -133,7 +133,7 @@ export default function NewsletterCta({
         inputRef.current.value = ''
       }
       setViewState('success')
-      setFeedbackMessage(data?.message || 'Thanks for subscribing.')
+      setFeedbackMessage(data?.message || newsletterMessages.subscribed)
       router.push('/newsletter/success')
     } catch {
       setViewState('error')
@@ -196,7 +196,7 @@ export default function NewsletterCta({
         <p className="mt-3 text-sm text-secondary/80" aria-live="polite">
           {validationMessage && validationMessage}
           {viewState === 'success' && feedbackMessage}
-          {viewState === 'error' && `Subscription failed: ${feedbackMessage}`}
+          {viewState === 'error' && feedbackMessage}
           {viewState === 'missing-config' && feedbackMessage}
         </p>
       )}

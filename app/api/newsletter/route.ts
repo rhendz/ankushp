@@ -4,6 +4,7 @@ import {
   getNewsletterProvider,
   getNewsletterStatus,
 } from "@/lib/newsletter-config";
+import { newsletterMessages } from "@/lib/newsletter-messages";
 
 type ErrorCategory = "provider" | "missing-config" | "api-failure";
 type LogLevel = "info" | "warn" | "error";
@@ -15,8 +16,7 @@ interface ErrorDescriptor {
   error: string;
 }
 
-const userFacingUnavailableMessage =
-  "Newsletter subscriptions are currently unavailable due to missing configuration.";
+const userFacingUnavailableMessage = newsletterMessages.unavailable;
 
 const errorByPath = {
   providerUnavailable: {
@@ -35,7 +35,7 @@ const errorByPath = {
     category: "api-failure",
     code: "NEWSLETTER_PROVIDER_API_ERROR",
     status: 502,
-    error: "There was an error subscribing to the list",
+    error: newsletterMessages.providerApiError,
   },
 } as const satisfies Record<string, ErrorDescriptor>;
 
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json(
         {
-          error: "Email is required",
+          error: newsletterMessages.emailRequired,
           code: "NEWSLETTER_EMAIL_REQUIRED",
           category: "provider",
         },
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json(
         {
-          message: "You're already subscribed.",
+          message: newsletterMessages.alreadySubscribed,
         },
         { status: 200 },
       );
@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
       responseStatus: 201,
     });
     return NextResponse.json(
-      { message: "Successfully subscribed to the newsletter" },
+      { message: newsletterMessages.subscribed },
       { status: 201 },
     );
   }

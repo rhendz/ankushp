@@ -37,6 +37,23 @@ Logs intentionally exclude secrets and user-provided email values.
   - `NEWSLETTER_PROVIDER_API_ERROR`: provider request failed (network or provider HTTP error).
   - Provider-specific API codes may appear in `errorCode` when safely available.
 
+## User-facing copy map
+
+The API and CTA share `lib/newsletter-messages.ts` as the source of truth:
+
+- `unavailable`
+  - "Newsletter sign-ups are temporarily unavailable. You can still read all posts."
+- `subscribeError` / `providerApiError`
+  - "We couldn't complete your subscription. Please try again in a moment."
+- `emailValidation`
+  - "Please enter a valid email address (for example, name@example.com)."
+- `emailRequired`
+  - "Please enter your email to subscribe."
+- `subscribed`
+  - "You're subscribed. Thanks for joining."
+- `alreadySubscribed`
+  - "You're already subscribed with this email."
+
 ## Manual verification checklist
 
 1. Configured success path
