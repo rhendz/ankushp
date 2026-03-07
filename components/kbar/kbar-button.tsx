@@ -26,6 +26,7 @@ const KBarButton = () => {
         strokeWidth={1.5}
         stroke="currentColor"
         className="h-6 w-6 text-secondary"
+        aria-hidden="true"
       >
         <path
           strokeLinecap="round"

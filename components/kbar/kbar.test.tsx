@@ -9,8 +9,16 @@ type ModalSnapshot = {
   isLoading: boolean
 }
 
+type ProviderSnapshot = {
+  callbacks?: {
+    onOpen?: () => void
+    onClose?: () => void
+  }
+}
+
 const mocks = vi.hoisted(() => ({
   modalSnapshots: [] as ModalSnapshot[],
+  providerSnapshots: [] as ProviderSnapshot[],
   push: vi.fn(),
 }))
 
@@ -19,7 +27,16 @@ vi.mock('next/navigation.js', () => ({
 }))
 
 vi.mock('kbar', () => ({
-  KBarProvider: ({ children }: { children: React.ReactNode }) => children,
+  KBarProvider: ({
+    children,
+    options,
+  }: {
+    children: React.ReactNode
+    options?: ProviderSnapshot
+  }) => {
+    mocks.providerSnapshots.push(options ?? {})
+    return children
+  },
 }))
 
 vi.mock('./kbar-modal', () => ({
@@ -39,9 +56,20 @@ const getLatestModalSnapshot = () => {
   return latestSnapshot
 }
 
+const getLatestProviderSnapshot = () => {
+  const latestSnapshot = mocks.providerSnapshots.at(-1)
+
+  if (!latestSnapshot) {
+    throw new Error('KBarProvider was never rendered.')
+  }
+
+  return latestSnapshot
+}
+
 describe('KBarSearchProvider fetch resilience', () => {
   beforeEach(() => {
     mocks.modalSnapshots.length = 0
+    mocks.providerSnapshots.length = 0
     mocks.push.mockReset()
   })
 
@@ -162,5 +190,36 @@ describe('KBarSearchProvider fetch resilience', () => {
     expect(onSearchDocumentsLoad).toHaveBeenCalledWith(responsePayload)
     expect(getLatestModalSnapshot().actions).toEqual(transformedActions)
     expect(screen.getByTestId('kbar-modal')).toBeTruthy()
+  })
+
+  it('restores focus to the previously focused element when the menu closes', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        headers: { get: vi.fn().mockReturnValue('application/json; charset=utf-8') },
+        json: vi.fn().mockResolvedValue([]),
+      })
+    )
+
+    render(
+      <KBarSearchProvider kbarConfig={{ searchDocumentsPath: '/search.json' }}>
+        <button type="button">Search trigger</button>
+        <button type="button">Other focus target</button>
+      </KBarSearchProvider>
+    )
+
+    await waitFor(() => {
+      expect(getLatestModalSnapshot().isLoading).toBe(false)
+    })
+
+    const [searchTrigger, otherFocusTarget] = screen.getAllByRole('button')
+
+    searchTrigger.focus()
+    getLatestProviderSnapshot().callbacks?.onOpen?.()
+    otherFocusTarget.focus()
+    getLatestProviderSnapshot().callbacks?.onClose?.()
+
+    expect(document.activeElement).toBe(searchTrigger)
   })
 })
