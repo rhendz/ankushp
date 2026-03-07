@@ -215,7 +215,7 @@ export default function NewsletterCta({
           type="submit"
           disabled={disableForm}
           aria-disabled={disableForm}
-          className="min-w-[10rem] rounded-md bg-accent px-5 py-2.5 font-semibold text-white transition hover:bg-accent/80 disabled:cursor-not-allowed disabled:bg-secondary/20 disabled:text-secondary/50 disabled:opacity-100"
+          className="min-w-[10rem] rounded-md bg-accent px-5 py-2.5 font-semibold text-white transition hover:bg-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary disabled:cursor-not-allowed disabled:bg-secondary/20 disabled:text-secondary/50 disabled:opacity-100"
         >
           {viewState === 'success'
             ? 'Subscribed'
