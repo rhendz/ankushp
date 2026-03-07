@@ -64,4 +64,41 @@ test.describe('blog smoke suite', () => {
     await expect(page.getByRole('button', { name: 'Unavailable' })).toBeDisabled()
     await expect(page.getByText(expectedMessage)).toBeVisible()
   })
+
+  test('post engagement rail supports like click/hold, copy feedback, and newsletter visibility', async ({
+    page,
+  }) => {
+    await page.goto('/blog/posts/the-missing-layer-in-your-ai-stack-intermediate-knowledge')
+
+    const engagementRail = page.getByTestId('engagement-rail')
+    const likeButton = page.getByTestId('like-button')
+    const likeCount = page.getByTestId('like-count')
+    const copyLinkButton = page.getByTestId('copy-link-button')
+
+    await expect(engagementRail).toBeVisible()
+    await expect(likeButton).toBeVisible()
+    await expect(likeCount).toBeVisible()
+    await expect(copyLinkButton).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Enjoyed this post/i })).toBeVisible()
+
+    const initialCount = Number((await likeCount.textContent())?.trim() || '0')
+
+    await likeButton.click()
+    await expect
+      .poll(async () => Number((await likeCount.textContent())?.trim() || '0'))
+      .toBeGreaterThan(initialCount)
+
+    const afterClickCount = Number((await likeCount.textContent())?.trim() || '0')
+    await likeButton.hover()
+    await page.mouse.down()
+    await page.waitForTimeout(900)
+    await page.mouse.up()
+
+    await expect
+      .poll(async () => Number((await likeCount.textContent())?.trim() || '0'))
+      .toBeGreaterThan(afterClickCount)
+
+    await copyLinkButton.click()
+    await expect(copyLinkButton).toHaveAttribute('aria-label', 'Link copied')
+  })
 })

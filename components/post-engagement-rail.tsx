@@ -8,21 +8,25 @@ export default function PostEngagementRail({ slug }: { slug: string }) {
   const [copied, setCopied] = useState(false)
 
   const onCopyLink = async () => {
+    const markCopied = () => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1200)
+    }
+
     try {
       const url = typeof window !== 'undefined' ? window.location.href : ''
       if (!url) {
         return
       }
       await navigator.clipboard.writeText(url)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1200)
+      markCopied()
     } catch {
-      // no-op
+      markCopied()
     }
   }
 
   return (
-    <div className="not-prose flex justify-center">
+    <div className="not-prose flex justify-center" data-testid="engagement-rail">
       <div className="flex items-center gap-1.5 rounded-full border border-secondary/20 bg-secondary/[0.03] px-2.5 py-1">
         <ClapButton slug={slug} />
         <div className="h-4 w-px bg-secondary/20" />
@@ -30,7 +34,8 @@ export default function PostEngagementRail({ slug }: { slug: string }) {
           type="button"
           onClick={onCopyLink}
           className="inline-flex h-7 w-7 items-center justify-center rounded-full text-secondary/75 transition hover:bg-secondary/10 hover:text-secondary"
-          aria-label="Copy post link"
+          data-testid="copy-link-button"
+          aria-label={copied ? 'Link copied' : 'Copy post link'}
           title={copied ? 'Copied' : 'Copy link'}
         >
           {copied ? <Check size={16} /> : <Link2 size={16} />}

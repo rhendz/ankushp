@@ -258,6 +258,7 @@ export default function ClapButton({ slug }: { slug: string }) {
             onPointerLeave={stopHoldLike}
             onKeyDown={onButtonKeyDown}
             disabled={!state.configured || isLoading}
+            data-testid="like-button"
             aria-label={isAtCap ? `Like limit reached (${state.cap})` : 'Like this post'}
             aria-pressed={hasLiked}
             className={`group relative inline-flex h-10 w-10 items-center justify-center rounded-full border text-xl leading-none transition hover:scale-105 ${
@@ -298,7 +299,7 @@ export default function ClapButton({ slug }: { slug: string }) {
           ))}
         </div>
 
-        <span className="text-xs font-semibold text-secondary/80">
+        <span className="text-xs font-semibold text-secondary/80" data-testid="like-count">
           {state.total.toLocaleString()}
         </span>
       </div>
