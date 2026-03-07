@@ -1,0 +1,83 @@
+name: Bug
+description: Report a defect with reproducible behavior.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Sev 1 - Critical outage
+        - Sev 2 - Major functionality impacted
+        - Sev 3 - Minor functionality impacted
+        - Sev 4 - Cosmetic / low impact
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 - Critical
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+      placeholder: When I..., the app...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      placeholder: It should...
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      placeholder: It does...
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: Browser, device, URL, commit SHA, screenshots/logs.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: User Impact
+      placeholder: Who is affected and how often?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Fix Acceptance Criteria
+      placeholder: |
+        - [ ] Repro no longer fails
+        - [ ] No regression on related flow
+    validations:
+      required: true
