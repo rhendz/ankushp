@@ -33,7 +33,7 @@ describe('KBarButton', () => {
     expect(trigger.getAttribute('type')).toBe('button')
     expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
-    expect(trigger.getAttribute('aria-controls')).toBe('kbar-search-dialog')
+    expect(trigger.getAttribute('aria-controls')).toBe('kbar-command-menu')
 
     fireEvent.click(trigger)
 

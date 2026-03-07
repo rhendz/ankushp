@@ -72,7 +72,7 @@ describe('KBarModal', () => {
 
     const searchInput = screen.getByRole('combobox', { name: 'Search commands' })
     expect(searchInput.getAttribute('id')).toBe('kbar-search-input')
-    expect(searchInput.getAttribute('aria-describedby')).toContain('kbar-search-hint')
+    expect(searchInput.getAttribute('aria-describedby')).toContain('kbar-command-menu-description')
     expect(searchInput.getAttribute('aria-describedby')).toContain('kbar-results-status')
 
     await waitFor(() => {
