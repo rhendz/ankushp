@@ -5,11 +5,14 @@
   "scripts": {
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
-    "prebuild": "node scripts/run-contentlayer-build.mjs",
+    "prebuild": "cross-env INIT_CWD=$PWD contentlayer build || true && node scripts/patch-contentlayer-json-imports.mjs",
     "build": "cross-env INIT_CWD=$PWD SKIP_CONTENTLAYER=true next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
+    "test:smoke": "playwright test",
+    "test:smoke:headed": "playwright test --headed --project=chromium",
+    "test:smoke:ci": "cross-env CI=1 playwright test --project=chromium --reporter=line",
     "blog:handoff:validate": "node scripts/blog-handoff-import.mjs validate",
     "blog:handoff:import": "node scripts/blog-handoff-import.mjs import",
     "blog:handoff:smoke": "node scripts/blog-handoff-import.mjs validate scripts/blog-handoff/samples/valid-collaborator-handoff.md",
@@ -66,6 +69,7 @@
     "three": "^0.160.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@svgr/webpack": "^8.0.1",
     "@types/mdx": "^2.0.5",
     "@types/react": "^18.2.14",
