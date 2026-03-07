@@ -100,8 +100,6 @@ export default function ClapButton({ slug }: { slug: string }) {
     }
   }, [slug])
 
-  const canLikeNow = !isLoading && state.configured && stateRef.current.user < stateRef.current.cap
-
   const launchBurst = (count: number, celebration = false) => {
     if (prefersReducedMotion) {
       return
@@ -209,7 +207,11 @@ export default function ClapButton({ slug }: { slug: string }) {
   }
 
   const enqueueClap = () => {
-    if (!canLikeNow) {
+    if (
+      isLoading ||
+      !stateRef.current.configured ||
+      stateRef.current.user >= stateRef.current.cap
+    ) {
       return
     }
 
@@ -235,7 +237,11 @@ export default function ClapButton({ slug }: { slug: string }) {
       return
     }
 
-    if (!canLikeNow) {
+    if (
+      isLoading ||
+      !stateRef.current.configured ||
+      stateRef.current.user >= stateRef.current.cap
+    ) {
       return
     }
 
