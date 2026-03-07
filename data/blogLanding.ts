@@ -4,14 +4,8 @@ export type BlogLandingLink = {
   description: string
 }
 
-export type BlogLandingTag = {
-  label: string
-  href: string
-}
-
 export const blogLandingConfig: {
   startHere: BlogLandingLink[]
-  popularTags: BlogLandingTag[]
 } = {
   startHere: [
     {
@@ -29,10 +23,5 @@ export const blogLandingConfig: {
       href: '/blog/posts/accelerating-your-python-projects-with-poetry',
       description: 'A lightweight guide to dependency management and reproducible workflows.',
     },
-  ],
-  popularTags: [
-    { label: 'tools', href: '/blog/tags/tools' },
-    { label: 'mlops', href: '/blog/tags/mlops' },
-    { label: 'machine-learning', href: '/blog/tags/machine-learning' },
   ],
 }

@@ -2,14 +2,38 @@ import Link from "@/components/link";
 import Tag from "@/components/tag";
 import siteMetadata from "@/data/siteMetadata";
 import { blogLandingConfig } from "@/data/blogLanding";
+import tagData from "app/blog/tag-data.json";
 import { allBlogs } from "contentlayer/generated";
 import { sortPosts, allCoreContent } from "pliny/utils/contentlayer";
 import { formatDate } from "pliny/utils/formatDate";
 import NewsletterCta from "@/components/newsletter-cta";
 
 const MAX_DISPLAY = 5;
+const MAX_POPULAR_TAGS = 5;
+const START_HERE_FALLBACK_COUNT = 3;
 
 const BlogHome = ({ posts }) => {
+  const knownPostHrefs = new Set(
+    posts.map((post) => `/blog/posts/${post.slug}`),
+  );
+  const curatedStartHere = blogLandingConfig.startHere.filter((item) =>
+    knownPostHrefs.has(item.href),
+  );
+  const startHereItems =
+    curatedStartHere.length > 0
+      ? curatedStartHere
+      : posts.slice(0, START_HERE_FALLBACK_COUNT).map((post) => ({
+          title: post.title,
+          href: `/blog/posts/${post.slug}`,
+          description: post.summary ?? "",
+        }));
+
+  const tagCounts = tagData as Record<string, number>;
+  const popularTags = Object.keys(tagCounts)
+    .sort((a, b) => tagCounts[b] - tagCounts[a])
+    .slice(0, MAX_POPULAR_TAGS)
+    .map((tag) => ({ label: tag, href: `/blog/tags/${tag}` }));
+
   return (
     <>
       <div className="space-y-2 pb-8 pt-6 md:space-y-5">
@@ -17,11 +41,9 @@ const BlogHome = ({ posts }) => {
           Hi, I'm Ankush Patel
         </h1>
         <p className="text-lg leading-7 text-secondary/60">
-          Welcome to my blog, where curiosity drives exploration and passion
-          sparks discovery! 🚀 Join me in navigating the dynamic world of
-          technology, from exploring the latest AI advancements to unraveling
-          fascinating tech innovations. Whether you're here to delve into
-          insights or to savor everyday wonders, welcome aboard!
+          I write about AI engineering, product thinking, and the systems behind
+          reliable software. If you're building with AI or just curious about
+          what actually works in practice, you're in the right place 🚀
         </p>
       </div>
       <div className="divide-y divide-secondary/30">
@@ -31,14 +53,14 @@ const BlogHome = ({ posts }) => {
               Start Here
             </h2>
             <ul className="grid gap-3">
-              {blogLandingConfig.startHere.map((item, index) => (
+              {startHereItems.map((item, index) => (
                 <li
                   key={item.href}
-                  className="group rounded-xl border border-secondary/20 bg-gradient-to-r from-secondary/[0.08] to-secondary/[0.03] p-4 transition hover:border-accent/40 hover:from-secondary/[0.12] hover:to-secondary/[0.06]"
+                  className="group rounded-xl border border-secondary/20 bg-gradient-to-r from-accent/[0.06] via-accent/[0.03] to-transparent p-4 transition hover:border-accent/40 hover:from-accent/[0.1] hover:via-accent/[0.05] dark:from-secondary/[0.08] dark:via-secondary/[0.06] dark:to-secondary/[0.03] dark:hover:from-secondary/[0.12] dark:hover:via-secondary/[0.1] dark:hover:to-secondary/[0.06]"
                 >
                   <Link
                     href={item.href}
-                    className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+                    className="block rounded-lg text-secondary no-underline visited:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <p className="text-xs font-semibold uppercase tracking-wide text-secondary/60">
@@ -66,7 +88,7 @@ const BlogHome = ({ posts }) => {
               Popular Tags
             </h2>
             <div className="flex flex-wrap gap-2.5">
-              {blogLandingConfig.popularTags.map((tag) => (
+              {popularTags.map((tag) => (
                 <Link
                   key={tag.href}
                   href={tag.href}
