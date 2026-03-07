@@ -123,11 +123,13 @@ export async function addClap({
   visitorId,
   ip,
   userAgent,
+  amount = 1,
 }: {
   slug: string
   visitorId: string
   ip: string
   userAgent: string
+  amount?: number
 }): Promise<ClapSummary & { limited?: boolean }> {
   const status = getRedisStatus()
   if (!status.configured) {
@@ -141,6 +143,8 @@ export async function addClap({
 
   const fingerprint = hashFingerprint(`${ip}|${userAgent}`)
   const rlKey = rateLimitKey(slug, fingerprint)
+  const clampedAmount = Math.max(1, Math.min(10, Math.floor(amount)))
+
   if (status.mode === 'local') {
     const now = Date.now()
     const existingRate = localRate.get(rlKey)
@@ -168,9 +172,10 @@ export async function addClap({
       return await getClapSummary(slug, visitorId)
     }
 
-    const nextUserCount = currentUser + 1
+    const allowedAmount = Math.min(clampedAmount, CLAPS_CAP_PER_VISITOR - currentUser)
+    const nextUserCount = currentUser + allowedAmount
     const totalStoreKey = totalKey(slug)
-    const nextTotalCount = (localTotals.get(totalStoreKey) || 0) + 1
+    const nextTotalCount = (localTotals.get(totalStoreKey) || 0) + allowedAmount
     localUsers.set(perUserKey, nextUserCount)
     localTotals.set(totalStoreKey, nextTotalCount)
 
@@ -200,9 +205,10 @@ export async function addClap({
     return await getClapSummary(slug, visitorId)
   }
 
+  const allowedAmount = Math.min(clampedAmount, CLAPS_CAP_PER_VISITOR - currentUser)
   const [newUser, newTotal] = await Promise.all([
-    redis.incr(perUserKey),
-    redis.incr(totalKey(slug)),
+    redis.incrby(perUserKey, allowedAmount),
+    redis.incrby(totalKey(slug), allowedAmount),
   ])
 
   return {

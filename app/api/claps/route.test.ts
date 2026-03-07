@@ -79,4 +79,28 @@ describe("/api/claps", () => {
     expect(summaryBody.total).toBe(50);
     expect(summaryBody.cap).toBe(50);
   });
+
+  it("accepts batched amount in POST body", async () => {
+    const cookie = "clap_visitor_id=test-visitor-batch";
+    const request = requestWithCookie("http://localhost:3000/api/claps", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slug: "batch-route-post", amount: 5 }),
+      cookie,
+    });
+
+    const response = await POST(request);
+    const body = (await response.json()) as {
+      total: number;
+      user: number;
+      cap: number;
+    };
+
+    expect(response.status).toBe(200);
+    expect(body.total).toBe(5);
+    expect(body.user).toBe(5);
+    expect(body.cap).toBe(50);
+  });
 });

@@ -74,4 +74,44 @@ describe('claps-store (local mock mode)', () => {
     expect(limitedAt).toBeGreaterThan(0)
     expect(limitedAt).toBeLessThanOrEqual(121)
   })
+
+  it('supports batched clap increments while respecting cap', async () => {
+    const slug = 'batch-post'
+    const visitorId = 'batch-visitor'
+
+    const firstBatch = await addClap({
+      slug,
+      visitorId,
+      ip: '127.0.0.1',
+      userAgent: 'vitest',
+      amount: 7,
+    })
+    expect(firstBatch.user).toBe(7)
+    expect(firstBatch.total).toBe(7)
+
+    // Amount is clamped to max batch size (10).
+    const clampedBatch = await addClap({
+      slug,
+      visitorId,
+      ip: '127.0.0.1',
+      userAgent: 'vitest',
+      amount: 60,
+    })
+    expect(clampedBatch.user).toBe(17)
+    expect(clampedBatch.total).toBe(17)
+
+    for (let index = 0; index < 5; index += 1) {
+      await addClap({
+        slug,
+        visitorId,
+        ip: '127.0.0.1',
+        userAgent: 'vitest',
+        amount: 10,
+      })
+    }
+
+    const summary = await getClapSummary(slug, visitorId)
+    expect(summary.user).toBe(50)
+    expect(summary.total).toBe(50)
+  })
 })

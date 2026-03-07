@@ -31,6 +31,7 @@ const defaultState: ClapState = {
 
 const HOLD_REPEAT_DELAY_MS = 260
 const HOLD_REPEAT_INTERVAL_MS = 170
+const MAX_BATCH_SIZE = 5
 
 export default function ClapButton({ slug }: { slug: string }) {
   const [state, setState] = useState<ClapState>(defaultState)
@@ -147,7 +148,8 @@ export default function ClapButton({ slug }: { slug: string }) {
     setIsProcessing(true)
 
     while (queuedClapsRef.current > 0) {
-      queuedClapsRef.current -= 1
+      const batchSize = Math.min(MAX_BATCH_SIZE, queuedClapsRef.current)
+      queuedClapsRef.current -= batchSize
 
       try {
         const response = await fetch('/api/claps', {
@@ -155,7 +157,7 @@ export default function ClapButton({ slug }: { slug: string }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ slug }),
+          body: JSON.stringify({ slug, amount: batchSize }),
         })
 
         const data = (await response.json()) as Partial<ClapState> & {
@@ -166,8 +168,8 @@ export default function ClapButton({ slug }: { slug: string }) {
         if (!response.ok) {
           setState((current) => ({
             ...current,
-            total: Math.max(0, current.total - 1),
-            user: Math.max(0, current.user - 1),
+            total: Math.max(0, current.total - batchSize),
+            user: Math.max(0, current.user - batchSize),
           }))
           queuedClapsRef.current = 0
           setError(data.error || "Couldn't register like right now.")
@@ -193,8 +195,8 @@ export default function ClapButton({ slug }: { slug: string }) {
       } catch {
         setState((current) => ({
           ...current,
-          total: Math.max(0, current.total - 1),
-          user: Math.max(0, current.user - 1),
+          total: Math.max(0, current.total - batchSize),
+          user: Math.max(0, current.user - batchSize),
         }))
         queuedClapsRef.current = 0
         setError("Couldn't register like right now.")
