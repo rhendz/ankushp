@@ -99,7 +99,7 @@ jobs:
       - name: Detect test script
         id: test-script
         run: |
-          node -e "const fs=require('node:fs');const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));const hasTest=Boolean(pkg.scripts&&pkg.scripts.test);fs.appendFileSync(process.env.GITHUB_OUTPUT,`has_test=${hasTest}\n`);"
+          node -e 'const fs=require("node:fs");const pkg=JSON.parse(fs.readFileSync("package.json","utf8"));const hasTest=Boolean(pkg.scripts&&pkg.scripts.test);fs.appendFileSync(process.env.GITHUB_OUTPUT,`has_test=${hasTest}\n`);'
 
       - name: Run tests
         if: steps.test-script.outputs.has_test == 'true'
