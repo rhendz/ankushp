@@ -9,7 +9,10 @@
     "build": "cross-env INIT_CWD=$PWD SKIP_CONTENTLAYER=true next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
-    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts"
+    "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
+    "test:smoke": "playwright test",
+    "test:smoke:headed": "playwright test --headed --project=chromium",
+    "test:smoke:ci": "cross-env CI=1 playwright test --project=chromium --reporter=line"
   },
   "dependencies": {
     "@next/bundle-analyzer": "14.0.3",
@@ -62,6 +65,7 @@
     "three": "^0.160.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@svgr/webpack": "^8.0.1",
     "@types/mdx": "^2.0.5",
     "@types/react": "^18.2.14",
