@@ -47,6 +47,7 @@ export default function ClapButton({ slug }: { slug: string }) {
   const stateRef = useRef(state)
   const queuedClapsRef = useRef(0)
   const processingRef = useRef(false)
+  const particleIdRef = useRef(0)
   const holdDelayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -110,9 +111,11 @@ export default function ClapButton({ slug }: { slug: string }) {
       const distance = celebration ? 52 + Math.random() * 28 : 36 + Math.random() * 18
       const x = Math.cos(angle) * distance
       const y = Math.sin(angle) * distance
+      const nextParticleId = Date.now() * 1000 + particleIdRef.current
+      particleIdRef.current += 1
 
       return {
-        id: Date.now() + index + Math.round(Math.random() * 1000),
+        id: nextParticleId,
         x: `${x.toFixed(1)}px`,
         y: `${y.toFixed(1)}px`,
         delayMs: Math.floor(Math.random() * 45),
@@ -334,23 +337,6 @@ export default function ClapButton({ slug }: { slug: string }) {
         </span>
       </div>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-
-      <style jsx>{`
-        @keyframes clap-burst {
-          0% {
-            opacity: 0.95;
-            transform: translate(-50%, -50%) scale(0.6);
-          }
-          80% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-            transform: translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y)))
-              scale(1.1);
-          }
-        }
-      `}</style>
     </div>
   )
 }
