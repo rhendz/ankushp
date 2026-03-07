@@ -22,9 +22,13 @@ test.describe('blog smoke suite', () => {
   test('kbar opens with cmd/ctrl+k on blog pages', async ({ page }) => {
     await page.goto('/blog')
 
+    await expect(page.getByRole('button', { name: 'Open command menu' })).toBeVisible()
+
     const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
     await page.keyboard.press(`${modifier}+K`)
 
+    await expect(page.getByRole('dialog', { name: 'Command menu' })).toBeVisible()
+    await expect(page.getByRole('combobox', { name: 'Search commands' })).toBeVisible()
     await expect(page.getByTestId('kbar-positioner')).toBeVisible()
     await expect(page.getByTestId('kbar-search-input')).toBeVisible()
 
