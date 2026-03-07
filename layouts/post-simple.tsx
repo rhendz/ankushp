@@ -10,7 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
-import ClapButton from '@/components/clap-button'
+import PostEngagementRail from '@/components/post-engagement-rail'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -21,7 +21,7 @@ interface LayoutProps {
 }
 
 export default function PostLayout({ content, next, prev, relatedPosts, children }: LayoutProps) {
-  const { path, slug, date, title } = content
+  const { slug, date, title } = content
 
   return (
     <SectionContainer>
@@ -43,13 +43,20 @@ export default function PostLayout({ content, next, prev, relatedPosts, children
               </div>
             </div>
           </header>
-          <div className="grid-rows-[auto_1fr] divide-y divide-secondary/30 pb-8 xl:divide-y-0">
-            <div className="divide-y divide-secondary/30 xl:col-span-3 xl:row-span-2 xl:pb-0">
-              <div className="prose max-w-none pb-8 pt-10">{children}</div>
-              <RelatedPosts posts={relatedPosts} />
-              <ClapButton slug={slug} />
-              <div className="py-6">
-                <NewsletterCta title="Want more posts like this?" />
+          <div className="grid-rows-[auto_1fr] pb-8">
+            <div className="xl:col-span-3 xl:row-span-2 xl:pb-0">
+              <div className="prose max-w-none pb-4 pt-10">{children}</div>
+              <div className="pb-3 pt-1">
+                <PostEngagementRail slug={slug} />
+              </div>
+              <div className="pt-2">
+                <RelatedPosts posts={relatedPosts} />
+              </div>
+              <div className="pb-8 pt-10">
+                <NewsletterCta
+                  title="Want more posts like this?"
+                  className="mx-0 max-w-none p-5 sm:p-6"
+                />
               </div>
             </div>
             {siteMetadata.comments && (

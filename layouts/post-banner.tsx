@@ -11,7 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll-top-and-comment'
 import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
-import ClapButton from '@/components/clap-button'
+import PostEngagementRail from '@/components/post-engagement-rail'
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -43,11 +43,15 @@ export default function PostMinimal({ content, next, prev, relatedPosts, childre
               <PageTitle>{title}</PageTitle>
             </div>
           </div>
-          <div className="prose max-w-none py-4 dark:prose-invert">{children}</div>
-          <RelatedPosts posts={relatedPosts} />
-          <ClapButton slug={slug} />
-          <div className="py-6">
-            <NewsletterCta title="Want more updates?" />
+          <div className="prose max-w-none pb-4 pt-4 dark:prose-invert">{children}</div>
+          <div className="pb-3 pt-1">
+            <PostEngagementRail slug={slug} />
+          </div>
+          <div className="pt-2">
+            <RelatedPosts posts={relatedPosts} />
+          </div>
+          <div className="pb-8 pt-10">
+            <NewsletterCta title="Want more updates?" className="mx-0 max-w-none p-5 sm:p-6" />
           </div>
           {siteMetadata.comments && (
             <div className="py-6 text-center text-gray-700 dark:text-gray-300" id="comment">

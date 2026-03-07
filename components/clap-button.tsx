@@ -1,7 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type {
+  CSSProperties,
+  KeyboardEvent as ReactKeyboardEvent,
+  PointerEvent as ReactPointerEvent,
+} from 'react'
 
 type ClapState = {
   configured: boolean
@@ -25,14 +29,28 @@ const defaultState: ClapState = {
   cap: 50,
 }
 
+const HOLD_REPEAT_DELAY_MS = 260
+const HOLD_REPEAT_INTERVAL_MS = 170
+
 export default function ClapButton({ slug }: { slug: string }) {
   const [state, setState] = useState<ClapState>(defaultState)
   const [isLoading, setIsLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [particles, setParticles] = useState<Particle[]>([])
   const [error, setError] = useState('')
 
   const isAtCap = state.user >= state.cap
+  const hasLiked = state.user > 0
+
+  const stateRef = useRef(state)
+  const queuedClapsRef = useRef(0)
+  const processingRef = useRef(false)
+  const holdDelayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
 
   useEffect(() => {
     let isCancelled = false
@@ -53,7 +71,7 @@ export default function ClapButton({ slug }: { slug: string }) {
           }))
         }
       } catch {
-        // Keep defaults and let users still try clapping.
+        // Keep defaults and let users still try liking.
       } finally {
         if (!isCancelled) {
           setIsLoading(false)
@@ -67,7 +85,7 @@ export default function ClapButton({ slug }: { slug: string }) {
     }
   }, [slug])
 
-  const canClap = state.configured && !isSubmitting && !isLoading && !isAtCap
+  const canLikeNow = !isLoading && state.configured && stateRef.current.user < stateRef.current.cap
 
   const launchBurst = (count: number, celebration = false) => {
     const nextParticles: Particle[] = Array.from({ length: count }).map((_, index) => {
@@ -90,94 +108,166 @@ export default function ClapButton({ slug }: { slug: string }) {
     setParticles((prev) => [...prev, ...nextParticles])
   }
 
-  const helperText = useMemo(() => {
-    if (!state.configured) {
-      return 'Claps are currently unavailable.'
+  const stopHoldLike = () => {
+    if (holdDelayTimeoutRef.current) {
+      clearTimeout(holdDelayTimeoutRef.current)
+      holdDelayTimeoutRef.current = null
     }
-    if (isAtCap) {
-      return `Maxed out at ${state.cap}/${state.cap} claps from this browser.`
-    }
-    return `${state.user}/${state.cap} claps from you`
-  }, [isAtCap, state.cap, state.configured, state.user])
 
-  const onClap = async () => {
-    if (!canClap) {
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current)
+      holdIntervalRef.current = null
+    }
+  }
+
+  const flushQueuedClaps = async () => {
+    if (processingRef.current) {
+      return
+    }
+
+    processingRef.current = true
+    setIsProcessing(true)
+
+    while (queuedClapsRef.current > 0) {
+      queuedClapsRef.current -= 1
+
+      try {
+        const response = await fetch('/api/claps', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ slug }),
+        })
+
+        const data = (await response.json()) as Partial<ClapState> & {
+          error?: string
+          code?: string
+        }
+
+        if (!response.ok) {
+          setState((current) => ({
+            ...current,
+            total: Math.max(0, current.total - 1),
+            user: Math.max(0, current.user - 1),
+          }))
+          queuedClapsRef.current = 0
+          setError(data.error || "Couldn't register like right now.")
+          break
+        }
+
+        setState((current) => ({
+          configured: data.configured ?? current.configured,
+          total: typeof data.total === 'number' ? data.total : current.total,
+          user: typeof data.user === 'number' ? data.user : current.user,
+          cap: typeof data.cap === 'number' ? data.cap : current.cap,
+        }))
+
+        if (
+          typeof data.user === 'number' &&
+          typeof data.cap === 'number' &&
+          data.user >= data.cap
+        ) {
+          launchBurst(18, true)
+          queuedClapsRef.current = 0
+          break
+        }
+      } catch {
+        setState((current) => ({
+          ...current,
+          total: Math.max(0, current.total - 1),
+          user: Math.max(0, current.user - 1),
+        }))
+        queuedClapsRef.current = 0
+        setError("Couldn't register like right now.")
+        break
+      }
+    }
+
+    processingRef.current = false
+    setIsProcessing(false)
+  }
+
+  const enqueueClap = () => {
+    if (!canLikeNow) {
       return
     }
 
     setError('')
-    setIsSubmitting(true)
-    const prevState = state
-    setState((current) => ({
-      ...current,
-      total: current.total + 1,
-      user: Math.min(current.user + 1, current.cap),
-    }))
+    setState((prev) => {
+      if (prev.user >= prev.cap) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        total: prev.total + 1,
+        user: Math.min(prev.user + 1, prev.cap),
+      }
+    })
     launchBurst(10, false)
+    queuedClapsRef.current += 1
+    void flushQueuedClaps()
+  }
 
-    try {
-      const response = await fetch('/api/claps', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ slug }),
-      })
+  const startHoldLike = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) {
+      return
+    }
 
-      const data = (await response.json()) as Partial<ClapState> & {
-        error?: string
-        code?: string
-      }
+    if (!canLikeNow) {
+      return
+    }
 
-      if (!response.ok) {
-        setState(prevState)
-        setError(data.error || "Couldn't register clap right now.")
-        return
-      }
+    event.preventDefault()
+    enqueueClap()
 
-      setState((current) => ({
-        configured: data.configured ?? current.configured,
-        total: typeof data.total === 'number' ? data.total : current.total,
-        user: typeof data.user === 'number' ? data.user : current.user,
-        cap: typeof data.cap === 'number' ? data.cap : current.cap,
-      }))
+    holdDelayTimeoutRef.current = setTimeout(() => {
+      holdIntervalRef.current = setInterval(() => {
+        enqueueClap()
+      }, HOLD_REPEAT_INTERVAL_MS)
+    }, HOLD_REPEAT_DELAY_MS)
+  }
 
-      if (typeof data.user === 'number' && typeof data.cap === 'number' && data.user >= data.cap) {
-        launchBurst(18, true)
-      }
-    } catch {
-      setState(prevState)
-      setError("Couldn't register clap right now.")
-    } finally {
-      setIsSubmitting(false)
+  const onButtonKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      enqueueClap()
     }
   }
+
+  useEffect(() => {
+    return () => {
+      stopHoldLike()
+    }
+  }, [])
 
   if (!state.configured && !isLoading) {
     return null
   }
 
   return (
-    <div className="not-prose py-4">
-      <div className="flex items-center justify-between rounded-xl border border-secondary/20 bg-secondary/[0.04] px-4 py-3">
-        <div>
-          <p className="text-sm font-semibold text-secondary">Enjoyed this article?</p>
-          <p className="text-xs text-secondary/65">
-            {state.total.toLocaleString()} claps · {helperText}
-          </p>
-          {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-        </div>
-
+    <div className="not-prose py-0.5">
+      <div className="flex items-center gap-2">
         <div className="relative">
           <button
             type="button"
-            onClick={onClap}
-            disabled={!canClap}
-            aria-label={isAtCap ? `Clap limit reached (${state.cap})` : 'Send a clap'}
-            className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-accent/30 bg-accent/10 text-2xl leading-none text-accent transition hover:scale-105 hover:bg-accent/15 disabled:cursor-not-allowed disabled:opacity-70"
+            onPointerDown={startHoldLike}
+            onPointerUp={stopHoldLike}
+            onPointerCancel={stopHoldLike}
+            onPointerLeave={stopHoldLike}
+            onKeyDown={onButtonKeyDown}
+            disabled={!state.configured || isLoading}
+            aria-label={isAtCap ? `Like limit reached (${state.cap})` : 'Like this post'}
+            aria-pressed={hasLiked}
+            className={`group relative inline-flex h-10 w-10 items-center justify-center rounded-full border text-xl leading-none transition hover:scale-105 ${
+              hasLiked
+                ? 'bg-accent/12 hover:bg-accent/16 border-accent/45 text-accent'
+                : 'border-secondary/25 bg-transparent text-secondary hover:border-accent/40 hover:text-accent'
+            } ${!state.configured || isLoading ? 'cursor-not-allowed' : ''}`}
           >
             <span
-              className={`inline-block select-none ${isSubmitting ? 'scale-110' : 'scale-100'} transition`}
+              className={`inline-block select-none ${isProcessing ? 'scale-110' : 'scale-100'} transition`}
             >
               ❤
             </span>
@@ -207,7 +297,12 @@ export default function ClapButton({ slug }: { slug: string }) {
             </span>
           ))}
         </div>
+
+        <span className="text-xs font-semibold text-secondary/80">
+          {state.total.toLocaleString()}
+        </span>
       </div>
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
 
       <style jsx>{`
         @keyframes clap-burst {

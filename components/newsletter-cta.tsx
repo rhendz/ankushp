@@ -186,13 +186,11 @@ export default function NewsletterCta({
     <div
       className={`mx-auto w-full max-w-4xl rounded-2xl border border-secondary/30 bg-secondary/5 p-6 ${className}`.trim()}
     >
-      <div className="max-w-2xl">
-        <h2 className="text-2xl font-bold tracking-tight text-secondary">{title}</h2>
-        <p className="mt-2 text-sm text-secondary/70">{description}</p>
-      </div>
+      <h2 className="text-2xl font-bold tracking-tight text-secondary">{title}</h2>
+      <p className="mt-2 text-sm text-secondary/70">{description}</p>
 
       <form
-        className="mt-4 flex w-full max-w-2xl flex-col gap-3 md:flex-row md:items-center"
+        className="mt-4 flex w-full flex-col gap-3 md:flex-row md:items-center"
         onSubmit={subscribe}
         noValidate
       >
