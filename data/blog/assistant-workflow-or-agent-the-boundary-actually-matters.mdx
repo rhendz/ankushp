@@ -1,0 +1,44 @@
+---
+title: 'Assistant, Workflow, or Agent? The Boundary Actually Matters'
+date: '2026-01-22'
+lastmod: '2026-01-22'
+tags: ['product-boundaries', 'agentic-workflows', 'orchestration']
+summary: 'A practical framing for separating assistants, workflows, and agents based on control, execution latitude, and architecture.'
+---
+
+A lot of AI product language gets sloppy right where design decisions should get sharper.
+
+Teams call something an assistant, a workflow, and an agent almost interchangeably. That sounds harmless, but it is not. Those labels imply different boundaries around autonomy, control, and failure handling. If you blur them, you usually blur the system design too.
+
+An assistant is still user-led. It helps inside a conversation, answers, suggests, maybe calls a tool when asked, but the user is driving the interaction. The core shape is assistive.
+
+A workflow is system-led, but path-bound. It may use an LLM inside the loop, but the steps are still mostly defined in advance. The model is helping execute a process, not deciding how to pursue an open-ended goal.
+
+An agent is different because it has meaningful discretion. It is not just filling in steps. It is choosing actions, sequencing tools, and deciding how to move toward an outcome within some boundary.
+
+## What Actually Changes
+
+That is why the boundary actually matters. The real question is not whether the system feels smart. It is who decides, who acts, and how fixed the execution path is.
+
+Once you look at it that way, a lot of confusion clears up.
+
+If the user is still steering and approving each step, calling it an agent may overstate what the system really does. If the path is fixed and repeatable, calling it a workflow is usually more honest and more useful. If the system truly has execution latitude, then you are in agent territory, and now you need to think harder about permissions, observability, interruption, and blast radius.
+
+This is also why “agent” should not be the default prestige label. More autonomy is not automatically better product design. Sometimes the right answer is an assistant with tight tool access. Sometimes it is a workflow with clear checkpoints. Giving a system more discretion than the job requires usually creates more control problems than product value.
+
+So my default mental model is simple:
+
+**Assistant** helps.
+**Workflow** executes a defined path.
+**Agent** pursues a goal with bounded discretion.
+
+<Caption caption='A quick boundary check: who drives execution, how fixed the path is, and how much discretion the system has.'>
+  <Mermaid chart={`
+flowchart LR
+    A["**Assistant**<br/>User-led<br/>Interactive help<br/>Narrow / invoked"]
+    B["**Workflow**<br/>Predefined<br/>Repeatable execution<br/>Scoped to flow"]
+    C["**Agent**<br/>Goal pursuit<br/>Dynamically chosen<br/>Chosen as needed"]
+`}/>
+</Caption>
+
+Use the label that matches the control surface. The naming is not just semantics. It is part of the architecture.

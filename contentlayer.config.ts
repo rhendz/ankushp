@@ -1,5 +1,5 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer/source-files'
-import { writeFileSync } from 'fs'
+import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import readingTime from 'reading-time'
 import GithubSlugger from 'github-slugger'
 import path from 'path'
@@ -72,6 +72,43 @@ function createSearchIndex(allBlogs) {
       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
     )
     console.log('Local search index generated...')
+  }
+}
+
+function patchGeneratedJsonImports(dir = path.join(root, '.contentlayer/generated')) {
+  const singleQuoteJsonAssertion = /assert\s*\{\s*type:\s*'json'\s*\}/g
+  const doubleQuoteJsonAssertion = /assert\s*\{\s*type:\s*"json"\s*\}/g
+
+  try {
+    for (const name of readdirSync(dir)) {
+      const fullPath = path.join(dir, name)
+      const entry = statSync(fullPath)
+
+      if (entry.isDirectory()) {
+        patchGeneratedJsonImports(fullPath)
+        continue
+      }
+
+      if (!entry.isFile() || !fullPath.endsWith('.mjs')) {
+        continue
+      }
+
+      const source = readFileSync(fullPath, 'utf8')
+      if (
+        !singleQuoteJsonAssertion.test(source) &&
+        !doubleQuoteJsonAssertion.test(source)
+      ) {
+        continue
+      }
+
+      const patchedSource = source
+        .replace(singleQuoteJsonAssertion, "with { type: 'json' }")
+        .replace(doubleQuoteJsonAssertion, 'with { type: "json" }')
+
+      writeFileSync(fullPath, patchedSource, 'utf8')
+    }
+  } catch {
+    // Contentlayer may not have generated files yet on initial startup.
   }
 }
 
@@ -150,6 +187,7 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
+    patchGeneratedJsonImports()
     const { allBlogs } = await importData()
     createTagCount(allBlogs)
     createSearchIndex(allBlogs)
