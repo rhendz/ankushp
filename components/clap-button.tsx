@@ -38,6 +38,7 @@ export default function ClapButton({ slug }: { slug: string }) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [particles, setParticles] = useState<Particle[]>([])
   const [error, setError] = useState('')
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   const isAtCap = state.user >= state.cap
   const hasLiked = state.user > 0
@@ -51,6 +52,19 @@ export default function ClapButton({ slug }: { slug: string }) {
   useEffect(() => {
     stateRef.current = state
   }, [state])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches)
+    updatePreference()
+
+    mediaQuery.addEventListener('change', updatePreference)
+    return () => mediaQuery.removeEventListener('change', updatePreference)
+  }, [])
 
   useEffect(() => {
     let isCancelled = false
@@ -88,6 +102,10 @@ export default function ClapButton({ slug }: { slug: string }) {
   const canLikeNow = !isLoading && state.configured && stateRef.current.user < stateRef.current.cap
 
   const launchBurst = (count: number, celebration = false) => {
+    if (prefersReducedMotion) {
+      return
+    }
+
     const nextParticles: Particle[] = Array.from({ length: count }).map((_, index) => {
       const angle = (Math.PI * 2 * index) / count + Math.random() * 0.25
       const distance = celebration ? 52 + Math.random() * 28 : 36 + Math.random() * 18
@@ -261,7 +279,7 @@ export default function ClapButton({ slug }: { slug: string }) {
             data-testid="like-button"
             aria-label={isAtCap ? `Like limit reached (${state.cap})` : 'Like this post'}
             aria-pressed={hasLiked}
-            className={`group relative inline-flex h-10 w-10 items-center justify-center rounded-full border text-xl leading-none transition hover:scale-105 ${
+            className={`group relative inline-flex h-10 w-10 items-center justify-center rounded-full border text-xl leading-none transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary ${
               hasLiked
                 ? 'bg-accent/12 hover:bg-accent/16 border-accent/45 text-accent'
                 : 'border-secondary/25 bg-transparent text-secondary hover:border-accent/40 hover:text-accent'
@@ -299,7 +317,11 @@ export default function ClapButton({ slug }: { slug: string }) {
           ))}
         </div>
 
-        <span className="text-xs font-semibold text-secondary/80" data-testid="like-count">
+        <span
+          className="text-xs font-semibold text-secondary/80"
+          data-testid="like-count"
+          aria-live="polite"
+        >
           {state.total.toLocaleString()}
         </span>
       </div>

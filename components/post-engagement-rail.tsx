@@ -33,7 +33,7 @@ export default function PostEngagementRail({ slug }: { slug: string }) {
         <button
           type="button"
           onClick={onCopyLink}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-full text-secondary/75 transition hover:bg-secondary/10 hover:text-secondary"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full text-secondary/75 transition hover:bg-secondary/10 hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
           data-testid="copy-link-button"
           aria-label={copied ? 'Link copied' : 'Copy post link'}
           title={copied ? 'Copied' : 'Copy link'}

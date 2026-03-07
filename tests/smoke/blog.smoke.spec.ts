@@ -89,6 +89,14 @@ test.describe('blog smoke suite', () => {
       .toBeGreaterThan(initialCount)
 
     const afterClickCount = Number((await likeCount.textContent())?.trim() || '0')
+
+    await likeButton.focus()
+    await page.keyboard.press('Enter')
+    await expect
+      .poll(async () => Number((await likeCount.textContent())?.trim() || '0'))
+      .toBeGreaterThan(afterClickCount)
+
+    const afterKeyboardCount = Number((await likeCount.textContent())?.trim() || '0')
     await likeButton.hover()
     await page.mouse.down()
     await page.waitForTimeout(900)
@@ -96,7 +104,7 @@ test.describe('blog smoke suite', () => {
 
     await expect
       .poll(async () => Number((await likeCount.textContent())?.trim() || '0'))
-      .toBeGreaterThan(afterClickCount)
+      .toBeGreaterThan(afterKeyboardCount)
 
     await copyLinkButton.click()
     await expect(copyLinkButton).toHaveAttribute('aria-label', 'Link copied')
