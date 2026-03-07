@@ -16,7 +16,10 @@ export const KBarModal = ({ actions, isLoading }: { actions: Action[]; isLoading
 
   return (
     <KBarPortal>
-      <KBarPositioner className="bg-primary/50 p-4 backdrop-blur backdrop-filter">
+      <KBarPositioner
+        data-testid="kbar-positioner"
+        className="bg-primary/50 p-4 backdrop-blur backdrop-filter"
+      >
         <KBarAnimator className="w-full max-w-xl">
           <div className="overflow-hidden rounded-2xl border border-secondary/20 bg-primary/70">
             <div className="flex items-center space-x-4 p-4">
@@ -36,7 +39,10 @@ export const KBarModal = ({ actions, isLoading }: { actions: Action[]; isLoading
                   />
                 </svg>
               </span>
-              <KBarSearch className="h-8 w-full border-none border-transparent bg-transparent text-secondary placeholder-secondary/50 outline-none focus:ring-2 focus:ring-accent/70" />
+              <KBarSearch
+                data-testid="kbar-search-input"
+                className="h-8 w-full border-none border-transparent bg-transparent text-secondary placeholder-secondary/50 outline-none focus:ring-2 focus:ring-accent/70"
+              />
               <kbd className="inline-block whitespace-nowrap rounded border border-secondary/70 px-1.5 align-middle text-xs font-medium leading-4 tracking-wide text-secondary/70">
                 ESC
               </kbd>
