@@ -5,11 +5,14 @@
   "scripts": {
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
-    "prebuild": "cross-env INIT_CWD=$PWD contentlayer build || true && node scripts/patch-contentlayer-json-imports.mjs",
+    "prebuild": "node scripts/run-contentlayer-build.mjs",
     "build": "cross-env INIT_CWD=$PWD SKIP_CONTENTLAYER=true next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
+    "blog:handoff:validate": "node scripts/blog-handoff-import.mjs validate",
+    "blog:handoff:import": "node scripts/blog-handoff-import.mjs import",
+    "blog:handoff:smoke": "node scripts/blog-handoff-import.mjs validate scripts/blog-handoff/samples/valid-collaborator-handoff.md",
     "test": "vitest run"
   },
   "dependencies": {
@@ -64,7 +67,6 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
-    "@testing-library/react": "^14.2.2",
     "@types/mdx": "^2.0.5",
     "@types/react": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
@@ -76,13 +78,11 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.0",
-    "jsdom": "^24.1.3",
     "lint-staged": "^13.0.0",
     "next-contentlayer": "^0.3.4",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.4.1",
-    "typescript": "^5.1.3",
-    "vitest": "^1.6.0"
+    "typescript": "^5.1.3"
   },
   "resolutions": {
     "@opentelemetry/api": "1.4.1",

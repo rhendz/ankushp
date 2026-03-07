@@ -1,0 +1,51 @@
+---
+title: 'Designing Personal AI Automations That People Actually Trust'
+date: '2025-12-05'
+lastmod: '2025-12-05'
+tags: ['automation', 'reliability', 'product-boundaries']
+summary: 'Personal AI automations become trustworthy when scope, timing, approvals, and failure behavior are easy to understand and control.'
+---
+
+Personal AI automations are easy to overdesign.
+
+A lot of them are framed as “assistants,” but the real product question is simpler: would a normal person trust this thing near their inbox, calendar, reminders, files, or money?
+
+That trust usually has very little to do with how smart the model feels. It has much more to do with whether the automation behaves like a bounded operator instead of a vague autonomous presence.
+
+For personal workflows, trust is mostly a product design problem.
+
+The failure mode is common: an automation is given broad access, unclear triggers, and too much initiative too early. It can summarize messages, draft replies, move calendar events, file notes, maybe even buy something or send something. In theory, that sounds useful. In practice, it feels unpredictable. And once a system feels unpredictable in a high-trust surface, adoption collapses.
+
+The better model is to design trust through control surfaces.
+
+There are four that matter most.
+
+<Caption caption='Trust grows by stepping from manual to autonomous only after scope, visibility, and approvals are earned.'>
+  <Mermaid chart={`
+flowchart LR
+    A[Manual] --> B[Assistive]
+    B --> C[Semi-autonomous]
+    C --> D[Autonomous]
+
+    A1[High user control] --- A
+    B1[Low-risk suggestions] --- B
+    C1[Approval gates] --- C
+    D1[Trust must be earned] --- D
+`}/>
+</Caption>
+
+## Four Control Surfaces
+
+First, scope should be narrow and legible. A user should be able to answer: what can this automation touch, and what can it not touch? “Helps triage unread newsletters” is easier to trust than “manages your inbox.”
+
+Second, timing should be visible. People trust systems more when they know when something will run and why it ran. Triggered by a new receipt email is different from “works in the background.”
+
+Third, approvals should match the blast radius. Not every action needs a checkpoint, but high-consequence actions usually do. Drafting a reply can be automatic. Sending it probably should not be.
+
+Fourth, failure behavior should be understandable. When the system is unsure, does it stop, ask, log, retry, or silently guess? Trust grows when failure is contained instead of hidden.
+
+This is why the best personal automations often look less autonomous than the demos. They are opinionated, narrow, and a little boring. That is usually a strength. The user does not need to admire the system. They need to predict it.
+
+A useful design rule is this: move from manual to assistive to semi-autonomous before you move to fully autonomous. Each step should earn the next one. If the user would be surprised by an action, the system probably has not earned that level of trust yet.
+
+People do not trust personal AI automations because they promise more. They trust them because they make control obvious.
