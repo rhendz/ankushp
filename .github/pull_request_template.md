@@ -6,7 +6,7 @@
 - Example: `feat: add newsletter CTA status fallback`
 
 ## Linked Issue
-- Closes #
+- Closes #<issue-id> or N/A
 
 ## Type of Change
 - [ ] Feature
