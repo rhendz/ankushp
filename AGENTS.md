@@ -33,3 +33,21 @@ These rules define the default issue/PR workflow for this repository.
 - Ensure lint/build/tests in the PR template are completed.
 - Document risk and rollback plan.
 - For UI changes, include before/after evidence when feasible.
+
+## Agent Execution
+
+- Prefer repository scripts and runbooks over ad-hoc command sequences.
+- Primary runbook index: `docs/runbooks/README.md`.
+- For Codex skill-driven GA reporting, use:
+  - `docs/runbooks/codex-skills.md`
+  - `scripts/ga-seo-check.sh`
+  - `scripts/ga-seo-report.sh`
+- For site maintenance QA, run smoke checks via:
+  - `npm run test:smoke:ci` (CI parity)
+  - `npm run test:smoke` (local default)
+
+## Environment and Secrets
+
+- Never commit credentials, tokens, or service-account JSON files.
+- Keep secrets in local environment files (for example `.env.local`) or user-level secure paths.
+- Validate required env before running external API workflows (for GA: property id + auth variables).
