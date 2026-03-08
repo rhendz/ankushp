@@ -179,8 +179,10 @@ export default function ClapButton({ slug }: { slug: string }) {
 
         setState((current) => ({
           configured: data.configured ?? current.configured,
-          total: typeof data.total === 'number' ? data.total : current.total,
-          user: typeof data.user === 'number' ? data.user : current.user,
+          // Keep optimistic UI monotonic while queued claps are still in flight.
+          total:
+            typeof data.total === 'number' ? Math.max(current.total, data.total) : current.total,
+          user: typeof data.user === 'number' ? Math.max(current.user, data.user) : current.user,
           cap: typeof data.cap === 'number' ? data.cap : current.cap,
         }))
 
