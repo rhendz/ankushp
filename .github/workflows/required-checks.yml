@@ -21,6 +21,24 @@ env:
   OG_API_KEY: ci-build-og-key
 
 jobs:
+  pr-title:
+    name: pr-title
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Validating PR title: $PR_TITLE"
+          if [[ "$PR_TITLE" =~ ^(feat|bug|chore)\([A-Z]+-[0-9]+\):\ .+ ]]; then
+            echo "PR title format is valid."
+          else
+            echo "Invalid PR title format."
+            echo "Expected: feat|bug|chore(TEAM-123): short description"
+            exit 1
+          fi
+
   lint:
     name: lint
     runs-on: ubuntu-latest
