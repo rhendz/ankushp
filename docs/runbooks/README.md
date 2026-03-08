@@ -6,6 +6,10 @@ This is the single entry point for operations/workflow guidance in this reposito
 
 - [CI Required Checks Runbook](./ci-required-checks.md)
 
+## Codex Skills
+
+- [Codex Skills Runbook](./codex-skills.md)
+
 ## Newsletter
 
 - [Newsletter API Observability Runbook](./newsletter-observability.md)
