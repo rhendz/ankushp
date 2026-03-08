@@ -1,13 +1,11 @@
 import { Metadata } from "next";
 import siteMetadata from "@/data/siteMetadata";
 
-interface PageSEOProps {
+type PageSEOProps = Metadata & {
   title: string;
   description?: string;
   image?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
+};
 
 export function genPageMetadata({
   title,
