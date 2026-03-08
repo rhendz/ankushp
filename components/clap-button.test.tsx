@@ -114,6 +114,106 @@ describe('ClapButton', () => {
     })
   })
 
+  it('keeps displayed count monotonic while batched requests are still pending', async () => {
+    let postCallCount = 0
+    let serverState: ClapState = {
+      configured: true,
+      total: 0,
+      user: 0,
+      cap: 50,
+    }
+
+    let resolveFirstPost: (() => void) | null = null
+    let resolveSecondPost: (() => void) | null = null
+
+    const firstPostPromise = new Promise<Response>((resolve) => {
+      resolveFirstPost = () => {
+        serverState = {
+          ...serverState,
+          total: serverState.total + 1,
+          user: serverState.user + 1,
+        }
+        resolve(createJsonResponse(serverState))
+      }
+    })
+
+    const secondPostPromise = new Promise<Response>((resolve) => {
+      resolveSecondPost = () => {
+        serverState = {
+          ...serverState,
+          total: serverState.total + 5,
+          user: serverState.user + 5,
+        }
+        resolve(createJsonResponse(serverState))
+      }
+    })
+
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
+      const url = String(input)
+      const method = init?.method || 'GET'
+
+      if (method === 'GET' && url.includes('/api/claps')) {
+        return Promise.resolve(createJsonResponse(serverState))
+      }
+
+      if (method === 'POST' && url.includes('/api/claps')) {
+        postCallCount += 1
+
+        if (postCallCount === 1) {
+          return firstPostPromise
+        }
+
+        if (postCallCount === 2) {
+          return secondPostPromise
+        }
+
+        serverState = {
+          ...serverState,
+          total: serverState.total + 1,
+          user: serverState.user + 1,
+        }
+        return Promise.resolve(createJsonResponse(serverState))
+      }
+
+      throw new Error(`Unhandled fetch request: ${method} ${url}`)
+    })
+
+    render(<ClapButton slug="monotonic-like-post" />)
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/claps?slug=monotonic-like-post', {
+        method: 'GET',
+      })
+    })
+
+    const button = screen.getByTestId('like-button')
+
+    for (let i = 0; i < 7; i += 1) {
+      fireEvent.keyDown(button, { key: 'Enter' })
+    }
+
+    await waitFor(() => {
+      expect(screen.getByTestId('like-count').textContent).toBe('7')
+    })
+
+    resolveFirstPost?.()
+
+    await waitFor(() => {
+      expect(postCallCount).toBeGreaterThanOrEqual(2)
+    })
+
+    // The first server ack only confirms one clap, but UI should remain at optimistic 7.
+    await waitFor(() => {
+      expect(screen.getByTestId('like-count').textContent).toBe('7')
+    })
+
+    resolveSecondPost?.()
+
+    await waitFor(() => {
+      expect(screen.getByTestId('like-count').textContent).toBe('7')
+    })
+  })
+
   it('does not send POST requests when visitor has reached cap', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
       const url = String(input)
