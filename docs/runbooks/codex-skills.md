@@ -1,17 +1,12 @@
 # Codex Skills Runbook
 
-This repository assumes the following custom skills are installed in the user Codex home (not in this git repo):
+This repository expects these custom skills to be installed in the user Codex home (not in this git repo):
 
 - `site-maintenance`
 - `ga-seo-strategy-report`
 
-Default skills path:
-
+Skill path:
 - `$CODEX_HOME/skills` (fallback: `$HOME/.codex/skills`)
-
-## Why skills are not tracked here
-
-Skill files are user-environment artifacts and follow the Codex account/machine setup in `~/.codex/skills`. This repo tracks only durable wrappers and operator instructions.
 
 ## Required local setup for GA reports
 
@@ -28,23 +23,12 @@ Optional:
 
 ## Agent startup checklist
 
-1. Confirm skill script exists:
+1. Confirm skill scripts exist:
 - `$CODEX_HOME/skills/ga-seo-strategy-report/scripts/ga4_seo_strategy_report.py`
-
-2. Confirm setup check script exists:
 - `$CODEX_HOME/skills/ga-seo-strategy-report/scripts/check_ga4_setup.sh`
-
-3. Load env config:
-- `source .env.local`
-
-4. Activate project venv:
-- `. .venv/bin/activate`
-
-5. Run setup check:
-- `./scripts/ga-seo-check.sh`
-
-6. Run report:
-- `./scripts/ga-seo-report.sh`
+2. Load env config: `source .env.local`
+3. Run setup check: `./scripts/ga-seo-check.sh`
+4. Run report: `./scripts/ga-seo-report.sh`
 
 ## Wrapper scripts in this repo
 
@@ -53,6 +37,5 @@ Optional:
 
 ## Notes
 
-- Do not commit `output/` reports by default.
+- `output/` artifacts are intentionally ignored in git.
 - Do not commit credentials or service-account JSON files.
-- The GA skill defaults to content-focused `/blog` analysis and auto previous-period comparison.
