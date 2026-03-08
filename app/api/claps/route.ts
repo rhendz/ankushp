@@ -77,7 +77,13 @@ export async function GET(request: NextRequest) {
   }
 
   const visitorId = getVisitorId(request);
-  const summary = await getClapSummary(slug, visitorId);
+  let summary;
+  try {
+    summary = await getClapSummary(slug, visitorId);
+  } catch {
+    const response = createUnavailableResponse(getClapsCapPerVisitor());
+    return withVisitorCookie(response, request, visitorId);
+  }
   const response = summary.configured
     ? NextResponse.json(summary, {
         status: 200,
@@ -108,13 +114,19 @@ export async function POST(request: NextRequest) {
       : 1;
 
   const visitorId = getVisitorId(request);
-  const summary = await addClap({
-    slug,
-    visitorId,
-    ip: getClientIp(request),
-    userAgent: request.headers.get("user-agent") || "unknown",
-    amount,
-  });
+  let summary;
+  try {
+    summary = await addClap({
+      slug,
+      visitorId,
+      ip: getClientIp(request),
+      userAgent: request.headers.get("user-agent") || "unknown",
+      amount,
+    });
+  } catch {
+    const response = createUnavailableResponse(getClapsCapPerVisitor());
+    return withVisitorCookie(response, request, visitorId);
+  }
 
   if (!summary.configured) {
     const response = createUnavailableResponse(getClapsCapPerVisitor());
