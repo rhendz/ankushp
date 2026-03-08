@@ -2,8 +2,11 @@
 - What changed and why?
 
 ## PR Title
-- Format: `feat|chore|bug: <short description>`
-- Example: `feat: add newsletter CTA status fallback`
+- Format: `feat|bug|chore(TEAM-123): <short description>`
+- Example: `feat(ENG-142): add newsletter CTA status fallback`
+
+## Linked Linear
+- Linear issue key: `TEAM-123`
 
 ## Linked Issue
 - Closes #<issue-id> or N/A

@@ -24,7 +24,7 @@ These rules define the default issue/PR workflow for this repository.
 
 - Open one PR per issue.
 - Use `.github/pull_request_template.md`.
-- PR title must follow: `feat|chore|bug: <short description>`.
+- PR title must follow: `feat|bug|chore(TEAM-123): <short description>`.
 - Include `Closes #<issue-number>` in the PR body.
 - Complete validation and checklist sections before requesting review.
 
