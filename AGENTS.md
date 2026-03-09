@@ -24,9 +24,17 @@ These rules define the default issue/PR workflow for this repository.
 
 - Open one PR per issue.
 - Use `.github/pull_request_template.md`.
-- PR title must follow: `feat|bug|chore(TEAM-123): <short description>`.
+- PR title must follow: `feat|bug|chore: <short description>`.
 - Include `Closes #<issue-number>` in the PR body.
+- Add a Linear reference when available, but it is optional.
 - Complete validation and checklist sections before requesting review.
+
+## Tracking Model
+
+- Use Linear for desired outcomes and initiative-level planning.
+- Linear tickets can be coding or non-coding outcomes.
+- Use GitHub Issues for implementation-level work in this repository.
+- One Linear ticket may map to multiple GitHub Issues and multiple PRs.
 
 ## Merge Readiness
 
