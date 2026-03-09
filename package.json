@@ -14,6 +14,8 @@
     "test:smoke:headed": "playwright test --headed --project=chromium",
     "test:smoke:ci": "cross-env CI=1 playwright test --project=chromium --reporter=line",
     "agent:health": "bash ./scripts/agent-health-check.sh",
+    "agent:night:run": "bash ./scripts/night-runner.sh",
+    "agent:night:install-cron": "bash ./scripts/install-night-runner-cron.sh",
     "blog:handoff:validate": "node scripts/blog-handoff-import.mjs validate",
     "blog:handoff:import": "node scripts/blog-handoff-import.mjs import",
     "blog:handoff:smoke": "node scripts/blog-handoff-import.mjs validate scripts/blog-handoff/samples/valid-collaborator-handoff.md",
