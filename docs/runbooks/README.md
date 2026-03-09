@@ -19,3 +19,4 @@ This is the single entry point for operations/workflow guidance in this reposito
 
 - [Blog Content Handoff Runbook](./content-handoff.md)
 - [Collaborator Submission Prompt](./templates/blog-collaborator-submission-prompt.md)
+- [Blog Handoff + Pre-Publish Checklist](./templates/blog-publish-checklist.md)
