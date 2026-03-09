@@ -13,6 +13,7 @@
     "test:smoke": "playwright test",
     "test:smoke:headed": "playwright test --headed --project=chromium",
     "test:smoke:ci": "cross-env CI=1 playwright test --project=chromium --reporter=line",
+    "agent:health": "bash ./scripts/agent-health-check.sh",
     "blog:handoff:validate": "node scripts/blog-handoff-import.mjs validate",
     "blog:handoff:import": "node scripts/blog-handoff-import.mjs import",
     "blog:handoff:smoke": "node scripts/blog-handoff-import.mjs validate scripts/blog-handoff/samples/valid-collaborator-handoff.md",
