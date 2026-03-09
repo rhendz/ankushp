@@ -10,9 +10,10 @@ const POSTS_PER_PAGE = 5;
 export async function generateMetadata({
   params,
 }: {
-  params: { page: string };
+  params: Promise<{ page: string }>;
 }): Promise<Metadata> {
-  const pageNumber = Number.parseInt(params.page, 10);
+  const resolvedParams = await params;
+  const pageNumber = Number.parseInt(resolvedParams.page, 10);
   const page = Number.isNaN(pageNumber) || pageNumber < 1 ? 1 : pageNumber;
   const pageUrl = `${siteMetadata.siteUrl}/blog/posts/page/${page}`;
 
@@ -43,9 +44,14 @@ export const generateStaticParams = async () => {
   return paths;
 };
 
-export default function Page({ params }: { params: { page: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ page: string }>;
+}) {
+  const resolvedParams = await params;
   const posts = allCoreContent(sortPosts(allBlogs));
-  const pageNumber = parseInt(params.page as string);
+  const pageNumber = parseInt(resolvedParams.page as string);
   const initialDisplayPosts = posts.slice(
     POSTS_PER_PAGE * (pageNumber - 1),
     POSTS_PER_PAGE * pageNumber,

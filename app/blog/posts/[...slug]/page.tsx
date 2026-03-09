@@ -2,8 +2,7 @@ import "css/prism.css";
 import "css/mermaid.css";
 import "katex/dist/katex.css";
 
-import { components } from "@/components/mdx-components";
-import { MDXLayoutRenderer } from "pliny/mdx-components";
+import MdxRenderContent from "@/components/mdx-render-content";
 import {
   sortPosts,
   coreContent,
@@ -26,6 +25,7 @@ const layouts = {
   PostLayout,
   PostBanner,
 };
+export const dynamic = "force-dynamic";
 
 function getRelatedPosts(
   currentPost: Blog,
@@ -71,9 +71,10 @@ function getToken(id: string): string {
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }): Promise<Metadata | undefined> {
-  const slug = decodeURI(params.slug.join("/"));
+  const resolvedParams = await params;
+  const slug = decodeURI(resolvedParams.slug.join("/"));
   const post = allBlogs.find((p) => p.slug === slug);
   const authorList = post?.authors || ["default"];
   const authorDetails = authorList.map((author) => {
@@ -154,8 +155,13 @@ export const generateStaticParams = async () => {
   return paths;
 };
 
-export default async function Page({ params }: { params: { slug: string[] } }) {
-  const slug = decodeURI(params.slug.join("/"));
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const resolvedParams = await params;
+  const slug = decodeURI(resolvedParams.slug.join("/"));
   // Filter out drafts in production
   const sortedCoreContents = allCoreContent(sortPosts(allBlogs));
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug);
@@ -196,9 +202,8 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         prev={prev}
         relatedPosts={relatedPosts}
       >
-        <MDXLayoutRenderer
+        <MdxRenderContent
           code={post.body.code}
-          components={components}
           toc={post.toc}
         />
       </Layout>
