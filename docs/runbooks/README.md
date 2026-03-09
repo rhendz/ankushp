@@ -9,6 +9,7 @@ This is the single entry point for operations/workflow guidance in this reposito
 ## Codex Skills
 
 - [Codex Skills Runbook](./codex-skills.md)
+- [Weekly Content Measurement Runbook](./weekly-content-measurement.md)
 - Health check command: `npm run agent:health`
 - [Night Runner Runbook](./night-runner.md)
 

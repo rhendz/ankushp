@@ -31,6 +31,7 @@ Optional:
 2. Load env config: `source .env.local`
 3. Run setup check: `./scripts/ga-seo-check.sh`
 4. Run report: `./scripts/ga-seo-report.sh`
+5. Run weekly snapshot: `./scripts/ga-weekly-dashboard.sh`
 
 ## Upskill usage (12-hour maintenance runs)
 
@@ -47,6 +48,7 @@ python3 "$CODEX_HOME/skills/upskill/scripts/analyze_usage.py" \
 
 - `scripts/ga-seo-check.sh`: validates GA skill readiness from current env.
 - `scripts/ga-seo-report.sh`: executes the GA report skill with sensible defaults.
+- `scripts/ga-weekly-dashboard.sh`: creates a dated weekly snapshot under `output/ga-weekly/`.
 - `scripts/agent-health-check.sh`: validates installed skills, script syntax/smoke checks, and local automation TOML/cwd/rrule sanity.
 
 ## Notes
