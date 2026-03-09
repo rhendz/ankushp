@@ -56,6 +56,13 @@ const securityHeaders = [
   },
 ]
 
+const contentCacheHeaders = [
+  {
+    key: 'Cache-Control',
+    value: 'public, s-maxage=600, stale-while-revalidate=86400',
+  },
+]
+
 /**
  * @type {import('next/dist/next-server/server/config').NextConfig}
  **/
@@ -81,6 +88,42 @@ module.exports = () => {
         {
           source: '/(.*)',
           headers: securityHeaders,
+        },
+        {
+          source: '/',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/about',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/blog',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/blog/posts',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/blog/posts/:path*',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/blog/tags',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/blog/tags/:path*',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/sitemap.xml',
+          headers: contentCacheHeaders,
+        },
+        {
+          source: '/robots.txt',
+          headers: contentCacheHeaders,
         },
       ]
     },
