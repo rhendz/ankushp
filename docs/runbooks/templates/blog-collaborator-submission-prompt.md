@@ -12,6 +12,7 @@ Requirements:
 - Do not include TODO/TBD/lorem placeholders.
 - Keep meaning, voice, and paragraph order intact.
 - Only light readability formatting is allowed.
+- The handoff owner must also complete `docs/runbooks/templates/blog-publish-checklist.md`.
 
 Template to follow:
 
@@ -34,4 +35,3 @@ If a visual is required, include only one of these placeholders on its own line:
 - `[[MERMAID: short-description]]`
 
 Do not generate image files or Mermaid code.
-
