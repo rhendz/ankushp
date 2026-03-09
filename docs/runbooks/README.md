@@ -15,6 +15,10 @@ This is the single entry point for operations/workflow guidance in this reposito
 
 - [Newsletter API Observability Runbook](./newsletter-observability.md)
 
+## Performance
+
+- [Performance Cache Runbook](./performance-cache.md)
+
 ## Content Handoff
 
 - [Blog Content Handoff Runbook](./content-handoff.md)
