@@ -4,6 +4,7 @@ This repository expects these custom skills to be installed in the user Codex ho
 
 - `site-maintenance`
 - `ga-seo-strategy-report`
+- `upskill`
 
 Skill path:
 - `$CODEX_HOME/skills` (fallback: `$HOME/.codex/skills`)
@@ -26,9 +27,21 @@ Optional:
 1. Confirm skill scripts exist:
 - `$CODEX_HOME/skills/ga-seo-strategy-report/scripts/ga4_seo_strategy_report.py`
 - `$CODEX_HOME/skills/ga-seo-strategy-report/scripts/check_ga4_setup.sh`
+- `$CODEX_HOME/skills/upskill/scripts/analyze_usage.py`
 2. Load env config: `source .env.local`
 3. Run setup check: `./scripts/ga-seo-check.sh`
 4. Run report: `./scripts/ga-seo-report.sh`
+
+## Upskill usage (12-hour maintenance runs)
+
+Use this analyzer command to rank recent skill friction and choose patch targets:
+
+```bash
+python3 "$CODEX_HOME/skills/upskill/scripts/analyze_usage.py" \
+  --hours 12 \
+  --codex-home "$CODEX_HOME" \
+  --skills-dir "$CODEX_HOME/skills"
+```
 
 ## Wrapper scripts in this repo
 
