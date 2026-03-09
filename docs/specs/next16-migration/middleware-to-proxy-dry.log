@@ -1,0 +1,108 @@
+Executing command: jscodeshift --dry --verbose=2 --parser=tsx --ignore-pattern=**/node_modules/** --ignore-pattern=**/.next/** --extensions=tsx,ts,jsx,js --transform /Users/ankush/.npm/_npx/04c93779852ad6b7/node_modules/@next/codemod/transforms/middleware-to-proxy.js .
+Processing 88 files... 
+Spawning 9 workers...
+Running in dry mode, no files will be written! 
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 10 files to free worker...
+Sending 8 files to free worker...
+ NOC app/layout.tsx
+ NOC app/robots.ts
+ NOC components/theme-switch.tsx
+ NOC components/table-wrapper.tsx
+ NOC app/blog/layout.tsx
+ NOC app/page.tsx
+ NOC app/not-found.tsx
+ NOC components/tag.tsx
+ NOC layouts/author-layout.tsx
+ NOC data/blogLanding.ts
+ NOC app/seo.tsx
+ NOC .contentlayer/generated/types.d.ts
+ NOC next-env.d.ts
+ NOC components/clap-button.test.tsx
+ NOC app/seo.test.ts
+ NOC app/about/page.tsx
+ NOC components/home/home-3d-fallback.tsx
+ NOC components/mobile-nav.tsx
+ NOC components/footer.tsx
+ NOC components/kbar/constants.ts
+ NOC app/sitemap.ts
+ NOC components/mdx-components.tsx
+ NOC components/analytics.tsx
+ NOC components/page-title.tsx
+ NOC components/card.tsx
+ NOC components/section-container.tsx
+ NOC data/headerNavLinks.ts
+ NOC layouts/theme-providers.tsx
+ NOC components/link.tsx
+ NOC app/blog/tags/page.tsx
+ NOC components/home/home-3d-scene.tsx
+ NOC layouts/post-banner.tsx
+ NOC data/siteMetadata.js
+ NOC components/social-icons/icons.tsx
+ NOC app/blog/page.tsx
+ NOC contentlayer.config.ts
+ NOC components/header.tsx
+ NOC components/accordion.tsx
+ NOC app/providers.tsx
+ NOC components/comments.tsx
+ NOC components/social-icons/index.tsx
+ NOC app/api/claps/route.ts
+ NOC next.config.js
+ NOC layouts/list-layout.tsx
+ NOC .eslintrc.js
+ NOC postcss.config.js
+ NOC prettier.config.js
+ NOC layouts/post-layout.tsx
+ NOC layouts/post-simple.tsx
+ NOC components/image.tsx
+ NOC components/caption.tsx
+ NOC app/api/og/route.tsx
+ NOC app/blog/posts/page.tsx
+ NOC components/kbar/kbar-modal.tsx
+ NOC components/newsletter-cta.tsx
+ NOC components/pre.tsx
+ NOC lib/newsletter-config.ts
+ NOC components/post-engagement-rail.tsx
+ NOC components/kbar/kbar-button.test.tsx
+ NOC app/newsletter/success/page.tsx
+ NOC components/kbar/kbar.tsx
+ NOC components/kbar/kbar-button.tsx
+ NOC app/blog/tags/[tag]/page.tsx
+ NOC layouts/list-layout-with-tags.tsx
+ NOC app/blog/posts/page/[page]/page.tsx
+ NOC components/scroll-top-and-comment.tsx
+ NOC components/mermaid.tsx
+ NOC tailwind.config.js
+ NOC vitest.config.ts
+ NOC components/related-posts.tsx
+ NOC components/kbar/kbar-modal.test.tsx
+ NOC app/fonts.ts
+ NOC playwright.config.ts
+ NOC lib/claps-store.ts
+ NOC lib/newsletter-messages.ts
+ NOC components/utils/contentlayer.ts
+ NOC .contentlayer/generated/index.d.ts
+ NOC lib/utils.ts
+ NOC components/clap-button.tsx
+ NOC app/blog/posts/[...slug]/page.tsx
+ NOC components/layout-wrapper.tsx
+ NOC components/link.test.tsx
+ NOC lib/claps-store.test.ts
+ NOC components/kbar/kbar.test.tsx
+ NOC components/utils/formate-date.ts
+ NOC tests/smoke/blog.smoke.spec.ts
+ NOC app/api/claps/route.test.ts
+ NOC app/api/newsletter/route.ts
+All done. 
+Results: 
+0 errors
+88 unmodified
+0 skipped
+0 ok
+Time elapsed: 1.079seconds 

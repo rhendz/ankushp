@@ -1,0 +1,387 @@
+===== app/blog/posts/[...slug]/page.tsx =====
+Executing command: jscodeshift --dry --print --verbose=2 --parser=tsx --ignore-pattern=**/node_modules/** --ignore-pattern=**/.next/** --extensions=tsx,ts,jsx,js --transform /Users/ankush/.npm/_npx/04c93779852ad6b7/node_modules/@next/codemod/transforms/next-async-request-api.js app/blog/posts/[...slug]/page.tsx
+Processing 1 files... 
+Spawning 1 workers...
+Running in dry mode, no files will be written! 
+Sending 1 files to free worker...
+import "css/prism.css";
+import "css/mermaid.css";
+import "katex/dist/katex.css";
+
+import { components } from "@/components/mdx-components";
+import { MDXLayoutRenderer } from "pliny/mdx-components";
+import {
+  sortPosts,
+  coreContent,
+  allCoreContent,
+} from "pliny/utils/contentlayer";
+import { allBlogs, allAuthors } from "contentlayer/generated";
+import type { Authors, Blog } from "contentlayer/generated";
+import PostSimple from "@/layouts/post-simple";
+import PostLayout from "@/layouts/post-layout";
+import PostBanner from "@/layouts/post-banner";
+import type { RelatedPost } from "@/components/related-posts";
+import { Metadata } from "next";
+import siteMetadata from "@/data/siteMetadata";
+import { notFound } from "next/navigation";
+import { createHmac } from "node:crypto";
+
+const defaultLayout = "PostLayout";
+const layouts = {
+  PostSimple,
+  PostLayout,
+  PostBanner,
+};
+
+function getRelatedPosts(
+  currentPost: Blog,
+  posts: ReturnType<typeof allCoreContent>,
+): RelatedPost[] {
+  const currentTags = new Set(currentPost.tags ?? []);
+
+  return posts
+    .filter((post) => post.slug !== currentPost.slug)
+    .map((post) => {
+      const sharedTagCount = (post.tags ?? []).reduce((count, tag) => {
+        if (currentTags.has(tag)) {
+          return count + 1;
+        }
+        return count;
+      }, 0);
+
+      return { post, sharedTagCount };
+    })
+    .filter(({ sharedTagCount }) => sharedTagCount > 0)
+    .sort((a, b) => {
+      if (b.sharedTagCount !== a.sharedTagCount) {
+        return b.sharedTagCount - a.sharedTagCount;
+      }
+      return new Date(b.post.date).getTime() - new Date(a.post.date).getTime();
+    })
+    .slice(0, 3)
+    .map(({ post }) => ({ slug: post.slug, title: post.title }));
+}
+
+function getToken(id: string): string {
+  // Check if process.env.OG_API_KEY is defined
+  if (process.env.OG_API_KEY === undefined) {
+    throw new Error("OG_API_KEY environment variable is not defined");
+  }
+
+  const hmac = createHmac("sha256", process.env.OG_API_KEY);
+  hmac.update(id, "utf-8");
+  const token = hmac.digest("hex");
+  return token;
+}
+
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string[] }>;
+  }
+): Promise<Metadata | undefined> {
+  const params = await props.params;
+  const slug = decodeURI(params.slug.join("/"));
+  const post = allBlogs.find((p) => p.slug === slug);
+  const authorList = post?.authors || ["default"];
+  const authorDetails = authorList.map((author) => {
+    const authorResults = allAuthors.find((p) => p.slug === author);
+    return coreContent(authorResults as Authors);
+  });
+  if (!post) {
+    return;
+  }
+
+  const publishedAt = new Date(post.date).toISOString();
+  const modifiedAt = new Date(post.lastmod || post.date).toISOString();
+  const authors = authorDetails.map((author) => author.name);
+  const postUrl = `${siteMetadata.siteUrl}/blog/posts/${post.slug}`;
+  const socialBanner = siteMetadata.socialBanner.includes("http")
+    ? siteMetadata.socialBanner
+    : `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
+
+  const ogAPI = new URL("/api/og", siteMetadata.siteUrl);
+  ogAPI.searchParams.set("title", post.title);
+
+  let imageList: string[] = [];
+  if (post.images) {
+    imageList = typeof post.images === "string" ? [post.images] : post.images;
+
+    // We map og images to the image list, dynamically formatted images
+    imageList = imageList.map((img) => {
+      const imageUrl =
+        img && img.includes("http") ? img : siteMetadata.siteUrl + img;
+      ogAPI.searchParams.set("image-src", imageUrl);
+      ogAPI.searchParams.set("token", getToken(post.title + imageUrl));
+      return ogAPI.toString();
+    });
+  }
+
+  // Add social banner as a back up image
+  if (imageList.length === 0) {
+    imageList = [socialBanner];
+  }
+
+  // Ensure imageList is open graph compliant
+  const ogImages = imageList.map((img) => {
+    return {
+      url: img,
+    };
+  });
+
+  return {
+    title: post.title,
+    description: post.summary,
+    openGraph: {
+      title: post.title,
+      description: post.summary,
+      siteName: siteMetadata.title,
+      locale: "en_US",
+      type: "article",
+      publishedTime: publishedAt,
+      modifiedTime: modifiedAt,
+      url: postUrl,
+      images: ogImages,
+      authors: authors.length > 0 ? authors : [siteMetadata.author],
+    },
+    alternates: {
+      canonical: postUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.summary,
+      images: imageList,
+    },
+  };
+}
+
+export const generateStaticParams = async () => {
+  const paths = allBlogs.map((p) => ({ slug: p.slug.split("/") }));
+
+  return paths;
+};
+
+export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
+  const params = await props.params;
+  const slug = decodeURI(params.slug.join("/"));
+  // Filter out drafts in production
+  const sortedCoreContents = allCoreContent(sortPosts(allBlogs));
+  const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug);
+  if (postIndex === -1) {
+    return notFound();
+  }
+
+  const prev = sortedCoreContents[postIndex + 1];
+  const next = sortedCoreContents[postIndex - 1];
+  const post = allBlogs.find((p) => p.slug === slug) as Blog;
+  const authorList = post?.authors || ["default"];
+  const authorDetails = authorList.map((author) => {
+    const authorResults = allAuthors.find((p) => p.slug === author);
+    return coreContent(authorResults as Authors);
+  });
+  const mainContent = coreContent(post);
+  const relatedPosts = getRelatedPosts(post, sortedCoreContents);
+  const jsonLd = post.structuredData;
+  jsonLd["author"] = authorDetails.map((author) => {
+    return {
+      "@type": "Person",
+      name: author.name,
+    };
+  });
+
+  const Layout = layouts[post.layout || defaultLayout];
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Layout
+        content={mainContent}
+        authorDetails={authorDetails}
+        next={next}
+        prev={prev}
+        relatedPosts={relatedPosts}
+      >
+        <MDXLayoutRenderer
+          code={post.body.code}
+          components={components}
+          toc={post.toc}
+        />
+      </Layout>
+    </>
+  );
+}
+
+ OKK app/blog/posts/[...slug]/page.tsx
+All done. 
+Results: 
+0 errors
+0 unmodified
+0 skipped
+1 ok
+Time elapsed: 0.310seconds 
+
+===== app/blog/tags/[tag]/page.tsx =====
+Executing command: jscodeshift --dry --print --verbose=2 --parser=tsx --ignore-pattern=**/node_modules/** --ignore-pattern=**/.next/** --extensions=tsx,ts,jsx,js --transform /Users/ankush/.npm/_npx/04c93779852ad6b7/node_modules/@next/codemod/transforms/next-async-request-api.js app/blog/tags/[tag]/page.tsx
+Processing 1 files... 
+Spawning 1 workers...
+Running in dry mode, no files will be written! 
+Sending 1 files to free worker...
+import { slug } from "github-slugger";
+import { allCoreContent, sortPosts } from "pliny/utils/contentlayer";
+import siteMetadata from "@/data/siteMetadata";
+import ListLayout from "@/layouts/list-layout-with-tags";
+import { allBlogs } from "contentlayer/generated";
+import tagData from "app/blog/tag-data.json";
+import { genPageMetadata } from "app/seo";
+import { Metadata } from "next";
+
+export async function generateMetadata(
+  props: {
+    params: Promise<{ tag: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+  const tag = decodeURI(params.tag);
+  const tagUrl = `${siteMetadata.siteUrl}/blog/tags/${encodeURI(tag)}`;
+
+  return genPageMetadata({
+    title: tag,
+    description: `${siteMetadata.title} ${tag} tagged content`,
+    openGraph: {
+      title: `${tag} | ${siteMetadata.title}`,
+      description: `${siteMetadata.title} ${tag} tagged content`,
+      url: tagUrl,
+      siteName: siteMetadata.title,
+      images: [siteMetadata.socialBanner],
+      locale: "en_US",
+      type: "website",
+    },
+    alternates: {
+      canonical: tagUrl,
+      types: {
+        "application/rss+xml": `${siteMetadata.siteUrl}/blog/tags/${tag}/feed.xml`,
+      },
+    },
+  });
+}
+
+export const generateStaticParams = async () => {
+  const tagCounts = tagData as Record<string, number>;
+  const tagKeys = Object.keys(tagCounts);
+  const paths = tagKeys.map((tag) => ({
+    tag: encodeURI(tag),
+  }));
+  return paths;
+};
+
+export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
+  const params = await props.params;
+  const tag = decodeURI(params.tag);
+  // Capitalize first letter and convert space to dash
+  const title = tag[0].toUpperCase() + tag.split(" ").join("-").slice(1);
+  const filteredPosts = allCoreContent(
+    sortPosts(
+      allBlogs.filter(
+        (post) => post.tags && post.tags.map((t) => slug(t)).includes(tag),
+      ),
+    ),
+  );
+  return <ListLayout posts={filteredPosts} title={title} />;
+}
+
+ OKK app/blog/tags/[tag]/page.tsx
+All done. 
+Results: 
+0 errors
+0 unmodified
+0 skipped
+1 ok
+Time elapsed: 0.217seconds 
+
+===== app/blog/posts/page/[page]/page.tsx =====
+Executing command: jscodeshift --dry --print --verbose=2 --parser=tsx --ignore-pattern=**/node_modules/** --ignore-pattern=**/.next/** --extensions=tsx,ts,jsx,js --transform /Users/ankush/.npm/_npx/04c93779852ad6b7/node_modules/@next/codemod/transforms/next-async-request-api.js app/blog/posts/page/[page]/page.tsx
+Processing 1 files... 
+Spawning 1 workers...
+Running in dry mode, no files will be written! 
+Sending 1 files to free worker...
+import ListLayout from "@/layouts/list-layout-with-tags";
+import { allCoreContent, sortPosts } from "pliny/utils/contentlayer";
+import { allBlogs } from "contentlayer/generated";
+import { Metadata } from "next";
+import siteMetadata from "@/data/siteMetadata";
+import { genPageMetadata } from "app/seo";
+
+const POSTS_PER_PAGE = 5;
+
+export async function generateMetadata(
+  props: {
+    params: Promise<{ page: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
+  const pageNumber = Number.parseInt(params.page, 10);
+  const page = Number.isNaN(pageNumber) || pageNumber < 1 ? 1 : pageNumber;
+  const pageUrl = `${siteMetadata.siteUrl}/blog/posts/page/${page}`;
+
+  return genPageMetadata({
+    title: `Posts - Page ${page}`,
+    description: `Page ${page} of blog posts`,
+    openGraph: {
+      title: `Posts - Page ${page} | ${siteMetadata.title}`,
+      description: `Page ${page} of blog posts`,
+      url: pageUrl,
+      siteName: siteMetadata.title,
+      images: [siteMetadata.socialBanner],
+      locale: "en_US",
+      type: "website",
+    },
+    alternates: {
+      canonical: pageUrl,
+    },
+  });
+}
+
+export const generateStaticParams = async () => {
+  const totalPages = Math.ceil(allBlogs.length / POSTS_PER_PAGE);
+  const paths = Array.from({ length: totalPages }, (_, i) => ({
+    page: (i + 1).toString(),
+  }));
+
+  return paths;
+};
+
+export default async function Page(props: { params: Promise<{ page: string }> }) {
+  const params = await props.params;
+  const posts = allCoreContent(sortPosts(allBlogs));
+  const pageNumber = parseInt(params.page as string);
+  const initialDisplayPosts = posts.slice(
+    POSTS_PER_PAGE * (pageNumber - 1),
+    POSTS_PER_PAGE * pageNumber,
+  );
+  const pagination = {
+    currentPage: pageNumber,
+    totalPages: Math.ceil(posts.length / POSTS_PER_PAGE),
+  };
+
+  return (
+    <ListLayout
+      posts={posts}
+      initialDisplayPosts={initialDisplayPosts}
+      pagination={pagination}
+      title="All Posts"
+    />
+  );
+}
+
+ OKK app/blog/posts/page/[page]/page.tsx
+All done. 
+Results: 
+0 errors
+0 unmodified
+0 skipped
+1 ok
+Time elapsed: 0.402seconds 
+
