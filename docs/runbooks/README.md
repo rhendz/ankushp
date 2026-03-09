@@ -19,7 +19,3 @@ This is the single entry point for operations/workflow guidance in this reposito
 
 - [Blog Content Handoff Runbook](./content-handoff.md)
 - [Collaborator Submission Prompt](./templates/blog-collaborator-submission-prompt.md)
-
-## Publishing Cadence
-
-- [Weekly Publishing Cadence Runbook](./weekly-publishing-cadence.md)
