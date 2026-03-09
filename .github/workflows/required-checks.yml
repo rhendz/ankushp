@@ -31,11 +31,12 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo "Validating PR title: $PR_TITLE"
-          if [[ "$PR_TITLE" =~ ^(feat|bug|chore)\([A-Z]+-[0-9]+\):\ .+ ]]; then
+          if [[ "$PR_TITLE" =~ ^(feat|bug|chore)(\([A-Za-z0-9._-]+\))?:[[:space:]].+ ]]; then
             echo "PR title format is valid."
           else
             echo "Invalid PR title format."
-            echo "Expected: feat|bug|chore(TEAM-123): short description"
+            echo "Expected: feat|bug|chore: short description"
+            echo "Optional scope is allowed: feat(scope): short description"
             exit 1
           fi
 
