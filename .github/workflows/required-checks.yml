@@ -31,7 +31,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo "Validating PR title: $PR_TITLE"
-          if [[ "$PR_TITLE" =~ ^(feat|bug|chore)(\([^)]+\))?:\ .+ ]]; then
+          if [[ "$PR_TITLE" =~ ^(feat|bug|chore)(\([A-Za-z0-9._-]+\))?:[[:space:]].+ ]]; then
             echo "PR title format is valid."
           else
             echo "Invalid PR title format."
