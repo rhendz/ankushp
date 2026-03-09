@@ -34,8 +34,10 @@ Optional:
 
 - `scripts/ga-seo-check.sh`: validates GA skill readiness from current env.
 - `scripts/ga-seo-report.sh`: executes the GA report skill with sensible defaults.
+- `scripts/agent-health-check.sh`: validates installed skills, script syntax/smoke checks, and local automation TOML/cwd/rrule sanity.
 
 ## Notes
 
 - `output/` artifacts are intentionally ignored in git.
 - Do not commit credentials or service-account JSON files.
+- If no GA env is configured, `agent-health-check.sh` skips GA readiness as non-blocking.
