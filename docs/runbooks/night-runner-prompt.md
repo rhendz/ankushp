@@ -18,6 +18,8 @@ Run configuration (strict unattended defaults):
 - MAX_NO_PROGRESS_CYCLES = 2
 - MAX_MINUTES_PER_ISSUE = 30
 - MAX_CONSECUTIVE_FAILURES = 2
+- NO_DIRECTION_CONSECUTIVE_THRESHOLD = 2
+- NO_DIRECTION_TOTAL_THRESHOLD = 3
 - MAX_HOURS_PER_RUN = 4
 - SPEC_PATH = docs/specs (fallback: docs/ if missing)
 
@@ -66,6 +68,12 @@ State transitions:
 - blocked: external dependency/prerequisite unresolved
 - backlogged: stuck policy triggered
 
+Autonomy stop condition (explicit):
+- If no ready issues remain and all remaining work requires human decision/input (product choice, missing credentials/access, unclear acceptance criteria, unresolved dependency), stop run early.
+- Track issues that are blocked/backlogged specifically due to missing human input.
+- If NO_DIRECTION_CONSECUTIVE_THRESHOLD is reached, stop run early to avoid thrashing.
+- If NO_DIRECTION_TOTAL_THRESHOLD is reached within a run, stop run early even if not consecutive.
+
 Git/GitHub workflow (must follow AGENTS.md):
 - Create GitHub Issue before implementation unless explicitly told to skip.
 - Use matching template in .github/ISSUE_TEMPLATE/ (feature/bug/chore).
@@ -88,6 +96,7 @@ Stop conditions:
 - No queued issues remain in sprint
 - MAX_CONSECUTIVE_FAILURES reached
 - MAX_HOURS_PER_RUN reached
+- Autonomy stop condition triggered
 
 End-of-run:
 1) Ignore backlogged items for sprint completion.
@@ -119,3 +128,9 @@ Required output at end of run:
 - Backlogged issues with unblock plans
 - Retro notes
 - Proposed next sprint issue list
+
+Required output when autonomy stop condition triggers:
+- reason autonomy stopped
+- exact decisions/inputs needed from human
+- minimal next-step options (1-3)
+- recommended first issue to resume once input is provided
