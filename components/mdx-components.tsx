@@ -1,5 +1,3 @@
-import dynamic from 'next/dynamic'
-
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion'
 
 import TOCInline from 'pliny/ui/TOCInline'
@@ -9,11 +7,8 @@ import type { MDXComponents } from 'mdx/types'
 import Caption from './caption'
 import Image from './image'
 import CustomLink from './link'
+import Mermaid from './mermaid-lazy'
 import TableWrapper from './table-wrapper'
-
-const Mermaid = dynamic(() => import('./mermaid'), {
-  ssr: false,
-})
 
 import Pre from './pre'
 

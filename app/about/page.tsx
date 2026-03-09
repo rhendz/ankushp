@@ -1,11 +1,11 @@
-import { components } from "@/components/mdx-components";
 import { Authors, allAuthors } from "contentlayer/generated";
-import { MDXLayoutRenderer } from "pliny/mdx-components";
 import AuthorLayout from "@/layouts/author-layout";
 import { coreContent } from "pliny/utils/contentlayer";
 import { genPageMetadata } from "app/seo";
+import MdxRenderContent from "@/components/mdx-render-content";
 
 export const metadata = genPageMetadata({ title: "About" });
+export const dynamic = "force-dynamic";
 
 export default function Page() {
   const author = allAuthors.find((p) => p.slug === "default") as Authors;
@@ -14,7 +14,7 @@ export default function Page() {
   return (
     <>
       <AuthorLayout content={mainContent}>
-        <MDXLayoutRenderer code={author.body.code} components={components} />
+        <MdxRenderContent code={author.body.code} />
       </AuthorLayout>
     </>
   );
