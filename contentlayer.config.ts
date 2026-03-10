@@ -1,4 +1,4 @@
-import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer/source-files'
+import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import readingTime from 'reading-time'
 import GithubSlugger from 'github-slugger'
@@ -165,26 +165,30 @@ export const Authors = defineDocumentType(() => ({
   computedFields,
 }))
 
+const remarkPlugins = [
+  remarkExtractFrontmatter,
+  remarkGfm,
+  remarkCodeTitles,
+  remarkMath,
+  remarkImgToJsx,
+] as any[]
+
+const rehypePlugins = [
+  rehypeSlug,
+  rehypeAutolinkHeadings,
+  rehypeKatex,
+  [rehypeCitation, { path: path.join(root, 'data') }],
+  [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
+  rehypePresetMinify,
+] as any[]
+
 export default makeSource({
   contentDirPath: 'data',
   documentTypes: [Blog, Authors],
   mdx: {
     cwd: process.cwd(),
-    remarkPlugins: [
-      remarkExtractFrontmatter,
-      remarkGfm,
-      remarkCodeTitles,
-      remarkMath,
-      remarkImgToJsx,
-    ],
-    rehypePlugins: [
-      rehypeSlug,
-      rehypeAutolinkHeadings,
-      rehypeKatex,
-      [rehypeCitation, { path: path.join(root, 'data') }],
-      [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
-      rehypePresetMinify,
-    ],
+    remarkPlugins,
+    rehypePlugins,
   },
   onSuccess: async (importData) => {
     patchGeneratedJsonImports()

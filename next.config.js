@@ -1,4 +1,4 @@
-const { withContentlayer } = require('next-contentlayer')
+const { withContentlayer } = require('next-contentlayer2')
 
 // Ensures process environment variables are expanded
 const dotenvExpand = require('dotenv-expand')
@@ -79,9 +79,6 @@ module.exports = () => {
           hostname: 'picsum.photos',
         },
       ],
-    },
-    experimental: {
-      esmExternals: 'loose',
     },
     async headers() {
       return [

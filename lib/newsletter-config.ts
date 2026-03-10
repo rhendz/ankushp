@@ -2,18 +2,18 @@ import siteMetadata from '@/data/siteMetadata'
 
 export type NewsletterProvider =
   | 'buttondown'
+  | 'beehiiv'
   | 'convertkit'
   | 'klaviyo'
   | 'mailchimp'
-  | 'revue'
   | 'emailoctopus'
 
 const requiredEnvByProvider: Record<NewsletterProvider, string[]> = {
   buttondown: ['BUTTONDOWN_API_KEY'],
+  beehiiv: ['BEEHIIV_API_KEY', 'BEEHIIV_PUBLICATION_ID'],
   convertkit: ['CONVERTKIT_API_KEY', 'CONVERTKIT_FORM_ID'],
   klaviyo: ['KLAVIYO_API_KEY', 'KLAVIYO_LIST_ID'],
   mailchimp: ['MAILCHIMP_API_KEY', 'MAILCHIMP_API_SERVER', 'MAILCHIMP_AUDIENCE_ID'],
-  revue: ['REVUE_API_KEY'],
   emailoctopus: ['EMAILOCTOPUS_API_KEY', 'EMAILOCTOPUS_LIST_ID'],
 }
 
