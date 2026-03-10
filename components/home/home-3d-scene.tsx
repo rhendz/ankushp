@@ -3,7 +3,6 @@
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
 import Home3DFallback from '@/components/home/home-3d-fallback'
@@ -16,6 +15,7 @@ const fragmentShader = /*glsl*/ `
   uniform float u_hue;
   uniform float u_saturation;
   uniform float u_lightness;
+  uniform float u_rim_strength;
 
   varying vec2 vUv;
   varying float vDisplacement;
@@ -89,6 +89,12 @@ const fragmentShader = /*glsl*/ `
     
     // Convert back to RGB
     vec3 finalColor = hsl2rgb(hsl);
+
+    // Subtle shader-level rim glow (screen-space independent, no post effects)
+    float centerDistance = length((vUv - 0.5) * 2.0);
+    float rim = smoothstep(0.35, 1.0, centerDistance);
+    finalColor += vec3(0.14, 0.16, 0.22) * rim * u_rim_strength;
+    finalColor = clamp(finalColor, 0.0, 1.0);
 
     gl_FragColor = vec4(finalColor, 1.0);
   }
@@ -203,11 +209,39 @@ const vertexShader = /*glsl*/ `
 
 type BlobProps = {
   darkMode?: boolean
+  scale?: number
 }
 
-const Blob = ({ darkMode = false }: BlobProps) => {
+const Blob = ({ darkMode = false, scale = 1.2 }: BlobProps) => {
   const mesh = useRef<THREE.Mesh>(null)
   const hover = useRef(false)
+  const haloTexture = useMemo(() => {
+    const size = 256
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+    gradient.addColorStop(0, 'rgba(180, 208, 255, 0.42)')
+    gradient.addColorStop(0.35, 'rgba(140, 185, 255, 0.22)')
+    gradient.addColorStop(0.7, 'rgba(120, 160, 255, 0.08)')
+    gradient.addColorStop(1, 'rgba(120, 160, 255, 0)')
+
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, size, size)
+
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.needsUpdate = true
+    return texture
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      haloTexture?.dispose()
+    }
+  }, [haloTexture])
 
   const uniforms = useMemo(
     () => ({
@@ -220,6 +254,7 @@ const Blob = ({ darkMode = false }: BlobProps) => {
       u_hue: { value: 1.0 },
       u_saturation: { value: 1.0 },
       u_lightness: { value: 0.2 },
+      u_rim_strength: { value: 0.0 },
     }),
     []
   )
@@ -238,33 +273,48 @@ const Blob = ({ darkMode = false }: BlobProps) => {
         0.02
       )
 
-      shaderMaterial.uniforms.u_lightness.value = darkMode ? 0.0 : 0.2
+      shaderMaterial.uniforms.u_lightness.value = darkMode ? 0.05 : 0.2
+      shaderMaterial.uniforms.u_rim_strength.value = darkMode ? 0.56 : 0.0
     }
   })
 
   return (
-    <mesh
-      ref={mesh}
+    <group
       position={[0, 0, 0]}
       rotation={[-Math.PI / 4, 0, 0]}
-      scale={1.25}
       onPointerOver={() => (hover.current = true)}
       onPointerOut={() => (hover.current = false)}
     >
-      <icosahedronGeometry args={[1.5, 100]} />
-      <shaderMaterial
-        fragmentShader={fragmentShader}
-        vertexShader={vertexShader}
-        uniforms={uniforms}
-        wireframe={darkMode ? false : true}
-      />
-    </mesh>
+      {darkMode && haloTexture ? (
+        <sprite position={[0, 0, -0.25]} scale={[scale * 4.8, scale * 4.8, 1]}>
+          <spriteMaterial
+            map={haloTexture}
+            color="#a4bfff"
+            transparent
+            opacity={0.5}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+            depthTest={false}
+          />
+        </sprite>
+      ) : null}
+      <mesh ref={mesh} scale={scale}>
+        <icosahedronGeometry args={[1.5, 100]} />
+        <shaderMaterial
+          fragmentShader={fragmentShader}
+          vertexShader={vertexShader}
+          uniforms={uniforms}
+          wireframe={darkMode ? false : true}
+        />
+      </mesh>
+    </group>
   )
 }
 
 export default function Home3DScene() {
   const { resolvedTheme } = useTheme()
   const [canRender3D, setCanRender3D] = useState<boolean | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
   const isDarkMode = resolvedTheme === 'dark'
 
   useEffect(() => {
@@ -281,20 +331,31 @@ export default function Home3DScene() {
     }
   }, [])
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)')
+    const update = () => setIsMobile(mediaQuery.matches)
+    update()
+    mediaQuery.addEventListener('change', update)
+    return () => mediaQuery.removeEventListener('change', update)
+  }, [])
+
   if (!canRender3D) {
     return <Home3DFallback />
   }
 
   return (
     <div className="absolute inset-0">
-      <Canvas className="z-0 h-full w-full">
-        <Blob darkMode={isDarkMode} />
+      <Canvas
+        className="z-0 h-full w-full bg-transparent"
+        gl={{ alpha: true, antialias: true }}
+        onCreated={({ gl, scene }) => {
+          scene.background = null
+          gl.setClearColor(0x000000, 0)
+          gl.setClearAlpha(0)
+        }}
+      >
+        <Blob darkMode={isDarkMode} scale={isMobile ? 0.95 : 1.2} />
         <OrbitControls enablePan={false} enableZoom={false} />
-        {isDarkMode && (
-          <EffectComposer>
-            <Bloom intensity={0.2} luminanceThreshold={0.1} />
-          </EffectComposer>
-        )}
       </Canvas>
     </div>
   )
