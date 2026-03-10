@@ -14,7 +14,7 @@ const GENERATED_SEARCH_INDEX_PATH =
 
 const child = spawn(
   process.platform === 'win32' ? 'npx.cmd' : 'npx',
-  ['cross-env', `INIT_CWD=${process.cwd()}`, 'contentlayer', 'build'],
+  ['cross-env', `INIT_CWD=${process.cwd()}`, 'contentlayer2', 'build'],
   {
     cwd: process.cwd(),
     env: process.env,

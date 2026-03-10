@@ -5,7 +5,6 @@ import { genPageMetadata } from "app/seo";
 import MdxRenderContent from "@/components/mdx-render-content";
 
 export const metadata = genPageMetadata({ title: "About" });
-export const dynamic = "force-dynamic";
 
 export default function Page() {
   const author = allAuthors.find((p) => p.slug === "default") as Authors;

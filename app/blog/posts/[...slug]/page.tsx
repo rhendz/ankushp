@@ -25,7 +25,6 @@ const layouts = {
   PostLayout,
   PostBanner,
 };
-export const dynamic = "force-dynamic";
 
 function getRelatedPosts(
   currentPost: Blog,
