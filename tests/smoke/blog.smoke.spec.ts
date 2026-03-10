@@ -1,6 +1,19 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('blog smoke suite', () => {
+  test('home page loads without client runtime errors', async ({ page }) => {
+    const runtimeErrors: string[] = []
+    page.on('pageerror', (error) => {
+      runtimeErrors.push(error.message)
+    })
+
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: /Ankush Patel/i })).toBeVisible()
+    await page.waitForTimeout(500)
+
+    expect(runtimeErrors, `unexpected client errors: ${runtimeErrors.join(' | ')}`).toHaveLength(0)
+  })
+
   test('blog landing page loads', async ({ page }) => {
     await page.goto('/blog')
 
