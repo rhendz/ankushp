@@ -6,8 +6,9 @@ import Link from './link'
 import MobileNav from './mobile-nav'
 import ThemeSwitch from './theme-switch'
 import { usePathname } from 'next/navigation'
-import { KBarSearchProvider, KBarSearchProps } from './kbar/kbar'
-import KBarButton from './kbar/kbar-button'
+import dynamic from 'next/dynamic'
+
+const BlogSearch = dynamic(() => import('./kbar/blog-search'), { ssr: false })
 
 const NavLinks = ({ links }) => {
   return (
@@ -55,11 +56,7 @@ const Header = () => {
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
         <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
-        {isBlogPage && siteMetadata.search?.provider === 'kbar' && (
-          <KBarSearchProvider kbarConfig={siteMetadata.search.kbarConfig as KBarSearchProps}>
-            <KBarButton />
-          </KBarSearchProvider>
-        )}
+        {isBlogPage && siteMetadata.search?.provider === 'kbar' && <BlogSearch />}
         <ThemeSwitch />
         <MobileNav />
       </div>
