@@ -1,8 +1,15 @@
 'use client'
 
-import { Comments as CommentsComponent } from 'pliny/comments'
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import siteMetadata from '@/data/siteMetadata'
+
+const CommentsComponent = dynamic(
+  () => import('pliny/comments').then((mod) => mod.Comments),
+  {
+    ssr: false,
+  }
+)
 
 export default function Comments({ slug }: { slug: string }) {
   const [loadComments, setLoadComments] = useState(false)
