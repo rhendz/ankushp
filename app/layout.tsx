@@ -99,7 +99,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
 
-      <body className="bg-primary text-secondary">
+      <body className="bg-primary text-secondary" suppressHydrationWarning>
         <Providers>
           {googleAnalyticsId && (
             <Analytics googleAnalyticsId={googleAnalyticsId} />
