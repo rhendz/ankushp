@@ -71,6 +71,9 @@ child.on('exit', (code) => {
     combinedOutput.includes('Generated ') &&
     combinedOutput.includes('documents in .contentlayer') &&
     combinedOutput.includes('ERR_INVALID_ARG_TYPE')
+  const hasFatalModuleError =
+    combinedOutput.includes('ERR_MODULE_NOT_FOUND') ||
+    combinedOutput.includes("Cannot find package '@opentelemetry/api'")
 
   process.stdout.write(
     sanitizeOutput(stdout, { suppressKnownExitBug: hasKnownExitBug && hasGeneratedArtifacts })
@@ -78,6 +81,11 @@ child.on('exit', (code) => {
   process.stderr.write(
     sanitizeOutput(stderr, { suppressKnownExitBug: hasKnownExitBug && hasGeneratedArtifacts })
   )
+
+  if (hasFatalModuleError) {
+    process.stderr.write('Contentlayer build failed due to missing runtime module dependency.\n')
+    process.exit(1)
+  }
 
   if (code === 0 || (hasKnownExitBug && hasGeneratedArtifacts)) {
     if (hasKnownExitBug) {
