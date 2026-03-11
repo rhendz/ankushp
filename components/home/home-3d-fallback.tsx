@@ -15,9 +15,6 @@ export default function Home3DFallback() {
       <div className="absolute left-1/2 top-1/2 h-[19rem] w-[19rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-secondary/20 motion-safe:animate-[spin_20s_linear_infinite] lg:h-[27rem] lg:w-[27rem]" />
       <div className="absolute left-1/2 top-1/2 h-[13rem] w-[13rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-secondary/25 motion-safe:animate-[spin_13s_linear_infinite_reverse] lg:h-[18rem] lg:w-[18rem]" />
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.24em] text-secondary/55">
-        Interactive Visual
-      </div>
     </div>
   )
 }
