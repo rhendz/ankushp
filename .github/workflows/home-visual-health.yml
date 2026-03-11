@@ -1,0 +1,76 @@
+name: Home Visual Health
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: home-visual-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HOME_VISUAL_HEALTH_URL: https://www.ankushp.com
+      HOME_VISUAL_HEALTH_SETTLE_MS: 4000
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Run home visual health check
+        id: health
+        run: npm run health:home-visual
+
+      - name: Create incident issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'bug: homepage visual health check failed'
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const existing = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            })
+
+            const duplicate = existing.find((issue) => issue.title.toLowerCase() === title)
+            if (duplicate) {
+              core.info(`Open incident already exists: #${duplicate.number}`)
+              return
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body: [
+                'Automated home visual health check detected a production runtime regression.',
+                '',
+                `- Workflow run: ${runUrl}`,
+                '- Environment: production',
+                '- Check script: `npm run health:home-visual`',
+                '',
+                'Please inspect console/runtime errors and confirm the homepage interactive visual path is healthy.'
+              ].join('\n'),
+              labels: ['bug'],
+            })
