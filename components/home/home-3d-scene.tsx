@@ -215,12 +215,37 @@ export default function Home3DScene() {
     const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 100)
     camera.position.set(0, 0, 9)
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    renderer.setClearColor(0x000000, 0)
-    mountEl.appendChild(renderer.domElement)
+    const canvas = document.createElement('canvas')
+    mountEl.appendChild(canvas)
 
-    const geometry = new THREE.IcosahedronGeometry(1.5, 100)
+    const rendererOptions: Array<THREE.WebGLRendererParameters> = [
+      { canvas, alpha: true, antialias: true, powerPreference: 'high-performance' },
+      { canvas, alpha: true, antialias: false, powerPreference: 'high-performance' },
+      { canvas, alpha: true, antialias: false, powerPreference: 'default' },
+    ]
+
+    let renderer: THREE.WebGLRenderer | null = null
+    let rendererError: unknown = null
+
+    for (const options of rendererOptions) {
+      try {
+        renderer = new THREE.WebGLRenderer(options)
+        break
+      } catch (error) {
+        rendererError = error
+      }
+    }
+
+    if (!renderer) {
+      canvas.remove()
+      throw rendererError instanceof Error ? rendererError : new Error('Unable to initialize WebGL renderer')
+    }
+
+    const webglRenderer = renderer
+    webglRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    webglRenderer.setClearColor(0x000000, 0)
+
+    const geometry = new THREE.IcosahedronGeometry(1.5, 48)
     const material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -271,7 +296,7 @@ export default function Home3DScene() {
       const h = mountEl.clientHeight || window.innerHeight
       camera.aspect = w / h
       camera.updateProjectionMatrix()
-      renderer.setSize(w, h)
+      webglRenderer.setSize(w, h)
 
       const isMobile = window.matchMedia('(max-width: 768px)').matches
       const scale = isMobile ? 0.95 : 1.2
@@ -296,7 +321,7 @@ export default function Home3DScene() {
       material.wireframe = !isDarkMode
 
       blob.rotation.y += 0.002
-      renderer.render(scene, camera)
+      webglRenderer.render(scene, camera)
 
       if (!firstFrame) {
         firstFrame = true
@@ -323,8 +348,8 @@ export default function Home3DScene() {
       }
 
       haloTexture?.dispose()
-      renderer.dispose()
-      renderer.domElement.remove()
+      webglRenderer.dispose()
+      webglRenderer.domElement.remove()
     }
   }, [isDarkMode, uniforms])
 

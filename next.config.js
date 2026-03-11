@@ -64,7 +64,7 @@ module.exports = () => {
   const plugins = process.env.SKIP_CONTENTLAYER ? [withBundleAnalyzer] : [withContentlayer, withBundleAnalyzer]
   return plugins.reduce((acc, next) => next(acc), {
     reactStrictMode: true,
-    transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+    transpilePackages: ['three'],
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
     images: {
       remotePatterns: [
