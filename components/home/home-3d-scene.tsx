@@ -5,7 +5,6 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from 'next-themes'
-import Home3DFallback from '@/components/home/home-3d-fallback'
 
 const fragmentShader = /*glsl*/ `
   uniform float u_intensity;
@@ -313,23 +312,8 @@ const Blob = ({ darkMode = false, scale = 1.2 }: BlobProps) => {
 
 export default function Home3DScene() {
   const { resolvedTheme } = useTheme()
-  const [canRender3D, setCanRender3D] = useState<boolean | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const isDarkMode = resolvedTheme === 'dark'
-
-  useEffect(() => {
-    try {
-      const canvas = document.createElement('canvas')
-      const gl =
-        canvas.getContext('webgl2') ??
-        canvas.getContext('webgl') ??
-        canvas.getContext('experimental-webgl')
-
-      setCanRender3D(Boolean(gl))
-    } catch {
-      setCanRender3D(false)
-    }
-  }, [])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)')
@@ -338,10 +322,6 @@ export default function Home3DScene() {
     mediaQuery.addEventListener('change', update)
     return () => mediaQuery.removeEventListener('change', update)
   }, [])
-
-  if (!canRender3D) {
-    return <Home3DFallback />
-  }
 
   return (
     <div className="absolute inset-0">
