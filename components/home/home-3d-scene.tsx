@@ -211,6 +211,22 @@ type BlobProps = {
   scale?: number
 }
 
+type SceneReadyProbeProps = {
+  onReady: () => void
+}
+
+const SceneReadyProbe = ({ onReady }: SceneReadyProbeProps) => {
+  const didSignal = useRef(false)
+
+  useFrame(() => {
+    if (didSignal.current) return
+    didSignal.current = true
+    onReady()
+  })
+
+  return null
+}
+
 const Blob = ({ darkMode = false, scale = 1.2 }: BlobProps) => {
   const mesh = useRef<THREE.Mesh>(null)
   const hover = useRef(false)
@@ -313,6 +329,7 @@ const Blob = ({ darkMode = false, scale = 1.2 }: BlobProps) => {
 export default function Home3DScene() {
   const { resolvedTheme } = useTheme()
   const [isMobile, setIsMobile] = useState(false)
+  const [sceneVisible, setSceneVisible] = useState(false)
   const isDarkMode = resolvedTheme === 'dark'
 
   useEffect(() => {
@@ -324,7 +341,11 @@ export default function Home3DScene() {
   }, [])
 
   return (
-    <div className="absolute inset-0">
+    <div
+      className={`absolute inset-0 transition-opacity duration-500 ease-out ${
+        sceneVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       <Canvas
         className="z-0 h-full w-full bg-transparent"
         gl={{ alpha: true, antialias: true }}
@@ -334,6 +355,7 @@ export default function Home3DScene() {
           gl.setClearAlpha(0)
         }}
       >
+        <SceneReadyProbe onReady={() => setSceneVisible(true)} />
         <Blob darkMode={isDarkMode} scale={isMobile ? 0.95 : 1.2} />
         <OrbitControls enablePan={false} enableZoom={false} />
       </Canvas>
