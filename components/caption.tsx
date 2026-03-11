@@ -3,7 +3,7 @@ interface CaptionProps {
   caption: string // The caption text
 }
 
-const Caption = ({ children, caption }: CaptionProps): JSX.Element => {
+const Caption = ({ children, caption }: CaptionProps) => {
   return (
     <figure className="flex flex-col">
       <div className="w-full">{children}</div>

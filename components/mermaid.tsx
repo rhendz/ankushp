@@ -35,7 +35,7 @@ const initializeMermaid = () => {
   })
 }
 
-const Mermaid = ({ chart }: MermaidProps): JSX.Element => {
+const Mermaid = ({ chart }: MermaidProps) => {
   useEffect(() => {
     initializeMermaid()
     mermaid.contentLoaded()
