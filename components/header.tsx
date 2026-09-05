@@ -16,7 +16,7 @@ const NavLinks = ({ links }: { links: NavLink[] }) => {
   return (
     <>
       {links.map((link) => (
-        <Link key={link.title} href={link.href} className="hidden font-medium sm:block">
+        <Link key={link.title} href={link.href} className="font-medium">
           {link.title}
         </Link>
       ))}
@@ -59,7 +59,10 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
-        <nav aria-label="Main" className="contents">
+        <nav
+          aria-label="Main"
+          className="hidden items-center space-x-4 sm:flex sm:space-x-6"
+        >
           <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
         </nav>
         {isBlogPage && siteMetadata.search?.provider === 'kbar' && <BlogSearch />}
