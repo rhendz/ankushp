@@ -70,10 +70,17 @@ Fail:
 ## Evidence
 
 - Raw run summary CSV: `docs/perf/evidence/issue-70/lighthouse-desktop-summary.csv`
-- Lighthouse desktop run 1: `docs/perf/evidence/issue-70/lighthouse-desktop-run-1.report.html`
-- Lighthouse desktop run 2: `docs/perf/evidence/issue-70/lighthouse-desktop-run-2.report.html`
-- Lighthouse desktop run 3: `docs/perf/evidence/issue-70/lighthouse-desktop-run-3.report.html`
+- Lighthouse desktop run 1: `docs/perf/evidence/issue-70/lighthouse-desktop-run-1.report.json`
+- Lighthouse desktop run 2: `docs/perf/evidence/issue-70/lighthouse-desktop-run-2.report.json`
+- Lighthouse desktop run 3: `docs/perf/evidence/issue-70/lighthouse-desktop-run-3.report.json`
 - Desktop route screenshot: `docs/perf/evidence/issue-70/homepage-desktop.png`
+
+The matching `.report.html` files were removed: Lighthouse writes both formats
+from a single run, and each HTML file is the same LHR payload as its `.json`
+sibling wrapped in a viewer bundle (~1.5 MB for the three). No measurement is
+lost. To read a run as a full report, drop its `.json` into the Lighthouse
+Viewer at <https://googlechrome.github.io/lighthouse/viewer/>, or run
+`npx -y lighthouse --view` against a saved JSON.
 
 ## Follow-up Checklist
 
