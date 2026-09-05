@@ -6,4 +6,5 @@ export const newsletterMessages = {
   subscribed: "You're subscribed. Thanks for joining.",
   alreadySubscribed: "You're already subscribed with this email.",
   providerApiError: "We couldn't complete your subscription. Please try again in a moment.",
+  rateLimited: 'Too many sign-up attempts. Please try again in a few minutes.',
 } as const

@@ -5,6 +5,8 @@ import {
   getNewsletterStatus,
 } from "@/lib/newsletter-config";
 import { newsletterMessages } from "@/lib/newsletter-messages";
+import { consumeRateLimit } from "@/lib/rate-limit";
+import { createHash } from "node:crypto";
 
 type ErrorCategory = "provider" | "missing-config" | "api-failure";
 type LogLevel = "info" | "warn" | "error";
@@ -20,6 +22,33 @@ const userFacingUnavailableMessage = newsletterMessages.unavailable;
 const cacheHeaders = {
   "Cache-Control": "public, max-age=300, stale-while-revalidate=600",
 };
+
+// Anyone can POST here, and every accepted request costs a call to the upstream
+// provider, so cap sign-up attempts per client.
+const SUBSCRIBE_LIMIT_PER_WINDOW = 5;
+const SUBSCRIBE_WINDOW_SECONDS = 60 * 10;
+const MAX_EMAIL_LENGTH = 254;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function getClientIp(request: NextRequest) {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0]?.trim() || "unknown";
+  }
+  return request.headers.get("x-real-ip") || "unknown";
+}
+
+function subscribeRateLimitKey(request: NextRequest) {
+  const fingerprint = createHash("sha256")
+    .update(getClientIp(request), "utf8")
+    .digest("hex")
+    .slice(0, 24);
+  return `newsletter:rl:${fingerprint}`;
+}
+
+function isValidEmail(email: string) {
+  return email.length <= MAX_EMAIL_LENGTH && EMAIL_PATTERN.test(email);
+}
 
 const errorByPath = {
   providerUnavailable: {
@@ -133,6 +162,33 @@ export async function POST(request: NextRequest) {
   const provider = getNewsletterProvider();
   const status = getNewsletterStatus();
 
+  const rateLimit = await consumeRateLimit({
+    key: subscribeRateLimitKey(request),
+    limit: SUBSCRIBE_LIMIT_PER_WINDOW,
+    windowSeconds: SUBSCRIBE_WINDOW_SECONDS,
+  });
+
+  if (!rateLimit.allowed) {
+    logNewsletter("warn", "newsletter.post.rate-limited", {
+      provider,
+      configured: status.configured,
+      errorCategory: "provider",
+      errorCode: "NEWSLETTER_RATE_LIMITED",
+      responseStatus: 429,
+    });
+    return NextResponse.json(
+      {
+        error: newsletterMessages.rateLimited,
+        code: "NEWSLETTER_RATE_LIMITED",
+        category: "provider",
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      },
+    );
+  }
+
   logNewsletter("info", "newsletter.post.received", {
     provider,
     configured: status.configured,
@@ -163,7 +219,33 @@ export async function POST(request: NextRequest) {
   }
 
   if (provider === "buttondown") {
-    const { email } = (await request.json()) as { email?: string };
+    let email: string | undefined;
+    try {
+      ({ email } = (await request.json()) as { email?: string });
+    } catch {
+      email = undefined;
+    }
+
+    email = typeof email === "string" ? email.trim() : undefined;
+
+    if (email && !isValidEmail(email)) {
+      logNewsletter("warn", "newsletter.post.failed", {
+        provider,
+        configured: true,
+        errorCategory: "provider",
+        errorCode: "NEWSLETTER_EMAIL_INVALID",
+        responseStatus: 400,
+      });
+      return NextResponse.json(
+        {
+          error: newsletterMessages.emailValidation,
+          code: "NEWSLETTER_EMAIL_INVALID",
+          category: "provider",
+        },
+        { status: 400 },
+      );
+    }
+
     if (!email) {
       logNewsletter("warn", "newsletter.post.failed", {
         provider,

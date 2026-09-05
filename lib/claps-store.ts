@@ -1,5 +1,7 @@
-import { Redis } from '@upstash/redis'
+import type { Redis } from '@upstash/redis'
 import { createHash } from 'node:crypto'
+
+import { getRedisClient } from '@/lib/redis'
 
 const CLAPS_CAP_PER_VISITOR = 50
 const RATE_LIMIT_PER_MINUTE = 120
@@ -28,21 +30,12 @@ function getRedisStatus(): ClapStoreStatus {
     return { configured: true, mode: 'local' }
   }
 
-  const url = process.env.UPSTASH_REDIS_REST_KV_REST_API_URL
-  const token = process.env.UPSTASH_REDIS_REST_KV_REST_API_TOKEN
-
-  if (!url || !token) {
+  const redis = getRedisClient()
+  if (!redis) {
     return { configured: false }
   }
 
-  return {
-    configured: true,
-    mode: 'redis',
-    redis: new Redis({
-      url,
-      token,
-    }),
-  }
+  return { configured: true, mode: 'redis', redis }
 }
 
 function totalKey(slug: string) {
