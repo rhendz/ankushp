@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * Blog-route styles for MDX output (task lists, footnotes, citations, KaTeX).
+ * Deliberately has no `@tailwind` directives: `app/globals.css` already emits the
+ * full Tailwind build for every route, and repeating them here shipped a second
+ * ~60KB copy of Tailwind on blog pages. `@apply` still resolves without them.
+ */
 
 .task-list-item::before {
   @apply hidden;
