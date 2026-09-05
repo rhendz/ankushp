@@ -6,7 +6,7 @@ import { slug } from "github-slugger";
 import tagData from "app/blog/tag-data.json";
 import { allBlogs } from "contentlayer/generated";
 import { sortPosts, allCoreContent } from "pliny/utils/contentlayer";
-import { formatDate } from "pliny/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 import NewsletterCta from "@/components/newsletter-cta";
 
 const MAX_DISPLAY = 5;
