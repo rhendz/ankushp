@@ -6,7 +6,9 @@ const siteMetadata = {
   description: 'ML engineer pioneering human-centered AI solutions',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+  // Falls back to the canonical production origin so `new URL(siteUrl)` in the
+  // metadata/sitemap/robots paths cannot throw when the env var is unset.
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://ankushp.com',
   siteRepo: 'https://github.com/rhendz/ankushp',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/social-banner.png',

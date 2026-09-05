@@ -64,6 +64,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       className={`${fontSans.variable} ${fontMono.variable} scroll-smooth`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
@@ -91,11 +92,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           color="#171219"
         />
         <link rel="shortcut icon" href="/static/favicons/favicon.ico" />
-        <meta name="msapplication-TileColor" content="#2d89ef" />
-        <meta
-          name="msapplication-config"
-          content="/static/favicons/browserconfig.xml"
-        />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
 

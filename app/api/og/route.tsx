@@ -2,6 +2,11 @@ import { ImageResponse } from "next/og";
 // App router includes @vercel/og.
 // No need to install it.
 
+// Next 16 deprecates the edge runtime, but the nodejs runtime cannot load the
+// font below: webpack rewrites `new URL(..., import.meta.url)` to a relative
+// asset path ("/_next/static/media/Inter-ExtraBold.*.ttf") that `fetch` rejects
+// with "Failed to parse URL". Migrating needs the font read from disk (or
+// inlined) first; until then this stays on edge.
 export const runtime = "edge";
 
 const key = crypto.subtle.importKey(
