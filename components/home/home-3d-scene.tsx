@@ -262,10 +262,10 @@ export default function Home3DScene() {
 
     if (isDarkMode) {
       const size = 256
-      const canvas = document.createElement('canvas')
-      canvas.width = size
-      canvas.height = size
-      const ctx = canvas.getContext('2d')
+      const haloCanvas = document.createElement('canvas')
+      haloCanvas.width = size
+      haloCanvas.height = size
+      const ctx = haloCanvas.getContext('2d')
       if (ctx) {
         const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
         gradient.addColorStop(0, 'rgba(180, 208, 255, 0.42)')
@@ -275,7 +275,7 @@ export default function Home3DScene() {
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, size, size)
 
-        haloTexture = new THREE.CanvasTexture(canvas)
+        haloTexture = new THREE.CanvasTexture(haloCanvas)
         const spriteMat = new THREE.SpriteMaterial({
           map: haloTexture,
           color: '#a4bfff',
@@ -314,27 +314,73 @@ export default function Home3DScene() {
     let firstFrame = false
     const clock = new THREE.Clock()
 
-    const tick = () => {
-      uniforms.u_time.value = 0.4 * clock.getElapsedTime()
+    const applyThemeUniforms = () => {
       uniforms.u_lightness.value = isDarkMode ? 0.05 : 0.2
       uniforms.u_rim_strength.value = isDarkMode ? 0.56 : 0.0
       material.wireframe = !isDarkMode
+    }
 
-      blob.rotation.y += 0.002
+    const renderFrame = () => {
+      applyThemeUniforms()
       webglRenderer.render(scene, camera)
 
       if (!firstFrame) {
         firstFrame = true
         setSceneVisible(true)
       }
+    }
 
+    const tick = () => {
+      uniforms.u_time.value = 0.4 * clock.getElapsedTime()
+      blob.rotation.y += 0.002
+      renderFrame()
       raf = window.requestAnimationFrame(tick)
     }
 
-    tick()
+    // Respect prefers-reduced-motion: draw one static frame instead of animating.
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    // The hero scrolls out of view on every page; keep the GPU idle once it does.
+    let isIntersecting = true
+    let isAnimating = false
+
+    const startAnimation = () => {
+      if (isAnimating || reducedMotion.matches || !isIntersecting) return
+      isAnimating = true
+      tick()
+    }
+
+    const stopAnimation = () => {
+      if (!isAnimating) return
+      isAnimating = false
+      window.cancelAnimationFrame(raf)
+    }
+
+    const syncAnimation = () => {
+      if (reducedMotion.matches || !isIntersecting) {
+        stopAnimation()
+        renderFrame()
+        return
+      }
+      startAnimation()
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting
+        syncAnimation()
+      },
+      { threshold: 0 }
+    )
+    observer.observe(mountEl)
+
+    reducedMotion.addEventListener('change', syncAnimation)
+    syncAnimation()
 
     return () => {
-      window.cancelAnimationFrame(raf)
+      stopAnimation()
+      observer.disconnect()
+      reducedMotion.removeEventListener('change', syncAnimation)
       window.removeEventListener('resize', resize)
 
       scene.remove(blob)
