@@ -3,15 +3,17 @@ import { NextRequest } from "next/server";
 import { GET, POST } from "@/app/api/claps/route";
 import { resetLocalClapStoreForTests } from "@/lib/claps-store";
 
-function requestWithCookie(
-  url: string,
-  init?: RequestInit & { cookie?: string },
-) {
-  const headers = new Headers(init?.headers);
-  if (init?.cookie) {
-    headers.set("cookie", init.cookie);
+type RequestWithCookieInit = ConstructorParameters<typeof NextRequest>[1] & {
+  cookie?: string;
+};
+
+function requestWithCookie(url: string, init: RequestWithCookieInit = {}) {
+  const { cookie, ...requestInit } = init;
+  const headers = new Headers(requestInit.headers);
+  if (cookie) {
+    headers.set("cookie", cookie);
   }
-  return new NextRequest(url, { ...init, headers });
+  return new NextRequest(url, { ...requestInit, headers });
 }
 
 describe("/api/claps", () => {
