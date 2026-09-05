@@ -10,11 +10,13 @@ import dynamic from 'next/dynamic'
 
 const BlogSearch = dynamic(() => import('./kbar/blog-search'), { ssr: false })
 
-const NavLinks = ({ links }) => {
+type NavLink = { href: string; title: string }
+
+const NavLinks = ({ links }: { links: NavLink[] }) => {
   return (
     <>
       {links.map((link) => (
-        <Link key={link.title} href={link.href} className="hidden font-medium sm:block">
+        <Link key={link.title} href={link.href} className="font-medium">
           {link.title}
         </Link>
       ))}
@@ -35,6 +37,8 @@ const Header = () => {
               <svg
                 viewBox="0 0 116.56 92.428"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                focusable="false"
                 className="h-8 w-8"
               >
                 <g transform="translate(-90.221 -58.786)">
@@ -55,7 +59,12 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
-        <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
+        <nav
+          aria-label="Main"
+          className="hidden items-center space-x-4 sm:flex sm:space-x-6"
+        >
+          <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
+        </nav>
         {isBlogPage && siteMetadata.search?.provider === 'kbar' && <BlogSearch />}
         <ThemeSwitch />
         <MobileNav />

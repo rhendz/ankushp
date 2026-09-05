@@ -4,7 +4,7 @@ import { KBarProvider } from 'kbar'
 import { useRouter } from 'next/navigation.js'
 import { KBarModal } from './kbar-modal'
 import { CoreContent, MDXDocument } from '../utils/contentlayer'
-import { formatDate } from '../utils/formate-date'
+import { formatDate } from '@/lib/format-date'
 
 export interface KBarSearchProps {
   searchDocumentsPath: string | false

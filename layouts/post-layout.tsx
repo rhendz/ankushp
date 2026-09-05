@@ -13,11 +13,14 @@ import NewsletterCta from '@/components/newsletter-cta'
 import RelatedPosts, { type RelatedPost } from '@/components/related-posts'
 import PostEngagementRail from '@/components/post-engagement-rail'
 
+// UTC for the same reason as lib/format-date: the post date is a calendar
+// date, and formatting it in the viewer's zone shifts it a day west of UTC.
 const postDateTemplate: Intl.DateTimeFormatOptions = {
   weekday: 'long',
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: 'UTC',
 }
 
 interface LayoutProps {
@@ -74,7 +77,7 @@ export default function PostLayout({
                           src={author.avatar}
                           width={38}
                           height={38}
-                          alt="avatar"
+                          alt={`${author.name} portrait`}
                           className="h-10 w-10 rounded-full"
                         />
                       )}

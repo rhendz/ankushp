@@ -2,10 +2,11 @@ import Link from "@/components/link";
 import Tag from "@/components/tag";
 import siteMetadata from "@/data/siteMetadata";
 import { blogLandingConfig } from "@/data/blogLanding";
+import { slug } from "github-slugger";
 import tagData from "app/blog/tag-data.json";
 import { allBlogs } from "contentlayer/generated";
 import { sortPosts, allCoreContent } from "pliny/utils/contentlayer";
-import { formatDate } from "pliny/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 import NewsletterCta from "@/components/newsletter-cta";
 
 const MAX_DISPLAY = 5;
@@ -32,7 +33,7 @@ const BlogHome = ({ posts }) => {
   const popularTags = Object.keys(tagCounts)
     .sort((a, b) => tagCounts[b] - tagCounts[a])
     .slice(0, MAX_POPULAR_TAGS)
-    .map((tag) => ({ label: tag, href: `/blog/tags/${tag}` }));
+    .map((tag) => ({ label: tag, href: `/blog/tags/${slug(tag)}` }));
 
   return (
     <>
@@ -101,9 +102,9 @@ const BlogHome = ({ posts }) => {
           </div>
         </div>
         <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+          <h2 className="text-3xl font-extrabold leading-9 tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             Latest
-          </h1>
+          </h2>
         </div>
         <ul className="divide-y divide-secondary/30">
           {!posts.length && "No posts found."}

@@ -43,9 +43,9 @@ describe('ClapButton', () => {
       cap: 50,
     }
 
-    let resolveFirstPost: (() => void) | null = null
+    const deferred: { resolveFirstPost?: () => void } = {}
     const firstPostPromise = new Promise<Response>((resolve) => {
-      resolveFirstPost = () => {
+      deferred.resolveFirstPost = () => {
         const firstAmount = postAmounts[0] ?? 1
         serverState = {
           ...serverState,
@@ -101,7 +101,7 @@ describe('ClapButton', () => {
 
     expect(postAmounts[0]).toBe(1)
 
-    resolveFirstPost?.()
+    deferred.resolveFirstPost?.()
 
     await waitFor(() => {
       expect(postAmounts.length).toBeGreaterThan(1)
@@ -123,11 +123,13 @@ describe('ClapButton', () => {
       cap: 50,
     }
 
-    let resolveFirstPost: (() => void) | null = null
-    let resolveSecondPost: (() => void) | null = null
+    const deferred: {
+      resolveFirstPost?: () => void
+      resolveSecondPost?: () => void
+    } = {}
 
     const firstPostPromise = new Promise<Response>((resolve) => {
-      resolveFirstPost = () => {
+      deferred.resolveFirstPost = () => {
         serverState = {
           ...serverState,
           total: serverState.total + 1,
@@ -138,7 +140,7 @@ describe('ClapButton', () => {
     })
 
     const secondPostPromise = new Promise<Response>((resolve) => {
-      resolveSecondPost = () => {
+      deferred.resolveSecondPost = () => {
         serverState = {
           ...serverState,
           total: serverState.total + 5,
@@ -196,7 +198,7 @@ describe('ClapButton', () => {
       expect(screen.getByTestId('like-count').textContent).toBe('7')
     })
 
-    resolveFirstPost?.()
+    deferred.resolveFirstPost?.()
 
     await waitFor(() => {
       expect(postCallCount).toBeGreaterThanOrEqual(2)
@@ -207,7 +209,7 @@ describe('ClapButton', () => {
       expect(screen.getByTestId('like-count').textContent).toBe('7')
     })
 
-    resolveSecondPost?.()
+    deferred.resolveSecondPost?.()
 
     await waitFor(() => {
       expect(screen.getByTestId('like-count').textContent).toBe('7')

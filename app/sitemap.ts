@@ -10,12 +10,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = siteMetadata.siteUrl;
   const today = new Date().toISOString().split("T")[0];
 
-  const blogRoutes = allBlogs
-    .filter((post) => !post.draft)
-    .map((post) => ({
-      url: `${siteUrl}/blog/posts/${post.slug}`,
-      lastModified: post.lastmod || post.date,
-    }));
+  const publishedPosts = allBlogs.filter((post) => !post.draft);
+
+  const blogRoutes = publishedPosts.map((post) => ({
+    url: `${siteUrl}/blog/posts/${post.slug}`,
+    lastModified: post.lastmod || post.date,
+  }));
 
   const tagCounts = tagData as Record<string, number>;
   const tagRoutes = Object.keys(tagCounts).map((tag) => ({
@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: today,
   }));
 
-  const totalPages = Math.ceil(allBlogs.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(publishedPosts.length / POSTS_PER_PAGE);
   const paginatedPostRoutes = Array.from({ length: totalPages }, (_, i) => ({
     url: `${siteUrl}/blog/posts/page/${i + 1}`,
     lastModified: today,

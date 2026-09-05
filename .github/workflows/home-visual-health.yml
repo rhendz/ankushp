@@ -1,8 +1,12 @@
 name: Home Visual Health
 
 on:
+  # Daily. This watches a decorative hero visual on a personal site, so the
+  # every-30-minutes cadence it used to run at (~1,440 runs/month, each doing a
+  # full npm ci plus a Chromium download) bought no signal the next day's run
+  # would miss. Use workflow_dispatch for an on-demand check after a deploy.
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -28,22 +32,37 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
 
+      - name: Restore Playwright browser cache
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
+      # continue-on-error is required for the reporting step below to run at
+      # all: an `if:` without a status check function has success() applied
+      # implicitly, so `steps.health.outcome == 'failure'` could never be true
+      # while a failing step still aborted the job. The incident issue was
+      # therefore never created. The job is failed explicitly at the end.
       - name: Run home visual health check
         id: health
+        continue-on-error: true
         run: npm run health:home-visual
 
       - name: Create incident issue on failure
-        if: steps.health.outcome == 'failure'
+        if: always() && steps.health.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
@@ -77,3 +96,9 @@ jobs:
               ].join('\n'),
               labels: ['bug'],
             })
+
+      - name: Fail the run when unhealthy
+        if: always() && steps.health.outcome == 'failure'
+        run: |
+          echo "Home visual health check reported a failure; see the step log above."
+          exit 1

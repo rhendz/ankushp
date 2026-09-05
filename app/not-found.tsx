@@ -13,8 +13,8 @@ export default function NotFound() {
           Sorry we couldn't find this page.
         </p>
         <p className="mb-8">
-          But dont worry, you can go back to my homepage or you could find
-          plenty of other things on my blog!
+          But don&apos;t worry, you can go back to my homepage or you could
+          find plenty of other things on my blog!
         </p>
         <div className="flex flex-row justify-between">
           <Link

@@ -65,6 +65,13 @@ module.exports = () => {
   return plugins.reduce((acc, next) => next(acc), {
     reactStrictMode: true,
     transpilePackages: ['three'],
+    // /api/og reads this font from disk at request time. Tracing currently
+    // resolves it on its own from the literal path.join, so this is belt and
+    // braces: it pins the file into the function bundle so a change in the
+    // tracer's static analysis cannot silently break OG image generation.
+    outputFileTracingIncludes: {
+      '/api/og': ['./public/fonts/Inter-ExtraBold.ttf'],
+    },
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
     images: {
       remotePatterns: [
