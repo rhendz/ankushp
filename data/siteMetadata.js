@@ -3,7 +3,8 @@ const siteMetadata = {
   title: 'Ankush Patel',
   author: 'Ankush Patel',
   headerTitle: 'Ankush Patel',
-  description: 'ML engineer pioneering human-centered AI solutions',
+  description:
+    'AI Engineer - Backend & Systems. I write about AI engineering, product thinking, and the systems behind reliable software.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   // Falls back to the canonical production origin so `new URL(siteUrl)` in the

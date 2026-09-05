@@ -9,6 +9,8 @@ export const metadata: Metadata = {
     default: "Blog",
     template: `%s | ${siteMetadata.title}`,
   },
+  description:
+    "Notes from an AI Engineer working on backend and systems: AI engineering, product thinking, and the systems behind reliable software.",
 };
 
 export default function BlogLayout({
