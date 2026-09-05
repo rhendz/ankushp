@@ -1,13 +1,17 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { ImageResponse } from "next/og";
 // App router includes @vercel/og.
 // No need to install it.
 
-// Next 16 deprecates the edge runtime, but the nodejs runtime cannot load the
-// font below: webpack rewrites `new URL(..., import.meta.url)` to a relative
-// asset path ("/_next/static/media/Inter-ExtraBold.*.ttf") that `fetch` rejects
-// with "Failed to parse URL". Migrating needs the font read from disk (or
-// inlined) first; until then this stays on edge.
-export const runtime = "edge";
+// The edge runtime is deprecated in Next 16, and next/og's resvg wasm plus the
+// bundled fonts pushed this function past the 1 MB edge size limit. On the
+// nodejs runtime there is no such cap and the deprecation goes away; the font
+// is read from disk below, since webpack rewrites
+// `new URL(..., import.meta.url)` to a relative asset path that fetch rejects.
+// next.config.js traces the font file into this function's bundle.
+export const runtime = "nodejs";
 
 const key = crypto.subtle.importKey(
   "raw",
@@ -48,9 +52,9 @@ export async function GET(request: Request) {
       return new Response("Invalid token.", { status: 401 });
     }
 
-    const interBold = await fetch(
-      new URL("../../../public/fonts/Inter-ExtraBold.ttf", import.meta.url),
-    ).then((res) => res.arrayBuffer());
+    const interBold = await readFile(
+      path.join(process.cwd(), "public", "fonts", "Inter-ExtraBold.ttf"),
+    );
 
     // Set fontSize based off of title length
     const titleLength = title.length;
