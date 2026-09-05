@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from './link'
 import { homeNavLinks, blogNavLinks } from '@/data/headerNavLinks'
 import { usePathname } from 'next/navigation'
 
-const NavLinks = ({ links, onToggleNav }) => {
+type NavLink = { href: string; title: string }
+
+const NavLinks = ({
+  links,
+  onToggleNav,
+}: {
+  links: NavLink[]
+  onToggleNav: () => void
+}) => {
   return (
     <>
       {links.map((link) => (
@@ -29,20 +37,33 @@ const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
 
   const onToggleNav = () => {
-    setNavShow((status) => {
-      if (status) {
-        document.body.style.overflow = 'auto'
-      } else {
-        // Prevent scrolling
-        document.body.style.overflow = 'hidden'
-      }
-      return !status
-    })
+    setNavShow((status) => !status)
   }
+
+  useEffect(() => {
+    document.body.style.overflow = navShow ? 'hidden' : ''
+
+    if (!navShow) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setNavShow(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [navShow])
 
   return (
     <>
-      <button aria-label="Toggle Menu" onClick={onToggleNav} className="sm:hidden">
+      <button
+        aria-label="Toggle Menu"
+        aria-expanded={navShow}
+        onClick={onToggleNav}
+        className="sm:hidden"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
@@ -57,12 +78,14 @@ const MobileNav = () => {
         </svg>
       </button>
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-full bg-primary/95 duration-300 ease-in-out ${
+        inert={!navShow}
+        aria-hidden={!navShow}
+        className={`fixed left-0 top-0 z-50 h-full w-full bg-primary/95 duration-300 ease-in-out sm:hidden ${
           navShow ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex justify-end">
-          <button className="mr-8 mt-11 h-8 w-8" aria-label="Toggle Menu" onClick={onToggleNav}>
+          <button className="mr-8 mt-11 h-8 w-8" aria-label="Close Menu" onClick={onToggleNav}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
