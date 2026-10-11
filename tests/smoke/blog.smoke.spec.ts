@@ -8,7 +8,7 @@ test.describe('blog smoke suite', () => {
     })
 
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: /Ankush Patel/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Useful AI/i })).toBeVisible()
     await page.waitForTimeout(500)
 
     expect(runtimeErrors, `unexpected client errors: ${runtimeErrors.join(' | ')}`).toHaveLength(0)

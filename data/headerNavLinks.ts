@@ -1,10 +1,8 @@
 export const homeNavLinks = [
-  { href: '/blog', title: 'Blog' },
+  { href: '/#work', title: 'Work' },
+  { href: '/blog', title: 'Writing' },
   { href: '/about', title: 'About' },
+  { href: '/#contact', title: 'Contact' },
 ]
 
-export const blogNavLinks = [
-  { href: '/blog', title: 'Blog' },
-  { href: '/blog/posts', title: 'Posts' },
-  { href: '/blog/tags', title: 'Tags' },
-]
+export const blogNavLinks = homeNavLinks

@@ -1,0 +1,134 @@
+[
+  {
+    "name": "desktop-light",
+    "run": 1,
+    "lcp": 176,
+    "cls": 0.00008444444444444444,
+    "fcp": 176,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "desktop-light",
+    "run": 2,
+    "lcp": 72,
+    "cls": 0,
+    "fcp": 72,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "desktop-light",
+    "run": 3,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864042,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "desktop-dark",
+    "run": 1,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "desktop-dark",
+    "run": 2,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864042,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "desktop-dark",
+    "run": 3,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "mobile-light",
+    "run": 1,
+    "lcp": 52,
+    "cls": 0.0004555639140317245,
+    "fcp": 52,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "mobile-light",
+    "run": 2,
+    "lcp": 64,
+    "cls": 0,
+    "fcp": 64,
+    "resourceBytes": 864042,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "mobile-light",
+    "run": 3,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "narrow-dark",
+    "run": 1,
+    "lcp": 56,
+    "cls": 0,
+    "fcp": 56,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "narrow-dark",
+    "run": 2,
+    "lcp": 60,
+    "cls": 0,
+    "fcp": 60,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "narrow-dark",
+    "run": 3,
+    "lcp": 56,
+    "cls": 0,
+    "fcp": 56,
+    "resourceBytes": 864018,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  }
+]
