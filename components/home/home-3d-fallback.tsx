@@ -1,11 +1,10 @@
 import { useId } from 'react'
 
-// A static contour sculpture is available before JavaScript, during loading,
-// and whenever motion or WebGL is unavailable.
+// Static luminous poster: no render loop, filters, downloads, or WebGL needed.
 export default function Home3DFallback() {
   const id = useId().replace(/:/g, '')
   const outline =
-    'M 253,70 C 316,59 337,111 365,153 C 401,207 412,235 383,286 C 365,322 365,359 313,379 C 261,401 243,361 198,368 C 141,380 104,337 103,293 C 102,250 70,224 96,176 C 119,132 145,137 168,110 C 192,82 214,77 253,70 Z'
+    'M245 66C310 56 356 91 370 145C387 196 416 240 378 299C348 348 304 387 247 382C180 379 129 367 104 313C79 259 90 215 107 162C125 107 182 74 245 66Z'
   return (
     <svg
       aria-hidden="true"
@@ -16,39 +15,32 @@ export default function Home3DFallback() {
     >
       <defs>
         <linearGradient
-          id={`${id}-surface`}
-          x1="145"
+          id={`${id}-base`}
+          x1="128"
           y1="90"
-          x2="355"
-          y2="370"
+          x2="334"
+          y2="365"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="rgb(var(--color-secondary))" stopOpacity=".07" />
-          <stop offset=".55" stopColor="rgb(var(--color-accent))" stopOpacity=".24" />
-          <stop offset="1" stopColor="rgb(var(--color-accent))" stopOpacity=".65" />
+          <stop stopColor="#4932ff" />
+          <stop offset=".38" stopColor="#992df8" />
+          <stop offset=".68" stopColor="#7390ff" />
+          <stop offset="1" stopColor="#4de9fa" />
         </linearGradient>
-        <clipPath id={`${id}-clip`}>
-          <path d={outline} />
-        </clipPath>
+        <radialGradient id={`${id}-pink`} cx=".9" cy=".52" r=".7">
+          <stop stopColor="#fbb5ff" />
+          <stop offset=".45" stopColor="#dc59ff" stopOpacity=".8" />
+          <stop offset="1" stopColor="#a935ff" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`${id}-light`} cx=".33" cy=".25" r=".55">
+          <stop stopColor="#edfcff" stopOpacity=".95" />
+          <stop offset=".24" stopColor="#d6e5ff" stopOpacity=".45" />
+          <stop offset="1" stopColor="#9bb6ff" stopOpacity="0" />
+        </radialGradient>
       </defs>
-      <path d={outline} fill={`url(#${id}-surface)`} />
-      <g
-        clipPath={`url(#${id}-clip)`}
-        stroke="rgb(var(--color-secondary))"
-        strokeOpacity=".26"
-        strokeWidth=".8"
-      >
-        {Array.from({ length: 30 }, (_, index) => {
-          const y = 40 + index * 12
-          return (
-            <path
-              key={index}
-              d={`M 62,${y} C 150,${y - 36} 178,${y + 40} 244,${y + 12} S 355,${y - 38} 427,${y + 8}`}
-            />
-          )
-        })}
-      </g>
-      <path d={outline} stroke="rgb(var(--color-secondary))" strokeOpacity=".15" strokeWidth=".8" />
+      <path d={outline} fill={`url(#${id}-base)`} />
+      <path d={outline} fill={`url(#${id}-pink)`} />
+      <path d={outline} fill={`url(#${id}-light)`} />
     </svg>
   )
 }

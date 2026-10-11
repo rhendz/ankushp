@@ -97,6 +97,41 @@ test('context loss returns to a visible static form', async ({ page }) => {
   await expect(page.locator('canvas')).toHaveCount(0)
 })
 
+test('offscreen and paused blobs submit no draw calls', async ({ page }) => {
+  await page.addInitScript(() => {
+    const draw = WebGL2RenderingContext.prototype.drawElements
+    WebGL2RenderingContext.prototype.drawElements = function (...args) {
+      const canvas = this.canvas as HTMLCanvasElement
+      if (canvas.closest('[data-testid="blob-canvas"]')) {
+        canvas.dataset.draws = String(Number(canvas.dataset.draws || 0) + 1)
+      }
+      return draw.apply(this, args)
+    }
+  })
+  await page.goto('/')
+  const canvas = page.getByTestId('blob-canvas').locator('canvas')
+  await expect(page.getByTestId('blob-canvas')).toHaveAttribute('data-ready', 'true')
+  const draws = () => canvas.getAttribute('data-draws')
+  const assertStopped = async () => {
+    await page.waitForTimeout(150)
+    const count = await draws()
+    expect(Number(count)).toBeGreaterThan(0)
+    await page.waitForTimeout(300)
+    expect(await draws()).toBe(count)
+  }
+  await page.locator('#contact').scrollIntoViewIfNeeded()
+  await expect(canvas).not.toBeInViewport()
+  await assertStopped()
+  await canvas.scrollIntoViewIfNeeded()
+  const offscreenCount = await draws()
+  await expect.poll(draws).not.toBe(offscreenCount)
+  await page.getByRole('button', { name: 'Pause animation' }).click()
+  await assertStopped()
+  await page.getByRole('button', { name: 'Resume animation' }).click()
+  const pausedCount = await draws()
+  await expect.poll(draws).not.toBe(pausedCount)
+})
+
 test('the introduction, work, and contact remain available without JavaScript', async ({
   browser,
 }) => {

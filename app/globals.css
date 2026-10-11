@@ -155,18 +155,20 @@
 .home-visual-stage::before {
   content: "";
   position: absolute;
-  inset: 12%;
-  border: 1px solid rgb(var(--color-secondary) / 0.07);
-  border-radius: 50%;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 52%,
+    rgb(114 68 255 / 0.1),
+    transparent 66%
+  );
   pointer-events: none;
 }
-.home-visual-stage::after {
-  content: "";
-  position: absolute;
-  inset: 4%;
-  border: 1px solid rgb(var(--color-secondary) / 0.035);
-  border-radius: 50%;
-  pointer-events: none;
+:root[data-theme="dark"] .home-visual-stage::before {
+  background: radial-gradient(
+    ellipse at 50% 52%,
+    rgb(92 67 245 / 0.15),
+    transparent 65%
+  );
 }
 .home-visual-stage canvas {
   width: 100%;

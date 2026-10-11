@@ -3,6 +3,8 @@
 import * as THREE from 'three'
 import { useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
+import { psrdnoise } from './shaders/psrdnoise'
+import { advancePointerSpring, BlobQuality } from '@/lib/blob-motion'
 
 type SceneProps = {
   paused: boolean
@@ -18,17 +20,32 @@ type SceneControls = {
 const vertexShader = /* glsl */ `
   uniform float u_time;
   uniform vec2 u_pointer;
-  varying vec3 v_position;
+  varying vec3 v_normal;
   varying vec3 v_viewPosition;
+  varying vec3 v_direction;
+
+  #define FASTROTATION
+  ${psrdnoise}
 
   void main() {
+    vec3 n = normalize(position);
+    vec3 g1, g2;
     float t = u_time;
-    vec3 p = position;
-    float wave = sin(p.x * 2.2 + t * 0.48) * cos(p.y * 1.8 - t * 0.32);
-    wave += 0.45 * sin(p.z * 2.8 + p.y * 1.3 + t * 0.25);
-    float influence = dot(normal.xy, u_pointer) * 0.07;
-    p += normal * (wave * 0.22 + influence);
-    v_position = p;
+    float flow = psrdnoise(n * 1.25 + vec3(0.0, t * 0.07, 0.0), vec3(0.0), t * 0.32, g1);
+    float detail = psrdnoise(n * 2.4 + vec3(3.7, 0.0, t * 0.04), vec3(0.0), -t * 0.21, g2);
+    float radius = 1.48 + 0.26 * flow + 0.055 * detail;
+    vec3 gradient = 0.26 * 1.25 * g1 + 0.055 * 2.4 * g2;
+
+    // A local, smooth pull toward the pointer; include its derivative in lighting.
+    vec3 pullDirection = normalize(vec3(u_pointer * 1.1, 0.8));
+    float pull = 0.13 * min(length(u_pointer), 1.0) * exp(3.0 * (dot(n, pullDirection) - 1.0));
+    radius += pull;
+    gradient += 3.0 * pull * pullDirection;
+    vec3 tangentGradient = gradient - n * dot(n, gradient);
+    vec3 displacedNormal = normalize(n - tangentGradient / radius);
+    vec3 p = n * radius;
+    v_normal = normalize(normalMatrix * displacedNormal);
+    v_direction = n;
     vec4 viewPosition = modelViewMatrix * vec4(p, 1.0);
     v_viewPosition = viewPosition.xyz;
     gl_Position = projectionMatrix * viewPosition;
@@ -36,29 +53,37 @@ const vertexShader = /* glsl */ `
 `
 
 const fragmentShader = /* glsl */ `
-  uniform vec3 u_surface;
-  uniform vec3 u_ink;
-  uniform vec3 u_accent;
   uniform float u_dark;
-  varying vec3 v_position;
+  uniform vec3 u_indigo;
+  uniform vec3 u_violet;
+  uniform vec3 u_cyan;
+  uniform vec3 u_pink;
+  varying vec3 v_normal;
   varying vec3 v_viewPosition;
+  varying vec3 v_direction;
 
   void main() {
-    vec3 normal = normalize(cross(dFdx(v_viewPosition), dFdy(v_viewPosition)));
-    vec3 light = normalize(vec3(-0.65, 0.85, 1.2));
-    float diffuse = max(dot(normal, light), 0.0);
-    float facing = max(dot(normal, normalize(-v_viewPosition)), 0.0);
-    float rim = pow(1.0 - facing, 2.2);
-    float warmth = (1.0 - smoothstep(-1.4, 0.6, v_position.y)) * 0.58 + 0.12;
-    vec3 base = mix(u_surface, u_accent, warmth);
-    vec3 color = base * (0.58 + diffuse * 0.48);
-    color = mix(color, u_accent, rim * (0.14 + u_dark * 0.12));
+    vec3 n = normalize(v_normal);
+    vec3 view = normalize(-v_viewPosition);
+    vec3 light = normalize(vec3(-0.65, 0.85, 1.4));
+    float facing = max(dot(n, view), 0.0);
+    float fresnel = pow(1.0 - facing, 3.0);
+    float vertical = smoothstep(-0.7, 0.8, v_direction.y);
+    float across = smoothstep(-0.7, 0.9, v_direction.x + v_direction.z * 0.15);
+    vec3 cool = mix(u_cyan, u_indigo, vertical);
+    vec3 warm = mix(u_cyan * 0.7 + vec3(0.3), u_pink, vertical);
+    vec3 base = mix(cool, warm, across * 0.86);
+    base = mix(base, u_violet, smoothstep(0.0, 0.9, v_direction.y) * (1.0 - across) * 0.5);
 
-    float contour = (v_position.y + 0.14 * sin(v_position.x * 2.5) + 0.10 * v_position.z) * 10.0;
-    float distanceToLine = abs(fract(contour - 0.5) - 0.5);
-    float width = max(fwidth(contour), 0.002);
-    float line = 1.0 - smoothstep(width * 0.18, width * 0.18 + width, distanceToLine);
-    color = mix(color, u_ink, line * 0.38);
+    float diffuse = max(dot(n, light), 0.0);
+    vec3 halfVector = normalize(light + view);
+    float highlight = pow(max(dot(n, halfVector), 0.0), 48.0);
+    float softHighlight = pow(max(dot(n, halfVector), 0.0), 7.0);
+    vec3 fillDirection = normalize(vec3(0.8, -0.5, 0.5));
+    float fill = max(dot(n, fillDirection), 0.0);
+    vec3 color = base * (0.42 + diffuse * 0.46 + fill * 0.22);
+    color += vec3(0.75, 0.85, 1.0) * (highlight * 0.48 + softHighlight * 0.12);
+    color += mix(u_pink, u_cyan, facing) * fresnel * mix(0.2, 0.55, u_dark);
     gl_FragColor = vec4(color, 1.0);
     #include <colorspace_fragment>
   }
@@ -68,6 +93,11 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
   const mountRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<SceneControls | null>(null)
   const { resolvedTheme } = useTheme()
+  const pausedRef = useRef(paused)
+  useEffect(() => {
+    pausedRef.current = paused
+    controlsRef.current?.setPaused(paused)
+  }, [paused])
 
   useEffect(() => {
     const mount = mountRef.current
@@ -102,26 +132,33 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
     const uniforms = {
       u_time: { value: 0 },
       u_pointer: { value: new THREE.Vector2() },
-      u_surface: { value: new THREE.Color() },
-      u_ink: { value: new THREE.Color() },
-      u_accent: { value: new THREE.Color() },
+      u_indigo: { value: new THREE.Color('#4438ff') },
+      u_violet: { value: new THREE.Color('#872bff') },
+      u_cyan: { value: new THREE.Color('#25e6ff') },
+      u_pink: { value: new THREE.Color('#e457ff') },
       u_dark: { value: 0 },
     }
     const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms })
     let compact = mount.clientWidth < 420
-    const blob = new THREE.Mesh(new THREE.IcosahedronGeometry(1.45, compact ? 24 : 36), material)
-    blob.rotation.set(-0.12, 0.2, -0.16)
+    const geometry = () => new THREE.SphereGeometry(1, compact ? 48 : 64, compact ? 32 : 48)
+    const blob = new THREE.Mesh(geometry(), material)
+    blob.rotation.set(-0.18, 0.2, -0.1)
+    const maximumDpr = () => Math.min(window.devicePixelRatio || 1, compact ? 1.5 : 1.75)
+    let currentMaximum = maximumDpr()
+    const quality = new BlobQuality(currentMaximum)
+    const spring = { x: 0, y: 0, vx: 0, vy: 0 }
     scene.add(blob)
 
     let frame = 0
     let previousTime = 0
     let elapsed = 0
     let running = false
-    let isPaused = false
+    let isPaused = pausedRef.current
     let intersecting = true
     let lost = false
     let disposed = false
     let ready = false
+    let compiled = false
     const targetPointer = new THREE.Vector2()
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const finePointer = window.matchMedia('(pointer: fine)')
@@ -130,6 +167,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
       running = false
       window.cancelAnimationFrame(frame)
       previousTime = 0
+      quality.resetTiming()
     }
     const fail = () => {
       if (lost || disposed) return
@@ -138,7 +176,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
       onUnavailable()
     }
     const render = () => {
-      if (lost || disposed) return
+      if (lost || disposed || !compiled) return
       try {
         renderer.render(scene, camera)
         if (shaderFailed) {
@@ -155,19 +193,28 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
       }
     }
     const canAnimate = () =>
-      !isPaused && !reducedMotion.matches && intersecting && !document.hidden && !lost && !disposed
+      !isPaused &&
+      !reducedMotion.matches &&
+      intersecting &&
+      !document.hidden &&
+      !lost &&
+      !disposed &&
+      compiled
     const tick = (now: number) => {
       if (!canAnimate()) {
         stop()
         return
       }
-      const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0
+      const delta = previousTime ? (now - previousTime) / 1000 : 0
       previousTime = now
       elapsed += delta
       uniforms.u_time.value = elapsed
-      uniforms.u_pointer.value.lerp(targetPointer, 1 - Math.exp(-delta * 4))
-      blob.rotation.y = 0.2 + Math.sin(elapsed * 0.12) * 0.3 + uniforms.u_pointer.value.x * 0.12
-      blob.rotation.x = -0.12 + uniforms.u_pointer.value.y * 0.07
+      advancePointerSpring(spring, targetPointer.x, targetPointer.y, delta)
+      uniforms.u_pointer.value.set(spring.x, spring.y)
+      blob.rotation.y = 0.2 + Math.sin(elapsed * 0.14) * 0.18 + spring.x * 0.18
+      blob.rotation.x = -0.18 + spring.y * 0.1
+      const ratio = quality.sample(delta * 1000)
+      if (ratio !== renderer.getPixelRatio()) renderer.setPixelRatio(ratio)
       render()
       if (!lost) frame = window.requestAnimationFrame(tick)
     }
@@ -183,15 +230,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
       }
     }
     const updateTheme = () => {
-      const styles = getComputedStyle(document.documentElement)
-      const color = (name: string) =>
-        `rgb(${styles.getPropertyValue(name).trim().split(/\s+/).join(',')})`
-      uniforms.u_surface.value.setStyle(color('--color-primary'))
-      uniforms.u_ink.value.setStyle(color('--color-secondary'))
-      uniforms.u_accent.value.setStyle(color('--color-accent'))
       uniforms.u_dark.value = document.documentElement.dataset.theme === 'dark' ? 1 : 0
-      // Lift the dark surface so contours remain legible without bloom/postprocessing.
-      if (uniforms.u_dark.value) uniforms.u_surface.value.lerp(new THREE.Color('#d5c6bd'), 0.3)
       render()
     }
     const resize = () => {
@@ -202,9 +241,14 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
       if (nextCompact !== compact) {
         compact = nextCompact
         blob.geometry.dispose()
-        blob.geometry = new THREE.IcosahedronGeometry(1.45, compact ? 24 : 36)
+        blob.geometry = geometry()
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, compact ? 1.5 : 2))
+      const nextMaximum = maximumDpr()
+      if (nextMaximum !== currentMaximum) {
+        currentMaximum = nextMaximum
+        quality.setMaximum(currentMaximum)
+      }
+      renderer.setPixelRatio(quality.ratio)
       renderer.setSize(w, h)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
@@ -247,10 +291,28 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
     // Set colors before the first visible frame.
     updateTheme()
     resize()
-    sync()
+    // Let the introduction paint first. Three's compileAsync polling cannot be
+    // cancelled safely on context loss/unmount, so use a cancellable idle task.
+    const prepare = () => {
+      if (disposed || lost) return
+      try {
+        renderer.compile(scene, camera)
+        compiled = true
+        render()
+        sync()
+      } catch {
+        fail()
+      }
+    }
+    const useIdle = typeof window.requestIdleCallback === 'function'
+    const preparation = useIdle
+      ? window.requestIdleCallback(prepare, { timeout: 500 })
+      : window.setTimeout(prepare, 0)
 
     return () => {
       disposed = true
+      if (useIdle) window.cancelIdleCallback(preparation)
+      else window.clearTimeout(preparation)
       stop()
       controlsRef.current = null
       observer.disconnect()
@@ -268,9 +330,6 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
     }
   }, [onReady, onUnavailable])
 
-  useEffect(() => {
-    controlsRef.current?.setPaused(paused)
-  }, [paused])
   useEffect(() => {
     controlsRef.current?.updateTheme()
   }, [resolvedTheme])

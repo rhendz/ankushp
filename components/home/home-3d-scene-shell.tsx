@@ -45,7 +45,7 @@ export default function Home3DSceneShell() {
           : 'Living form / 002'
 
   return (
-    <figure className="home-visual" aria-label="An organic sculpture with fine contour lines">
+    <figure className="home-visual" aria-label="A luminous, flowing blue and violet blob">
       <div className="home-visual-stage" data-testid="blob-stage">
         <div aria-hidden="true" className="absolute inset-0" hidden={ready && interactive}>
           <Home3DFallback />
