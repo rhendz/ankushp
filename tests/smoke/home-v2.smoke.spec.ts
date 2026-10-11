@@ -25,17 +25,33 @@ test('home presents work, selected writing, and a contact path from the blog', a
 test('motion can be paused and theme changes keep the same renderer', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.emulateMedia({ reducedMotion: 'no-preference', colorScheme: 'dark' })
+  await page.addInitScript(() => {
+    for (const method of ['drawElements', 'drawArrays'] as const) {
+      const draw = WebGL2RenderingContext.prototype[method]
+      WebGL2RenderingContext.prototype[method] = function (...args) {
+        const canvas = this.canvas as HTMLCanvasElement
+        if (canvas.closest('[data-testid="blob-canvas"]')) {
+          canvas.dataset.drawMode = args[0] === this.LINES ? 'wireframe' : 'solid'
+        }
+        return draw.apply(this, args)
+      }
+    }
+  })
   await page.goto('/')
   const canvas = page.getByTestId('blob-canvas').locator('canvas')
   await expect(page.getByTestId('blob-canvas')).toHaveAttribute('data-ready', 'true')
+  await expect(canvas).toHaveAttribute('data-draw-mode', 'solid')
   await page.getByRole('button', { name: 'Pause animation' }).click()
   // Pixel stability verifies the animation actually stopped, not just the label.
   const still = await canvas.screenshot()
   await page.waitForTimeout(200)
   expect(await canvas.screenshot()).toEqual(still)
   await canvas.evaluate((node) => node.setAttribute('data-original', 'true'))
-  await page.getByRole('button', { name: /Switch to .* mode/ }).click()
+  await page.getByRole('button', { name: 'Switch to light mode' }).click()
+  await expect(canvas).toHaveAttribute('data-draw-mode', 'wireframe')
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click()
+  await expect(canvas).toHaveAttribute('data-draw-mode', 'solid')
   await expect(canvas).toHaveAttribute('data-original', 'true')
   await expect(page.getByTestId('blob-fallback')).toBeHidden()
   await page.getByRole('button', { name: 'Resume animation' }).click()

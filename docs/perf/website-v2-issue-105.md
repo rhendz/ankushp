@@ -81,7 +81,10 @@ The server-rendered SVG retains solid/mesh theme distinctions before JavaScript,
 for reduced motion, and after graphics failures. The canvas replaces it only after
 a successful render. Text and contact do not depend on it. Pause, offscreen, and
 document-hidden states stop the frame loop. Theme changes reuse the renderer;
-geometry is replaced/disposed only when theme/detail changes. DPR is capped at
+geometry is replaced/disposed only when theme/detail changes. The resolved theme
+is passed directly to the scene: reading the DOM attribute inside a React effect
+was found to race with the theme provider during a deployed-preview check. Smoke
+coverage now asserts real solid → wireframe → solid draws while paused. DPR is capped at
 2 desktop / 1.5 compact and adapts downward after sustained slow frames, with
 cooldowns and slower recovery. Cancellable idle-time shader preparation avoids
 the unmount/context-loss polling race found with `compileAsync`.

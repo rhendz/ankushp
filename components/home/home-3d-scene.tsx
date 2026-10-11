@@ -13,7 +13,7 @@ type SceneProps = {
 
 type SceneControls = {
   setPaused: (paused: boolean) => void
-  updateTheme: () => void
+  updateTheme: (dark: boolean) => void
 }
 
 // Keep the original luminous UV color field. This is an authored graphic
@@ -347,8 +347,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
         frame = window.requestAnimationFrame(tick)
       }
     }
-    const updateTheme = () => {
-      const nextDark = document.documentElement.dataset.theme === 'dark'
+    const updateTheme = (nextDark: boolean) => {
       if (nextDark !== dark) {
         dark = nextDark
         blob.geometry.dispose()
@@ -416,7 +415,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
     document.addEventListener('visibilitychange', sync)
     reducedMotion.addEventListener('change', sync)
     // Set colors before the first visible frame.
-    updateTheme()
+    updateTheme(dark)
     resize()
     // Let the introduction paint first. Three's compileAsync polling cannot be
     // cancelled safely on context loss/unmount, so use a cancellable idle task.
@@ -459,7 +458,7 @@ export default function Home3DScene({ paused, onReady, onUnavailable }: ScenePro
   }, [onReady, onUnavailable])
 
   useEffect(() => {
-    controlsRef.current?.updateTheme()
+    if (resolvedTheme) controlsRef.current?.updateTheme(resolvedTheme === 'dark')
   }, [resolvedTheme])
 
   return (
