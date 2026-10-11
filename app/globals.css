@@ -175,6 +175,15 @@
   height: 100%;
   display: block;
 }
+.blob-poster-solid {
+  display: none;
+}
+:root[data-theme="dark"] .blob-poster-solid {
+  display: initial;
+}
+:root[data-theme="dark"] .blob-poster-mesh {
+  display: none;
+}
 .home-visual-caption {
   display: flex;
   align-items: center;

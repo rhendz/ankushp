@@ -21,39 +21,74 @@ The responsive hero pairs the introduction with a luminous blue/violet/cyan blob
 - No new dependencies, analytics providers, or hosting configuration were added.
   Professional-intent measurement remains a follow-up under existing issue #89.
 
-## Blob behavior
+## Visual research and decision
 
-The server-rendered SVG form is visible before JavaScript, during dynamic
-loading, when reduced motion is requested, and if WebGL initialization, shader
-compilation, or context loss prevents rendering. The canvas replaces it only after
-a successful render. The visual is decorative; text and contact do not depend on it.
+The original has a broadly rounded silhouette, continuous violet/blue/cyan/pink
+color fields, and a luminous lower cusp. Its light theme uses a fine airy wireframe.
+The later glossy experiment at `56cdf1f` retained the hues but introduced numerous
+folds and white specular spots. That changed the material and weakened its identity.
+Rendering benchmarks were not evidence that this visual change was better.
 
-The shader evaluates two octaves of rotating flow noise on the GPU. Analytic noise
-derivatives produce the deformed surface normal without neighboring noise samples
-or CPU geometry updates. One indexed mesh and one draw call produce the surface,
-specular lighting, and Fresnel rim; a static CSS gradient supplies the halo. There
-are no render targets, bloom passes, textures, or new runtime dependencies.
+Primary creator references were researched before the next experiment:
 
-Desktop geometry uses 6,016 triangles and compact geometry 2,976, compared with
-48,020 in the original mesh and 27,380 / 12,500 in the first v2 iteration. Fewer
-triangles alone do not establish a speedup: the new vertex shader does more work
-per vertex. Actual draw cadence measurements are recorded below.
+| Reference                                                                                                               | What was actually inspected                                                                                                                                                                                                                                                                        | Applicable lesson                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [Mario Carrillo, Creative WebGL Blobs](https://tympanus.net/codrops/2021/01/26/twisted-colorful-spheres-with-three-js/) | Three frames of the creator's [published demo assets](https://github.com/codrops/WebGLBlobs), run locally because the live host presented a verification challenge. Rounded bodies carry coordinated twisting color ribbons.                                                                       | Coordinate shape and color motion. The ribbons themselves are busier than this site's original identity.                            |
+| [Robert Aperios, Run Rob Run](https://www.runrobrun.com/)                                                               | Live scene across three frames; the first was loading, the next two showed changing broad folds, a consistent orange/clear material, and a localized hover grid. [Creator breakdown](https://tympanus.net/codrops/2026/08/20/run-rob-run-building-a-music-reactive-goo-with-three-js-and-webgpu/). | A coherent material and a subordinate interaction are more useful than stacking effects. Its glass/orange treatment is not adopted. |
+| [Unseen Studio, Cellular](https://unseen.co/labs/cellular/)                                                             | Two live frames with pointer movement: cobalt/violet cells, pink field, depth through focus, and a coordinated opening following the pointer. [Creator breakdown](https://tympanus.net/codrops/2025/09/11/when-cells-collide-the-making-of-an-organic-particle-experiment-with-rapier-three-js/).  | A controlled graphic palette and one clear response can create depth without shiny reflections.                                     |
 
-Pointer influence uses an exact critically damped spring and a localized surface
-pull, including its derivative in the lighting. Touch keeps native scrolling.
-Animation uses elapsed frame time. Pause, offscreen, and document-hidden states
-stop the frame loop. Theme changes update a uniform without recreating the renderer.
-DPR is capped at 1.75 desktop / 1.5 compact, bounded by device DPR. Sustained slow
-frames reduce resolution in 0.25 steps to 1; recovery requires a longer stable
-window and cooldowns prevent frequent buffer reallocations. Cancellable idle-time shader preparation
-retains the poster until the first successful render. Resources are disposed on unmount.
+These are design interpretations from inspected examples, not universal rules of
+what looks good. Liquid Raymarching's live demo remained behind a verification
+challenge; it was read as a creator explanation but not claimed as visually verified.
 
-Implementation references:
+A matched-camera study compared the original with a shallow rotating-noise field,
+and that field plus a restrained twist, at 0/5/10/15/20/25 seconds in both themes.
+The candidate also tested an antialiased triangular lattice. Dark color identity
+survived, but the twist added little and the lattice looked coarser/heavier than
+the original's fine veil. Those experiments were not adopted. The light comparison
+changes geometry, line rendering, and lightness as well as deformation; it does
+not isolate one variable.
 
-- [psrdnoise3, Stefan Gustavson and Ian McEwan](https://github.com/stegu/psrdnoise/blob/main/src/psrdnoise3.glsl): vendored with the full MIT notice in `components/home/shaders/psrdnoise.ts`.
-- [Exact damped springs](https://www.ryanjuckett.com/damped-springs/): timestep-independent interaction.
-- [Three.js WebGLRenderer](https://threejs.org/docs/pages/WebGLRenderer.html): shader preparation and drawing-buffer control.
-- [WebGL best practices](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices): bounded rendering cost and resource lifecycle.
+[Interactive research study](./evidence/issue-105/blob-study.html) (download/open
+in a browser; loads pinned Three.js from jsDelivr),
+[dark at 0s](./evidence/issue-105/study-dark-0.png),
+[dark at 15s](./evidence/issue-105/study-dark-15.png),
+[light at 0s](./evidence/issue-105/study-light-0.png),
+[light at 15s](./evidence/issue-105/study-light-15.png).
+
+The selected revision preserves the original rather than declaring either study
+a visual upgrade. It restores the original color shader, shallow deformation,
+continuous rotation, and fine light-mode wireframe, gives the object more space
+within the hero, and adds restrained spring-based pointer orientation/deformation.
+Visual preference remains the author's decision.
+
+## Current blob behavior
+
+The material is the original UV color field, not a physically shaded plastic.
+One GPU Perlin-noise field displaces the body with the original 0.15 amplitude.
+Elapsed-time rotation preserves the original approximately 0.12 radians/second at
+60Hz. Pointer influence adds at most 0.02 deformation amplitude and small weighted
+tilt/yaw, with an exact damped spring carrying velocity between frames.
+
+Dark solid geometry uses 16,820 triangles on desktop and 8,820 compact. Light mode
+retains the original 48,020-triangle topology, rendered as 144,060 line segments,
+because reducing that density visibly changed its character. Both are one draw
+per frame, with no textures or postprocessing. A static CSS halo replaces the
+original extra sprite draw. Triangle counts are a cost description, not a claim
+that the design is better or universally faster.
+
+The server-rendered SVG retains solid/mesh theme distinctions before JavaScript,
+for reduced motion, and after graphics failures. The canvas replaces it only after
+a successful render. Text and contact do not depend on it. Pause, offscreen, and
+document-hidden states stop the frame loop. Theme changes reuse the renderer;
+geometry is replaced/disposed only when theme/detail changes. DPR is capped at
+2 desktop / 1.5 compact and adapts downward after sustained slow frames, with
+cooldowns and slower recovery. Cancellable idle-time shader preparation avoids
+the unmount/context-loss polling race found with `compileAsync`.
+
+Technical references: [exact damped springs](https://www.ryanjuckett.com/damped-springs/),
+[Three.js rendering on demand](https://threejs.org/manual/pages/rendering-on-demand.html),
+and [responsive rendering](https://threejs.org/manual/pages/responsive.html).
 
 ## Validation
 
@@ -63,7 +98,7 @@ Passed locally:
 - `npm run typecheck`
 - `npm run build` (41 routes)
 - `npm run test` (28 tests)
-- `npm run test:smoke:ci` (13 tests passed; existing blog-navigation check needed one retry)
+- `npm run test:smoke:ci` (13 tests passed without retries)
 - `HOME_VISUAL_HEALTH_URL=http://127.0.0.1:4175 npm run health:home-visual`
 
 New smoke checks cover the work → essay → contact journey; real shader rendering;
@@ -97,13 +132,13 @@ regressions in real-user experience.
 
 | Viewport/theme | Before median FCP/LCP | After median FCP/LCP | After CLS, all runs |
 | -------------- | --------------------: | -------------------: | ------------------: |
-| 1440px light   |            72 / 72 ms |           60 / 60 ms |                   0 |
-| 1440px dark    |            60 / 60 ms |           60 / 60 ms |                   0 |
-| 375px light    |            60 / 60 ms |           56 / 56 ms |                   0 |
-| 320px dark     |            56 / 56 ms |           56 / 56 ms |                   0 |
+| 1440px light   |            72 / 72 ms |           68 / 68 ms |                   0 |
+| 1440px dark    |            60 / 60 ms |           64 / 64 ms |                   0 |
+| 375px light    |            60 / 60 ms |           64 / 64 ms |                   0 |
+| 320px dark     |            56 / 56 ms |           64 / 64 ms |                   0 |
 
 Same-origin resource transfer totals (excluding the navigation document) were
-approximately 864 KB before and 870 KB after, including fonts and prefetched
+approximately 864 KB before and 868 KB after, including fonts and prefetched
 resources. Reserving theme-control dimensions removed the hydration layout shift
 seen in the initial v2 capture.
 
@@ -120,56 +155,44 @@ The capture writes ignored artifacts under `output/website-v2/`. Retained data:
 [before metrics](./evidence/issue-105/before-metrics.json) and
 [after metrics](./evidence/issue-105/after-metrics.json).
 
-## Animation measurements
+## Current animation measurements
 
-`scripts/blob-performance-check.mjs` instruments the blob's WebGL draw submissions
-from the test browser, without adding application telemetry. Each of three scenarios
-runs three times for ten seconds after a two-second warmup. Desktop is 1440×1000;
-compact is a 375×812 viewport, both at device DPR 2. The compact scene is scrolled
-into view. Pointer runs dispatch a circular movement pattern. These are intervals
-between draw submissions, not GPU execution time; this implementation makes one
-draw per rendered frame. Adaptive production quality remains enabled, with actual
-buffer sizes recorded. This measures the complete production policy rather than
-isolating shader ALU cost at fixed resolution.
+Chromium 145 on an Apple M2 Pro, using native Metal. Values below are medians
+of the three per-run percentiles. Resolution stayed at its configured maximum
+throughout all runs.
 
-Native runs use Chromium 145 with `--use-angle=metal`, verified as
-**ANGLE Metal Renderer: Apple M2 Pro**. The first-v2 contour baseline is the deployed
-preview at `8c14fc0`; the revised version is a local production build. Load times
-are not compared across those hosts. Builds/tests were stopped during the animation
-measurements. Both run on this shared workstation, not an isolated performance lab.
+| Scenario              | Median p50 interval | Median p95 interval | Primitives per draw | Drawing buffer |
+| --------------------- | ------------------: | ------------------: | ------------------: | -------------- |
+| Dark desktop, idle    |              8.3 ms |              9.8 ms |    16,820 triangles | 952 × 952      |
+| Dark desktop, pointer |              8.3 ms |              9.2 ms |    16,820 triangles | 952 × 952      |
+| Dark compact, idle    |              8.3 ms |              9.2 ms |     8,820 triangles | 514 × 514      |
+| Light desktop, idle   |              8.3 ms |              9.2 ms |       144,060 lines | 952 × 952      |
+| Light compact, idle   |              8.3 ms |              9.1 ms |       144,060 lines | 514 × 514      |
 
-| Scenario        | Contour median p50 / p95 | Revised median p50 / p95 | Revised buffer |
-| --------------- | -----------------------: | -----------------------: | -------------- |
-| desktop-idle    |             8.3 / 9.8 ms |             8.3 / 9.6 ms | 833x833        |
-| desktop-pointer |             8.3 / 9.8 ms |             8.3 / 9.1 ms | 833x833        |
-| compact-idle    |             8.3 / 9.2 ms |             8.3 / 9.1 ms | 514x514        |
+One interval exceeded 50 ms across the three dark desktop idle runs; none did in
+the other scenarios. This demonstrates smooth submission cadence on this machine,
+not a universal frame-rate guarantee. [Current raw measurements](./evidence/issue-105/original-refined-metal.json).
 
-The revised version retained the same ~8.3 ms median cadence (about 120 Hz), with
-no draw intervals over 50 ms in any native run. Resolution stayed at its initial
-cap in every native run. This demonstrates smooth cadence on this GPU; it does
-not establish lower GPU execution time or performance on a phone.
+The benchmark instruments the blob's draw submissions from the test browser;
+it adds no application telemetry. Five scenarios cover dark desktop idle/pointer,
+dark compact, and light desktop/compact. Each uses three requested ten-second
+windows after warmup. The recorded observed span accounts for timer overrun.
+Desktop is 1440×1000 and compact 375×812, at device DPR 2. These are intervals
+between draw submissions, not GPU execution time or field performance.
 
-A separate SwiftShader comparison found a regression on desktop: median p50 draw
-interval **18.9 → 41.6 ms** at idle, and **19.2 → 37.2 ms** with pointer movement.
-Compact improved **42.5 → 20.0 ms**. The adaptive drawing buffer stepped down under
-software-renderer pressure. These results are retained rather than presented as a
-universal speedup. Software measurements used the same final steady-state shader,
-mesh, and quality policy, before the startup lifecycle fix. Baseline desktop run 1
-overlapped the end of validation work; baseline runs 2/3 did not. The report uses
-medians but does not infer a hardware result from those software runs.
-
-Reproduce native measurements on a Mac with Metal support:
+Reproduce on a Mac with Metal support:
 
 ```sh
-BLOB_PERF_BACKEND=metal node scripts/blob-performance-check.mjs revised-metal
-# Default backend exercises SwiftShader:
-node scripts/blob-performance-check.mjs revised-software
+BLOB_PERF_BACKEND=metal node scripts/blob-performance-check.mjs original-refined-metal
 ```
 
-Raw data: [Metal before](./evidence/issue-105/contour-metal.json),
-[Metal after](./evidence/issue-105/revised-metal.json),
-[SwiftShader before](./evidence/issue-105/contour-software.json),
-[SwiftShader after](./evidence/issue-105/revised-software.json).
+The software backend remains available by omitting the environment variable.
+[Earlier Metal baseline](./evidence/issue-105/contour-metal.json),
+[rejected glossy experiment](./evidence/issue-105/revised-metal.json), and its
+[software results](./evidence/issue-105/revised-software.json) are retained as
+historical evidence. They do not describe the current shader. The glossy experiment
+showed a desktop software-renderer regression despite its lower triangle count;
+that result helped demonstrate why counts alone are insufficient.
 
 ## Visual evidence
 

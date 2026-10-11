@@ -1,10 +1,10 @@
 import { useId } from 'react'
 
-// Static luminous poster: no render loop, filters, downloads, or WebGL needed.
+// Match the original color field and theme distinction without a graphics context.
 export default function Home3DFallback() {
   const id = useId().replace(/:/g, '')
   const outline =
-    'M245 66C310 56 356 91 370 145C387 196 416 240 378 299C348 348 304 387 247 382C180 379 129 367 104 313C79 259 90 215 107 162C125 107 182 74 245 66Z'
+    'M239 48C331 47 400 99 417 179C443 260 390 351 315 388C229 428 125 391 84 318C49 255 62 165 107 107C140 66 184 49 239 48Z'
   return (
     <svg
       aria-hidden="true"
@@ -14,33 +14,44 @@ export default function Home3DFallback() {
       fill="none"
     >
       <defs>
-        <linearGradient
-          id={`${id}-base`}
-          x1="128"
-          y1="90"
-          x2="334"
-          y2="365"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#4932ff" />
-          <stop offset=".38" stopColor="#992df8" />
-          <stop offset=".68" stopColor="#7390ff" />
-          <stop offset="1" stopColor="#4de9fa" />
+        <linearGradient id={`${id}-base`} x1=".35" y1="0" x2=".6" y2="1">
+          <stop stopColor="#6324ff" />
+          <stop offset=".42" stopColor="#664bff" />
+          <stop offset=".75" stopColor="#49b8ff" />
+          <stop offset="1" stopColor="#31fff7" />
         </linearGradient>
-        <radialGradient id={`${id}-pink`} cx=".9" cy=".52" r=".7">
-          <stop stopColor="#fbb5ff" />
-          <stop offset=".45" stopColor="#dc59ff" stopOpacity=".8" />
+        <radialGradient id={`${id}-pink`} cx="1" cy=".46" r=".9">
+          <stop stopColor="#f27bff" />
+          <stop offset=".48" stopColor="#db51ff" stopOpacity=".8" />
           <stop offset="1" stopColor="#a935ff" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id={`${id}-light`} cx=".33" cy=".25" r=".55">
-          <stop stopColor="#edfcff" stopOpacity=".95" />
-          <stop offset=".24" stopColor="#d6e5ff" stopOpacity=".45" />
-          <stop offset="1" stopColor="#9bb6ff" stopOpacity="0" />
+        <radialGradient id={`${id}-light`} cx=".58" cy=".95" r=".58">
+          <stop stopColor="#ffffff" />
+          <stop offset=".13" stopColor="#ffffff" stopOpacity=".95" />
+          <stop offset=".55" stopColor="#d3fcff" stopOpacity=".25" />
+          <stop offset="1" stopColor="#bfe9ff" stopOpacity="0" />
         </radialGradient>
+        <pattern id={`${id}-lattice`} width="6" height="10.392" patternUnits="userSpaceOnUse">
+          <path
+            d="M0 0H6M0 5.196H6M0 10.392H6M0 0L6 10.392M6 0L0 10.392"
+            stroke="white"
+            strokeWidth=".55"
+          />
+        </pattern>
+        <mask id={`${id}-mesh`}>
+          <path d={outline} fill={`url(#${id}-lattice)`} />
+        </mask>
+        <g id={`${id}-body`}>
+          <path d={outline} fill={`url(#${id}-base)`} />
+          <path d={outline} fill={`url(#${id}-pink)`} />
+          <path d={outline} fill={`url(#${id}-light)`} />
+        </g>
       </defs>
-      <path d={outline} fill={`url(#${id}-base)`} />
-      <path d={outline} fill={`url(#${id}-pink)`} />
-      <path d={outline} fill={`url(#${id}-light)`} />
+      <use href={`#${id}-body`} className="blob-poster-solid" />
+      <g className="blob-poster-mesh">
+        <use href={`#${id}-body`} opacity=".06" />
+        <use href={`#${id}-body`} mask={`url(#${id}-mesh)`} />
+      </g>
     </svg>
   )
 }

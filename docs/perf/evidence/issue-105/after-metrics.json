@@ -2,10 +2,10 @@
   {
     "name": "desktop-light",
     "run": 1,
-    "lcp": 148,
+    "lcp": 168,
     "cls": 0,
-    "fcp": 148,
-    "resourceBytes": 870373,
+    "fcp": 168,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -13,10 +13,10 @@
   {
     "name": "desktop-light",
     "run": 2,
-    "lcp": 60,
+    "lcp": 68,
     "cls": 0,
-    "fcp": 60,
-    "resourceBytes": 870373,
+    "fcp": 68,
+    "resourceBytes": 867657,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -24,10 +24,10 @@
   {
     "name": "desktop-light",
     "run": 3,
-    "lcp": 60,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 60,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -35,10 +35,10 @@
   {
     "name": "desktop-dark",
     "run": 1,
-    "lcp": 60,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 60,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867657,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -46,10 +46,10 @@
   {
     "name": "desktop-dark",
     "run": 2,
-    "lcp": 60,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 60,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -57,21 +57,21 @@
   {
     "name": "desktop-dark",
     "run": 3,
+    "lcp": 64,
+    "cls": 0,
+    "fcp": 64,
+    "resourceBytes": 867655,
+    "overflow": false,
+    "canvasCount": 1,
+    "errors": []
+  },
+  {
+    "name": "mobile-light",
+    "run": 1,
     "lcp": 60,
     "cls": 0,
     "fcp": 60,
-    "resourceBytes": 870373,
-    "overflow": false,
-    "canvasCount": 1,
-    "errors": []
-  },
-  {
-    "name": "mobile-light",
-    "run": 1,
-    "lcp": 56,
-    "cls": 0,
-    "fcp": 56,
-    "resourceBytes": 870373,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -79,10 +79,10 @@
   {
     "name": "mobile-light",
     "run": 2,
-    "lcp": 56,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 56,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867657,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -90,10 +90,10 @@
   {
     "name": "mobile-light",
     "run": 3,
-    "lcp": 56,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 56,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -101,10 +101,10 @@
   {
     "name": "narrow-dark",
     "run": 1,
-    "lcp": 56,
+    "lcp": 60,
     "cls": 0,
-    "fcp": 56,
-    "resourceBytes": 870373,
+    "fcp": 60,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -112,10 +112,10 @@
   {
     "name": "narrow-dark",
     "run": 2,
-    "lcp": 56,
+    "lcp": 64,
     "cls": 0,
-    "fcp": 56,
-    "resourceBytes": 870373,
+    "fcp": 64,
+    "resourceBytes": 867657,
     "overflow": false,
     "canvasCount": 1,
     "errors": []
@@ -123,10 +123,10 @@
   {
     "name": "narrow-dark",
     "run": 3,
-    "lcp": 72,
+    "lcp": 68,
     "cls": 0,
-    "fcp": 72,
-    "resourceBytes": 870373,
+    "fcp": 68,
+    "resourceBytes": 867655,
     "overflow": false,
     "canvasCount": 1,
     "errors": []

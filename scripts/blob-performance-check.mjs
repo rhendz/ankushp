@@ -12,13 +12,19 @@ const browser = await chromium.launch({
 })
 const results = []
 try {
-  for (const scenario of ['desktop-idle', 'desktop-pointer', 'compact-idle']) {
+  for (const scenario of [
+    'desktop-idle',
+    'desktop-pointer',
+    'compact-idle',
+    'desktop-light',
+    'compact-light',
+  ]) {
     for (let run = 1; run <= 3; run++) {
       const compact = scenario.startsWith('compact')
       const page = await browser.newPage({
         viewport: compact ? { width: 375, height: 812 } : { width: 1440, height: 1000 },
         deviceScaleFactor: 2,
-        colorScheme: 'dark',
+        colorScheme: scenario.endsWith('light') ? 'light' : 'dark',
         reducedMotion: 'no-preference',
       })
       await page.addInitScript(() => {
@@ -33,6 +39,7 @@ try {
               window.blobSamples.push({
                 time: performance.now(),
                 triangles: args[0] === this.TRIANGLES ? count / 3 : 0,
+                lines: args[0] === this.LINES ? count / 2 : 0,
                 width: this.drawingBufferWidth,
                 height: this.drawingBufferHeight,
               })
@@ -89,12 +96,15 @@ try {
         scenario,
         run,
         durationMs: duration,
+        observedSpanMs:
+          sample.draws.length > 1 ? sample.draws.at(-1).time - sample.draws[0].time : 0,
         browser: browser.version(),
         renderer: sample.renderer,
         devicePixelRatio: sample.dpr,
         cssWidth: sample.cssWidth,
         drawCount: sample.draws.length,
         trianglesPerDraw: [...new Set(sample.draws.map((d) => d.triangles))],
+        linesPerDraw: [...new Set(sample.draws.map((d) => d.lines))],
         bufferSizes: [...new Set(sample.draws.map((d) => `${d.width}x${d.height}`))],
         intervalP50Ms: percentile(0.5),
         intervalP95Ms: percentile(0.95),
