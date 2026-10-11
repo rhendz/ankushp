@@ -16,7 +16,11 @@ const NavLinks = ({ links }: { links: NavLink[] }) => {
   return (
     <>
       {links.map((link) => (
-        <Link key={link.title} href={link.href} className="font-medium">
+        <Link
+          key={link.title}
+          href={link.href}
+          className="inline-flex min-h-11 items-center text-sm font-medium underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
           {link.title}
         </Link>
       ))}
@@ -29,7 +33,7 @@ const Header = () => {
   const isBlogPage = pathname.includes('/blog')
 
   return (
-    <header className="flex items-center justify-between py-10">
+    <header className="flex items-center justify-between py-7 sm:py-9">
       <div>
         <Link href="/" aria-label={siteMetadata.headerTitle}>
           <div className="flex items-center justify-between">
@@ -59,10 +63,7 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
-        <nav
-          aria-label="Main"
-          className="hidden items-center space-x-4 sm:flex sm:space-x-6"
-        >
+        <nav aria-label="Main" className="hidden items-center space-x-4 sm:flex sm:space-x-6">
           <NavLinks links={isBlogPage ? blogNavLinks : homeNavLinks} />
         </nav>
         {isBlogPage && siteMetadata.search?.provider === 'kbar' && <BlogSearch />}

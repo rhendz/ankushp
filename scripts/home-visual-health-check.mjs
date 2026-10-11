@@ -10,10 +10,7 @@ const crashSignatures = [
   /Home 3D scene failed to render\.\s*TypeError/i,
 ]
 
-const ignoredSignatures = [
-  /Error creating WebGL context/i,
-  /A WebGL context could not be created/i,
-]
+const ignoredSignatures = [/Error creating WebGL context/i, /A WebGL context could not be created/i]
 
 const browser = await chromium.launch({
   headless: true,
@@ -40,6 +37,10 @@ try {
   const domSignals = await page.evaluate(() => ({
     canvasCount: document.querySelectorAll('canvas').length,
     fallbackShapeCount: document.querySelectorAll('.hero-visual-shape').length,
+    visibleVisualCount: [
+      ...document.querySelectorAll('[data-ready="true"] canvas, [data-testid="blob-fallback"]'),
+    ].filter((element) => element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }))
+      .length,
   }))
 
   const actionableErrors = collectedErrors.filter(
@@ -54,12 +55,15 @@ try {
     url: targetUrl,
     canvasCount: domSignals.canvasCount,
     fallbackShapeCount: domSignals.fallbackShapeCount,
+    visibleVisualCount: domSignals.visibleVisualCount,
     errorCount: actionableErrors.length,
     errors: actionableErrors.slice(0, 10),
   }
 
-  if (crashHits.length > 0) {
-    console.error('Home visual health check failed. Crash signature detected.')
+  if (crashHits.length > 0 || domSignals.visibleVisualCount === 0) {
+    console.error(
+      'Home visual health check failed. Crash detected or no rendered visual/fallback is visible.'
+    )
     console.error(JSON.stringify(summary, null, 2))
     process.exit(1)
   }

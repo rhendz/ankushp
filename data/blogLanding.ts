@@ -9,19 +9,21 @@ export const blogLandingConfig: {
 } = {
   startHere: [
     {
-      title: 'The Missing Layer in Your AI Stack: Intermediate Knowledge',
-      href: '/blog/posts/the-missing-layer-in-your-ai-stack-intermediate-knowledge',
-      description: 'Why intermediate representations are critical for practical AI systems.',
+      title: 'How I Think About Reliability in Agentic Workflows',
+      href: '/blog/posts/how-i-think-about-reliability-in-agentic-workflows',
+      description: 'Designing for mistakes that are visible, bounded, and recoverable.',
     },
     {
-      title: 'The MLOps Engineer: Bridging ML and Product',
-      href: '/blog/posts/the-mlops-engineer-bridging-the-gap-between-machine-learning-and-product',
-      description: 'A practical look at shipping reliable machine learning in production.',
+      title: 'Tool Calling Is the Real Product Surface of AI Systems',
+      href: '/blog/posts/tool-calling-is-the-real-product-surface-of-ai-systems',
+      description:
+        'Why tool boundaries and failure behavior shape the product people actually use.',
     },
     {
-      title: 'Accelerating Your Python Projects with Poetry',
-      href: '/blog/posts/accelerating-your-python-projects-with-poetry',
-      description: 'A lightweight guide to dependency management and reproducible workflows.',
+      title: 'Memory, State, and Skills Are Not the Same Thing',
+      href: '/blog/posts/memory-state-and-skills-are-not-the-same-thing',
+      description:
+        'Three different jobs, and the architectural clarity that comes from separating them.',
     },
   ],
 }

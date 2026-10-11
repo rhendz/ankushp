@@ -1,20 +1,54 @@
-'use client'
+import { useId } from 'react'
 
+// A static contour sculpture is available before JavaScript, during loading,
+// and whenever motion or WebGL is unavailable.
 export default function Home3DFallback() {
+  const id = useId().replace(/:/g, '')
+  const outline =
+    'M 253,70 C 316,59 337,111 365,153 C 401,207 412,235 383,286 C 365,322 365,359 313,379 C 261,401 243,361 198,368 C 141,380 104,337 103,293 C 102,250 70,224 96,176 C 119,132 145,137 168,110 C 192,82 214,77 253,70 Z'
   return (
-    <div aria-hidden className="absolute inset-0 overflow-hidden bg-primary" role="presentation">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(var(--color-accent),0.18),transparent_56%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_48%_64%,rgba(var(--color-secondary),0.11),transparent_67%)]" />
-
-      <div className="absolute inset-0 opacity-70 mix-blend-screen">
-        <div className="hero-visual-shape absolute left-1/2 top-[44%] h-[21rem] w-[21rem] -translate-x-[58%] -translate-y-1/2 rounded-[45%] bg-[rgba(var(--color-accent),0.16)] blur-[2px] motion-safe:animate-[hero-drift_14s_ease-in-out_infinite] lg:h-[30rem] lg:w-[30rem]" />
-        <div className="hero-visual-shape absolute left-1/2 top-[53%] h-[17rem] w-[17rem] -translate-x-[18%] -translate-y-1/2 rounded-[42%] bg-[rgba(var(--color-secondary),0.12)] blur-[1px] motion-safe:animate-[hero-drift-reverse_11s_ease-in-out_infinite] lg:h-[24rem] lg:w-[24rem]" />
-        <div className="hero-visual-shape absolute left-1/2 top-[50%] h-[14rem] w-[14rem] -translate-x-[2%] -translate-y-1/2 rounded-[40%] border border-secondary/20 motion-safe:animate-[hero-pulse_8s_ease-in-out_infinite] lg:h-[19rem] lg:w-[19rem]" />
-      </div>
-
-      <div className="absolute left-1/2 top-1/2 h-[19rem] w-[19rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-secondary/20 motion-safe:animate-[spin_20s_linear_infinite] lg:h-[27rem] lg:w-[27rem]" />
-      <div className="absolute left-1/2 top-1/2 h-[13rem] w-[13rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-secondary/25 motion-safe:animate-[spin_13s_linear_infinite_reverse] lg:h-[18rem] lg:w-[18rem]" />
-
-    </div>
+    <svg
+      aria-hidden="true"
+      data-testid="blob-fallback"
+      className="hero-visual-shape absolute inset-0 h-full w-full"
+      viewBox="0 0 480 460"
+      fill="none"
+    >
+      <defs>
+        <linearGradient
+          id={`${id}-surface`}
+          x1="145"
+          y1="90"
+          x2="355"
+          y2="370"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="rgb(var(--color-secondary))" stopOpacity=".07" />
+          <stop offset=".55" stopColor="rgb(var(--color-accent))" stopOpacity=".24" />
+          <stop offset="1" stopColor="rgb(var(--color-accent))" stopOpacity=".65" />
+        </linearGradient>
+        <clipPath id={`${id}-clip`}>
+          <path d={outline} />
+        </clipPath>
+      </defs>
+      <path d={outline} fill={`url(#${id}-surface)`} />
+      <g
+        clipPath={`url(#${id}-clip)`}
+        stroke="rgb(var(--color-secondary))"
+        strokeOpacity=".26"
+        strokeWidth=".8"
+      >
+        {Array.from({ length: 30 }, (_, index) => {
+          const y = 40 + index * 12
+          return (
+            <path
+              key={index}
+              d={`M 62,${y} C 150,${y - 36} 178,${y + 40} 244,${y + 12} S 355,${y - 38} 427,${y + 8}`}
+            />
+          )
+        })}
+      </g>
+      <path d={outline} stroke="rgb(var(--color-secondary))" strokeOpacity=".15" strokeWidth=".8" />
+    </svg>
   )
 }

@@ -12,7 +12,7 @@ export default function Footer() {
           <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={6} />
           <SocialIcon kind="twitterX" href={siteMetadata.twitter} size={6} />
         </div>
-        <div className="flex space-x-2 pb-[25%] text-sm text-secondary/60 sm:mb-8 sm:pb-0">
+        <div className="flex space-x-2 pb-8 text-sm text-secondary/60 sm:mb-8 sm:pb-0">
           <Link href="/">{siteMetadata.author}</Link>
           <div>{` • `}</div>
           <div>{`© ${new Date().getFullYear()}`}</div>

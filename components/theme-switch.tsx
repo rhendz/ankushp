@@ -28,13 +28,14 @@ const ThemeSwitch = () => {
   }, [theme, resolvedTheme])
 
   if (!mounted) {
-    return null
+    return <span aria-hidden="true" className="inline-flex h-11 w-11 shrink-0" />
   }
 
   const isDark = theme === 'dark' || resolvedTheme === 'dark'
 
   return (
     <button
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
     >

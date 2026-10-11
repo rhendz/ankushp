@@ -1,408 +1,281 @@
 'use client'
 
 import * as THREE from 'three'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
 
-const fragmentShader = /*glsl*/ `
-  uniform float u_intensity;
+type SceneProps = {
+  paused: boolean
+  onReady: () => void
+  onUnavailable: () => void
+}
+
+type SceneControls = {
+  setPaused: (paused: boolean) => void
+  updateTheme: () => void
+}
+
+const vertexShader = /* glsl */ `
   uniform float u_time;
-
-  uniform float u_hue;
-  uniform float u_saturation;
-  uniform float u_lightness;
-  uniform float u_rim_strength;
-
-  varying vec2 vUv;
-  varying float vDisplacement;
-
-  vec3 rgb2hsl(vec3 color) {
-    vec3 hsl;
-    float maxVal = max(max(color.r, color.g), color.b);
-    float minVal = min(min(color.r, color.g), color.b);
-
-    hsl.z = (maxVal + minVal) / 2.0;
-
-    float delta = maxVal - minVal;
-
-    if (delta == 0.0) {
-      hsl.x = 0.0;
-      hsl.y = 0.0;
-    } else {
-      hsl.y = (hsl.z < 0.5) ? (delta / (maxVal + minVal)) : (delta / (2.0 - maxVal - minVal));
-
-      if (maxVal == color.r) {
-        hsl.x = (color.g - color.b) / delta + ((color.g < color.b) ? 6.0 : 0.0);
-      } else if (maxVal == color.g) {
-        hsl.x = (color.b - color.r) / delta + 2.0;
-      } else {
-        hsl.x = (color.r - color.g) / delta + 4.0;
-      }
-
-      hsl.x /= 6.0;
-    }
-
-    return hsl;
-  }
-
-  float hue2rgb(float p, float q, float t) {
-    if (t < 0.0) t += 1.0;
-    if (t > 1.0) t -= 1.0;
-    if (t < 1.0 / 6.0) return p + (q - p) * 6.0 * t;
-    if (t < 1.0 / 2.0) return q;
-    if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
-    return p;
-  }
-
-  vec3 hsl2rgb(vec3 hsl) {
-    vec3 rgb;
-    if (hsl.y == 0.0) {
-      rgb = vec3(hsl.z);
-    } else {
-      float q = (hsl.z < 0.5) ? (hsl.z * (1.0 + hsl.y)) : (hsl.z + hsl.y - (hsl.z * hsl.y));
-      float p = 2.0 * hsl.z - q;
-      rgb.r = hue2rgb(p, q, hsl.x + 1.0 / 3.0);
-      rgb.g = hue2rgb(p, q, hsl.x);
-      rgb.b = hue2rgb(p, q, hsl.x - 1.0 / 3.0);
-    }
-    return rgb;
-  }
+  uniform vec2 u_pointer;
+  varying vec3 v_position;
+  varying vec3 v_viewPosition;
 
   void main() {
-    float distort = 2.0 * vDisplacement * u_intensity;
-
-    vec3 baseColor = vec3(abs(vUv - 0.5) * 2.0 * (1.0 - distort), 1.0);
-    vec3 hsl = rgb2hsl(baseColor);
-
-    hsl.x = mod(hsl.x + u_hue, 1.0);
-    hsl.y = clamp(hsl.y * u_saturation, 0.0, 1.0);
-    hsl.z = clamp(hsl.z + u_lightness, 0.0, 1.0);
-
-    vec3 finalColor = hsl2rgb(hsl);
-
-    float centerDistance = length((vUv - 0.5) * 2.0);
-    float rim = smoothstep(0.35, 1.0, centerDistance);
-    finalColor += vec3(0.14, 0.16, 0.22) * rim * u_rim_strength;
-    finalColor = clamp(finalColor, 0.0, 1.0);
-
-    gl_FragColor = vec4(finalColor, 1.0);
+    float t = u_time;
+    vec3 p = position;
+    float wave = sin(p.x * 2.2 + t * 0.48) * cos(p.y * 1.8 - t * 0.32);
+    wave += 0.45 * sin(p.z * 2.8 + p.y * 1.3 + t * 0.25);
+    float influence = dot(normal.xy, u_pointer) * 0.07;
+    p += normal * (wave * 0.22 + influence);
+    v_position = p;
+    vec4 viewPosition = modelViewMatrix * vec4(p, 1.0);
+    v_viewPosition = viewPosition.xyz;
+    gl_Position = projectionMatrix * viewPosition;
   }
 `
 
-const vertexShader = /*glsl*/ `
-  uniform float u_intensity;
-  uniform float u_time;
-
-  varying vec2 vUv;
-  varying float vDisplacement;
-
-  vec4 permute(vec4 x) {
-    return mod(((x*34.0)+1.0)*x, 289.0);
-  }
-
-  vec4 taylorInvSqrt(vec4 r) {
-    return 1.79284291400159 - 0.85373472095314 * r;
-  }
-
-  vec3 fade(vec3 t) {
-    return t*t*t*(t*(t*6.0-15.0)+10.0);
-  }
-
-  float cnoise(vec3 P) {
-    vec3 Pi0 = floor(P);
-    vec3 Pi1 = Pi0 + vec3(1.0);
-    Pi0 = mod(Pi0, 289.0);
-    Pi1 = mod(Pi1, 289.0);
-    vec3 Pf0 = fract(P);
-    vec3 Pf1 = Pf0 - vec3(1.0);
-    vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
-    vec4 iy = vec4(Pi0.yy, Pi1.yy);
-    vec4 iz0 = Pi0.zzzz;
-    vec4 iz1 = Pi1.zzzz;
-
-    vec4 ixy = permute(permute(ix) + iy);
-    vec4 ixy0 = permute(ixy + iz0);
-    vec4 ixy1 = permute(ixy + iz1);
-
-    vec4 gx0 = ixy0 / 7.0;
-    vec4 gy0 = fract(floor(gx0) / 7.0) - 0.5;
-    gx0 = fract(gx0);
-    vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
-    vec4 sz0 = step(gz0, vec4(0.0));
-    gx0 -= sz0 * (step(0.0, gx0) - 0.5);
-    gy0 -= sz0 * (step(0.0, gy0) - 0.5);
-
-    vec4 gx1 = ixy1 / 7.0;
-    vec4 gy1 = fract(floor(gx1) / 7.0) - 0.5;
-    gx1 = fract(gx1);
-    vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
-    vec4 sz1 = step(gz1, vec4(0.0));
-    gx1 -= sz1 * (step(0.0, gx1) - 0.5);
-    gy1 -= sz1 * (step(0.0, gy1) - 0.5);
-
-    vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
-    vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
-    vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
-    vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
-    vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
-    vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
-    vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
-    vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
-
-    vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
-    g000 *= norm0.x;
-    g010 *= norm0.y;
-    g100 *= norm0.z;
-    g110 *= norm0.w;
-    vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
-    g001 *= norm1.x;
-    g011 *= norm1.y;
-    g101 *= norm1.z;
-    g111 *= norm1.w;
-
-    float n000 = dot(g000, Pf0);
-    float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
-    float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
-    float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
-    float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
-    float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
-    float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
-    float n111 = dot(g111, Pf1);
-
-    vec3 fade_xyz = fade(Pf0);
-    vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
-    vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
-    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
-    return 2.2 * n_xyz;
-  }
+const fragmentShader = /* glsl */ `
+  uniform vec3 u_surface;
+  uniform vec3 u_ink;
+  uniform vec3 u_accent;
+  uniform float u_dark;
+  varying vec3 v_position;
+  varying vec3 v_viewPosition;
 
   void main() {
-    vUv = uv;
-    vDisplacement = cnoise(position + vec3(2.0 * u_time));
+    vec3 normal = normalize(cross(dFdx(v_viewPosition), dFdy(v_viewPosition)));
+    vec3 light = normalize(vec3(-0.65, 0.85, 1.2));
+    float diffuse = max(dot(normal, light), 0.0);
+    float facing = max(dot(normal, normalize(-v_viewPosition)), 0.0);
+    float rim = pow(1.0 - facing, 2.2);
+    float warmth = (1.0 - smoothstep(-1.4, 0.6, v_position.y)) * 0.58 + 0.12;
+    vec3 base = mix(u_surface, u_accent, warmth);
+    vec3 color = base * (0.58 + diffuse * 0.48);
+    color = mix(color, u_accent, rim * (0.14 + u_dark * 0.12));
 
-    vec3 newPosition = position + normal * (u_intensity * vDisplacement);
-    vec4 modelPosition = modelMatrix * vec4(newPosition, 1.0);
-    vec4 viewPosition = viewMatrix * modelPosition;
-    vec4 projectedPosition = projectionMatrix * viewPosition;
-
-    gl_Position = projectedPosition;
+    float contour = (v_position.y + 0.14 * sin(v_position.x * 2.5) + 0.10 * v_position.z) * 10.0;
+    float distanceToLine = abs(fract(contour - 0.5) - 0.5);
+    float width = max(fwidth(contour), 0.002);
+    float line = 1.0 - smoothstep(width * 0.18, width * 0.18 + width, distanceToLine);
+    color = mix(color, u_ink, line * 0.38);
+    gl_FragColor = vec4(color, 1.0);
+    #include <colorspace_fragment>
   }
 `
 
-export default function Home3DScene() {
-  const mountRef = useRef<HTMLDivElement | null>(null)
+export default function Home3DScene({ paused, onReady, onUnavailable }: SceneProps) {
+  const mountRef = useRef<HTMLDivElement>(null)
+  const controlsRef = useRef<SceneControls | null>(null)
   const { resolvedTheme } = useTheme()
-  const isDarkMode = resolvedTheme === 'dark'
-  const [sceneVisible, setSceneVisible] = useState(false)
-
-  const uniforms = useMemo(
-    () => ({
-      u_intensity: { value: 0.15 },
-      u_time: { value: 0.0 },
-      u_hue: { value: 1.0 },
-      u_saturation: { value: 1.0 },
-      u_lightness: { value: 0.2 },
-      u_rim_strength: { value: 0.0 },
-    }),
-    []
-  )
 
   useEffect(() => {
-    const mountEl = mountRef.current
-    if (!mountEl) return
-
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(44, 1, 0.1, 100)
-    camera.position.set(0, 0, 9)
+    const mount = mountRef.current
+    if (!mount) return
 
     const canvas = document.createElement('canvas')
-    mountEl.appendChild(canvas)
-
-    const rendererOptions: Array<THREE.WebGLRendererParameters> = [
-      { canvas, alpha: true, antialias: true, powerPreference: 'high-performance' },
-      { canvas, alpha: true, antialias: false, powerPreference: 'high-performance' },
-      { canvas, alpha: true, antialias: false, powerPreference: 'default' },
-    ]
-
-    let renderer: THREE.WebGLRenderer | null = null
-    let rendererError: unknown = null
-
-    for (const options of rendererOptions) {
-      try {
-        renderer = new THREE.WebGLRenderer(options)
-        break
-      } catch (error) {
-        rendererError = error
-      }
-    }
-
-    if (!renderer) {
+    canvas.setAttribute('aria-hidden', 'true')
+    mount.appendChild(canvas)
+    let renderer: THREE.WebGLRenderer
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'low-power',
+      })
+    } catch {
       canvas.remove()
-      throw rendererError instanceof Error ? rendererError : new Error('Unable to initialize WebGL renderer')
+      onUnavailable()
+      return
+    }
+    renderer.setClearColor(0x000000, 0)
+    // A failed shader must retain the static form rather than report a healthy canvas.
+    let shaderFailed = false
+    renderer.debug.onShaderError = () => {
+      shaderFailed = true
     }
 
-    const webglRenderer = renderer
-    webglRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    webglRenderer.setClearColor(0x000000, 0)
-
-    const geometry = new THREE.IcosahedronGeometry(1.5, 48)
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms,
-      wireframe: !isDarkMode,
-    })
-
-    const blob = new THREE.Mesh(geometry, material)
-    blob.rotation.set(-Math.PI / 4, 0, 0)
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 30)
+    camera.position.z = 7
+    const uniforms = {
+      u_time: { value: 0 },
+      u_pointer: { value: new THREE.Vector2() },
+      u_surface: { value: new THREE.Color() },
+      u_ink: { value: new THREE.Color() },
+      u_accent: { value: new THREE.Color() },
+      u_dark: { value: 0 },
+    }
+    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms })
+    let compact = mount.clientWidth < 420
+    const blob = new THREE.Mesh(new THREE.IcosahedronGeometry(1.45, compact ? 24 : 36), material)
+    blob.rotation.set(-0.12, 0.2, -0.16)
     scene.add(blob)
 
-    let haloTexture: THREE.CanvasTexture | null = null
-    let haloSprite: THREE.Sprite | null = null
-
-    if (isDarkMode) {
-      const size = 256
-      const haloCanvas = document.createElement('canvas')
-      haloCanvas.width = size
-      haloCanvas.height = size
-      const ctx = haloCanvas.getContext('2d')
-      if (ctx) {
-        const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-        gradient.addColorStop(0, 'rgba(180, 208, 255, 0.42)')
-        gradient.addColorStop(0.35, 'rgba(140, 185, 255, 0.22)')
-        gradient.addColorStop(0.7, 'rgba(120, 160, 255, 0.08)')
-        gradient.addColorStop(1, 'rgba(120, 160, 255, 0)')
-        ctx.fillStyle = gradient
-        ctx.fillRect(0, 0, size, size)
-
-        haloTexture = new THREE.CanvasTexture(haloCanvas)
-        const spriteMat = new THREE.SpriteMaterial({
-          map: haloTexture,
-          color: '#a4bfff',
-          transparent: true,
-          opacity: 0.5,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-          depthTest: false,
-        })
-        haloSprite = new THREE.Sprite(spriteMat)
-        haloSprite.position.set(0, 0, -0.25)
-        scene.add(haloSprite)
-      }
-    }
-
-    const resize = () => {
-      const w = mountEl.clientWidth || window.innerWidth
-      const h = mountEl.clientHeight || window.innerHeight
-      camera.aspect = w / h
-      camera.updateProjectionMatrix()
-      webglRenderer.setSize(w, h)
-
-      const isMobile = window.matchMedia('(max-width: 768px)').matches
-      const scale = isMobile ? 0.95 : 1.2
-      blob.scale.set(scale, scale, scale)
-      if (haloSprite) {
-        const haloScale = scale * 4.8
-        haloSprite.scale.set(haloScale, haloScale, 1)
-      }
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
-
-    let raf = 0
-    let firstFrame = false
-    const clock = new THREE.Clock()
-
-    const applyThemeUniforms = () => {
-      uniforms.u_lightness.value = isDarkMode ? 0.05 : 0.2
-      uniforms.u_rim_strength.value = isDarkMode ? 0.56 : 0.0
-      material.wireframe = !isDarkMode
-    }
-
-    const renderFrame = () => {
-      applyThemeUniforms()
-      webglRenderer.render(scene, camera)
-
-      if (!firstFrame) {
-        firstFrame = true
-        setSceneVisible(true)
-      }
-    }
-
-    const tick = () => {
-      uniforms.u_time.value = 0.4 * clock.getElapsedTime()
-      blob.rotation.y += 0.002
-      renderFrame()
-      raf = window.requestAnimationFrame(tick)
-    }
-
-    // Respect prefers-reduced-motion: draw one static frame instead of animating.
+    let frame = 0
+    let previousTime = 0
+    let elapsed = 0
+    let running = false
+    let isPaused = false
+    let intersecting = true
+    let lost = false
+    let disposed = false
+    let ready = false
+    const targetPointer = new THREE.Vector2()
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const finePointer = window.matchMedia('(pointer: fine)')
 
-    // The hero scrolls out of view on every page; keep the GPU idle once it does.
-    let isIntersecting = true
-    let isAnimating = false
-
-    const startAnimation = () => {
-      if (isAnimating || reducedMotion.matches || !isIntersecting) return
-      isAnimating = true
-      tick()
+    const stop = () => {
+      running = false
+      window.cancelAnimationFrame(frame)
+      previousTime = 0
     }
-
-    const stopAnimation = () => {
-      if (!isAnimating) return
-      isAnimating = false
-      window.cancelAnimationFrame(raf)
+    const fail = () => {
+      if (lost || disposed) return
+      lost = true
+      stop()
+      onUnavailable()
     }
-
-    const syncAnimation = () => {
-      if (reducedMotion.matches || !isIntersecting) {
-        stopAnimation()
-        renderFrame()
+    const render = () => {
+      if (lost || disposed) return
+      try {
+        renderer.render(scene, camera)
+        if (shaderFailed) {
+          fail()
+          return
+        }
+        if (!ready) {
+          ready = true
+          mount.dataset.ready = 'true'
+          onReady()
+        }
+      } catch {
+        fail()
+      }
+    }
+    const canAnimate = () =>
+      !isPaused && !reducedMotion.matches && intersecting && !document.hidden && !lost && !disposed
+    const tick = (now: number) => {
+      if (!canAnimate()) {
+        stop()
         return
       }
-      startAnimation()
+      const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0
+      previousTime = now
+      elapsed += delta
+      uniforms.u_time.value = elapsed
+      uniforms.u_pointer.value.lerp(targetPointer, 1 - Math.exp(-delta * 4))
+      blob.rotation.y = 0.2 + Math.sin(elapsed * 0.12) * 0.3 + uniforms.u_pointer.value.x * 0.12
+      blob.rotation.x = -0.12 + uniforms.u_pointer.value.y * 0.07
+      render()
+      if (!lost) frame = window.requestAnimationFrame(tick)
     }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isIntersecting = entry.isIntersecting
-        syncAnimation()
+    const sync = () => {
+      if (!canAnimate()) {
+        stop()
+        return
+      }
+      if (!running) {
+        running = true
+        previousTime = 0
+        frame = window.requestAnimationFrame(tick)
+      }
+    }
+    const updateTheme = () => {
+      const styles = getComputedStyle(document.documentElement)
+      const color = (name: string) =>
+        `rgb(${styles.getPropertyValue(name).trim().split(/\s+/).join(',')})`
+      uniforms.u_surface.value.setStyle(color('--color-primary'))
+      uniforms.u_ink.value.setStyle(color('--color-secondary'))
+      uniforms.u_accent.value.setStyle(color('--color-accent'))
+      uniforms.u_dark.value = document.documentElement.dataset.theme === 'dark' ? 1 : 0
+      // Lift the dark surface so contours remain legible without bloom/postprocessing.
+      if (uniforms.u_dark.value) uniforms.u_surface.value.lerp(new THREE.Color('#d5c6bd'), 0.3)
+      render()
+    }
+    const resize = () => {
+      const w = mount.clientWidth
+      const h = mount.clientHeight
+      if (!w || !h) return
+      const nextCompact = w < 420
+      if (nextCompact !== compact) {
+        compact = nextCompact
+        blob.geometry.dispose()
+        blob.geometry = new THREE.IcosahedronGeometry(1.45, compact ? 24 : 36)
+      }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, compact ? 1.5 : 2))
+      renderer.setSize(w, h)
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+      const scale = Math.min(1, camera.aspect)
+      blob.scale.setScalar(scale)
+      render()
+    }
+    const pointerMove = (event: PointerEvent) => {
+      if (!finePointer.matches || !canAnimate() || event.pointerType === 'touch') return
+      const bounds = mount.getBoundingClientRect()
+      targetPointer.set(
+        THREE.MathUtils.clamp(((event.clientX - bounds.left) / bounds.width) * 2 - 1, -1, 1),
+        THREE.MathUtils.clamp(1 - ((event.clientY - bounds.top) / bounds.height) * 2, -1, 1)
+      )
+    }
+    const pointerLeave = () => targetPointer.set(0, 0)
+    const contextLost = (event: Event) => {
+      event.preventDefault()
+      fail()
+    }
+    controlsRef.current = {
+      setPaused(value) {
+        isPaused = value
+        sync()
       },
-      { threshold: 0 }
-    )
-    observer.observe(mountEl)
-
-    reducedMotion.addEventListener('change', syncAnimation)
-    syncAnimation()
+      updateTheme,
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      intersecting = entry.isIntersecting
+      sync()
+    })
+    const sizeObserver = new ResizeObserver(resize)
+    observer.observe(mount)
+    sizeObserver.observe(mount)
+    mount.addEventListener('pointermove', pointerMove)
+    mount.addEventListener('pointerleave', pointerLeave)
+    canvas.addEventListener('webglcontextlost', contextLost)
+    document.addEventListener('visibilitychange', sync)
+    reducedMotion.addEventListener('change', sync)
+    // Set colors before the first visible frame.
+    updateTheme()
+    resize()
+    sync()
 
     return () => {
-      stopAnimation()
+      disposed = true
+      stop()
+      controlsRef.current = null
       observer.disconnect()
-      reducedMotion.removeEventListener('change', syncAnimation)
-      window.removeEventListener('resize', resize)
-
-      scene.remove(blob)
-      geometry.dispose()
+      sizeObserver.disconnect()
+      mount.removeEventListener('pointermove', pointerMove)
+      mount.removeEventListener('pointerleave', pointerLeave)
+      canvas.removeEventListener('webglcontextlost', contextLost)
+      document.removeEventListener('visibilitychange', sync)
+      reducedMotion.removeEventListener('change', sync)
+      blob.geometry.dispose()
       material.dispose()
-
-      if (haloSprite) {
-        scene.remove(haloSprite)
-        const mat = haloSprite.material as THREE.Material
-        mat.dispose()
-      }
-
-      haloTexture?.dispose()
-      webglRenderer.dispose()
-      webglRenderer.domElement.remove()
+      renderer.dispose()
+      if (!lost) renderer.forceContextLoss()
+      canvas.remove()
     }
-  }, [isDarkMode, uniforms])
+  }, [onReady, onUnavailable])
+
+  useEffect(() => {
+    controlsRef.current?.setPaused(paused)
+  }, [paused])
+  useEffect(() => {
+    controlsRef.current?.updateTheme()
+  }, [resolvedTheme])
 
   return (
-    <div
-      ref={mountRef}
-      className={`absolute inset-0 transition-opacity duration-500 ease-out ${sceneVisible ? 'opacity-100' : 'opacity-0'}`}
-    />
+    <div ref={mountRef} aria-hidden="true" data-testid="blob-canvas" className="absolute inset-0" />
   )
 }
