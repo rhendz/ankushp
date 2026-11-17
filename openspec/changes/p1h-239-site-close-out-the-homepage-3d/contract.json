@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "change": "p1h-239-site-close-out-the-homepage-3d",
+  "issue": "P1H-239",
+  "source": {
+    "planning_revision": "90eed3d7aea93783",
+    "base": "743252b29959d5480e8a2fca246c75ec0036441a"
+  },
+  "goal": "Close out GitHub issue 97 with a document grading its four deliverables against main, file and line, and a vitest guard that fails if package.json lists any @react-three/ package again.",
+  "scope": [
+    "lib/dependency-guard.test.ts",
+    "docs/specs/next16-migration/homepage-3d-closeout.md"
+  ],
+  "out_of_scope": [
+    "The homepage scene, its fallback, error boundary, look or behaviour (app/, components/, layouts/, css/)",
+    "package.json and package-lock.json: no dependency is added, removed or moved",
+    "Fixing the coverage gaps the document names (tests/smoke/, scripts/home-visual-health-check.mjs, .github/workflows/)",
+    "Closing GitHub issue 97: the developer does that after reading the document",
+    "openspec/, dispatch/, .claude/, CLAUDE.md, AGENTS.md, scripts/pipeline-check.sh"
+  ],
+  "acceptance": "bash scripts/pipeline-check.sh test && bash scripts/pipeline-check.sh lint && test -f docs/specs/next16-migration/homepage-3d-closeout.md",
+  "lane": "workstream",
+  "tasks": [
+    {
+      "id": "dependency-guard-test",
+      "title": "Add the @react-three manifest guard test",
+      "description": "Create lib/dependency-guard.test.ts per design.md D1-D3: a pure findReactThreePackages(manifest) over the keys of dependencies, devDependencies, peerDependencies, optionalDependencies and overrides, matching names that start with '@react-three/'; fixture cases that must catch one name in each of those five places and must pass a three/@types/three-only manifest; and the guard case asserting the real package.json (read from disk and JSON.parse'd) yields an empty list, with a failure message naming every offender. Verify with the targeted vitest run and lint.",
+      "class": "deterministic",
+      "acceptance": "bash scripts/pipeline-check.sh test -- lib/dependency-guard.test.ts && bash scripts/pipeline-check.sh lint",
+      "covers": [
+        "homepage-3d-dependency-guard/The unit-test check rejects @react-three packages in the manifest#Manifest lists no @react-three package",
+        "homepage-3d-dependency-guard/The unit-test check rejects @react-three packages in the manifest#A runtime dependency from the @react-three scope fails the check",
+        "homepage-3d-dependency-guard/The unit-test check rejects @react-three packages in the manifest#A development, peer, optional or override entry also fails the check",
+        "homepage-3d-dependency-guard/The unit-test check rejects @react-three packages in the manifest#A similarly named package outside the scope does not trip the guard"
+      ]
+    },
+    {
+      "id": "closeout-doc",
+      "title": "Write the issue 97 close-out document",
+      "description": "Write docs/specs/next16-migration/homepage-3d-closeout.md per design.md D4: header naming GitHub issue 97, Linear P1H-239, the date and the commit graded; the issue's objective and scope; '## Deliverable 1' to '## Deliverable 4', each with the verbatim deliverable, a '**Verdict:**' line (Met, Partly met or Not met) and path:line evidence marked read or ran, re-checked against the code when written; then '## Still missing' and '## Not verified'. Change no scene, dependency, script, smoke or workflow file. Verify the structure and that those paths are unchanged from the merge base with main.",
+      "class": "deterministic",
+      "acceptance": "f=docs/specs/next16-migration/homepage-3d-closeout.md; test -f \"$f\" && test \"$(grep -c '^## Deliverable [1-4]' \"$f\")\" -eq 4 && test \"$(grep -c '^\\*\\*Verdict:\\*\\* ' \"$f\")\" -ge 4 && grep -q '^## Still missing' \"$f\" && grep -q '^## Not verified' \"$f\" && git diff --quiet \"$(git merge-base HEAD refs/remotes/origin/main)\" -- package.json package-lock.json app components layouts css data public scripts tests .github next.config.js",
+      "covers": []
+    },
+    {
+      "id": "full-checks",
+      "title": "Run the full unit suite and lint",
+      "description": "On the finished branch, run the whole vitest suite and lint; both must pass, including the new guard against the real package.json.",
+      "class": "deterministic",
+      "acceptance": "bash scripts/pipeline-check.sh test && bash scripts/pipeline-check.sh lint",
+      "covers": [
+        "homepage-3d-dependency-guard/The unit-test check rejects @react-three packages in the manifest#Manifest lists no @react-three package"
+      ]
+    }
+  ]
+}
