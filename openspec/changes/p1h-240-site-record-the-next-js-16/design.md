@@ -56,9 +56,9 @@ text. Acceptance greps for them.
 | V2 | Async request API applied to the three codemod routes | met | `app/blog/posts/[...slug]/page.tsx`, `app/blog/tags/[tag]/page.tsx`, `app/blog/posts/page/[page]/page.tsx`: `params: Promise<…>` (lines as in `investigation.md`) |
 | V3 | Lint runs through the ESLint CLI with a flat config | met | `package.json:12`, `eslint.config.js`; no `.eslintrc*` tracked |
 | V4 | No route carries the temporary `force-dynamic` fallback | met | no match under `app/`; removed by `60a7a1f` (#94); `blockers.md` "Current stabilization state" is stale |
-| V5 | `bash scripts/pipeline-check.sh lint` passes | met or not met | the worker's own run, with date and commit |
-| V6 | `bash scripts/pipeline-check.sh test` passes | met or not met | the worker's own run, with date and commit |
-| V7 | `npm run build` passes, including static prerender of `/about` and post pages | not run | GitHub Actions `Required Checks / build` on the PR |
+| V5 | `bash scripts/pipeline-check.sh lint` passes | met or not met | the worker's own run: the date, and the merge-base commit the document describes (HEAD before the worker's commit) |
+| V6 | `bash scripts/pipeline-check.sh test` passes | met or not met | the worker's own run: the date, and the merge-base commit the document describes (HEAD before the worker's commit) |
+| V7 | `npm run build` passes and prerenders `/about` and post pages statically | not run | the route table in the log of GitHub Actions `Required Checks / build` on the PR. The developer confirms that `/about` is marked `○ (Static)` and `/blog/posts/[...slug]` `● (SSG)`, and that neither is marked `ƒ (Dynamic)`. A green job alone does not show this. |
 | V8 | Typecheck passes | not run | `Required Checks / typecheck` |
 | V9 | Playwright smoke passes | not run | `Playwright Smoke / smoke` |
 | V10 | Smoke suite covers every critical route | not met | `/about` (plus the tag and pagination routes) are not visited; the suite runs on the dev server |
@@ -67,8 +67,25 @@ text. Acceptance greps for them.
 | V13 | Performance spot-check, one blog post page | not run | commands in the section below |
 
    V5 and V6 record what the worker observed when it ran the checks. If one fails, the row says
-   `not met` and the task's acceptance fails anyway. V7 to V9 are never written as met by the
-   worker: the developer reads them off the PR's Actions run.
+   `not met` and the task's acceptance fails anyway. They cite the merge-base commit, not "this
+   commit". The worker runs the checks before it commits the file, so the commit that holds the
+   file cannot be named inside it. V7 to V9 are never written as met by the worker: the developer
+   reads them off the PR's Actions run.
+
+   V7's evidence is the route table, not the job's result. The `build` job
+   (`required-checks.yml:94-124`) fails only on errors. A route that silently became dynamic would
+   still build green. `next build` prints a legend of `○ (Static)`, `● (SSG)` and `ƒ (Dynamic)`
+   (`node_modules/next/dist/build/utils.js:514-533`, Next.js 16.3.4). `/about` has no
+   `generateStaticParams`, so static shows as `○`. The post route exports `generateStaticParams`
+   (`app/blog/posts/[...slug]/page.tsx:151`), so static shows as `●`.
+
+   The table must be machine-checkable, so the worker follows two format rules:
+   - Every row begins `| V<n> |`.
+   - The Status cell holds exactly one of the plain strings `met`, `not met` or `not run`, with no
+     bold, code or extra words. Qualifications go in the Evidence cell.
+
+   The Item cell contains no `|` character. Prettier pads table cells with spaces when it formats
+   them. The acceptance regexes allow any number of spaces around each cell.
 
 4. `## Smoke coverage of critical routes`. Critical routes are the routes named by the migration's
    own documents:
@@ -88,13 +105,15 @@ text. Acceptance greps for them.
 
    Then one sentence: the smoke web server is `npm run dev` (`playwright.config.ts:30`), so a green
    smoke run does not exercise the production prerender that blocker #90 was about. Only the
-   `build` job does.
+   route table in the `build` job's log shows that (V7).
 5. `## force-dynamic fallback`. Covers:
    - the `git log -S'force-dynamic' -- app` result (added in `13558b9`, removed in `60a7a1f`)
    - that no file under `app/` matches today
    - that `blockers.md`'s "Current stabilization state" and follow-up step 2 are therefore already
      done in code, with step 3 (build) and step 4 (smoke-check `/about`) open as V7 and V10
-6. `## Rollback triggers (proposed)`. A "Proposed, not adopted" note, then:
+6. `## Rollback triggers (proposed)`. A note containing the exact phrase `Proposed, not adopted`,
+   then one list item per trigger. Each item begins with its bold id, as in
+   `- **R1, checks:** …`. Acceptance greps for `^- \*\*R<n>`:
    - **R1, checks:** a required check (`lint`, `typecheck`, `build`, `test`) or the Playwright smoke
      fails on `main`, and the failure traces to the migration. Act by reverting, as
      `readiness.md:79-81` says.
@@ -151,10 +170,36 @@ text. Acceptance greps for them.
 `pipeline-check.sh lint` lints only `app components lib layouts scripts` (`package.json:12`).
 `test` collects only `components/`, `lib/` and `app/` (`vitest.config.ts:16-20`). Neither can see a
 file under `docs/`. Each acceptance therefore starts with `test -f` and `grep` assertions on the
-D2 headings and key facts, then runs the pipeline check the intake names.
+document, then runs the pipeline check the intake names.
 
-A separate task checks that nothing outside the document changed. It compares against the merge
-base with `origin/main`, never a fixed commit.
+Task 1 asserts the following, using the format rules in D2:
+- **Headings:** all seven D2 headings, plus the two subsections `### Homepage (/)` and
+  `### Blog post page`.
+- **Rows:** V1 to V13 are each present, and each has a Status cell of `met`, `not met` or `not run`.
+- **Statuses the plan fixes:**
+  - V4 is `met`.
+  - V7, V8, V9, V12 and V13 are `not run`. They need Actions or a browser, so this cannot change on
+    the PC.
+  - No row from V7 to V13 is `met`. This is a negated `grep -E`. `not met` does not match, because
+    the regex anchors `met` right after the cell separator.
+- **Content:** `Proposed, not adopted`, list items R1 to R4, the removal commit `60a7a1f`, `/about`
+  and `npx -y lighthouse`.
+
+V10 and V11 are only required not to be `met`. They are not pinned to `not met`: if `main` gains
+`/about` smoke coverage before the worker runs, task 1.1 tells the worker to record the current
+state.
+
+A separate task checks that nothing outside the document changed, comparing against the merge base
+with `origin/main`, never a fixed commit. It asserts the whole diff, not a list of paths that could
+miss one (`tsconfig.json`, `playwright.config.ts`, other `docs/` files). Every tracked path that
+differs from the merge base must be either `docs/specs/next16-migration/validation.md` or under
+`openspec/changes/p1h-240-site-record-the-next-js-16/`. So must every untracked, non-ignored path.
+
+Untracked paths are listed with top-level dot-entries excluded (`':(exclude,glob).*'`). `.github`
+and `.husky` are listed separately. The reason: in the agent sandbox, untracked mount points such
+as `.bashrc`, `.controller` and `.workstream` appear at the worktree root. They are not part of
+the change and would fail the check on every run. An untracked file cannot reach the PR without
+being committed, and once committed it appears in the tracked diff, which has no exclusion.
 
 *Alternative:* a vitest test that parses the document. Rejected: it would add a file under `app/` or
 `lib/`, outside the approved write path.
@@ -190,7 +235,9 @@ on the preview.
 - [The proposed thresholds are taken as adopted when the PR merges] → the section title and its
   first line say "Proposed, not adopted", and V11 stays not met.
 - [The Prettier pre-commit hook (lint-staged, `package.json:89-91`) reformats the markdown tables] →
-  harmless. The acceptance greps match headings and literals, not table spacing.
+  harmless. The acceptance greps match headings and literals, and the Status-cell regexes allow
+  any padding around `|`. Prettier does not rewrite `**` bold or the `-` list markers the R1-R4
+  greps rely on.
 - [Line numbers cited in the document drift as code changes] → each citation names the commit
   described in the header.
 
