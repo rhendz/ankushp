@@ -1,1 +1,4 @@
 schema: delivery
+# Documentation only: one new file under docs/. No route, response or visible behaviour changes,
+# so there is no spec delta. See proposal.md, Capabilities.
+skip_specs: true
