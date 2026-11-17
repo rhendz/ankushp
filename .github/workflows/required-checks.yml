@@ -33,10 +33,13 @@ jobs:
           echo "Validating PR title: $PR_TITLE"
           if [[ "$PR_TITLE" =~ ^(feat|bug|chore)(\([A-Za-z0-9._-]+\))?:[[:space:]].+ ]]; then
             echo "PR title format is valid."
+          elif [[ "$PR_TITLE" =~ ^[A-Z][A-Z0-9]+-[0-9]+:[[:space:]].+ ]]; then
+            echo "PR title carries a pipeline job key; valid."
           else
             echo "Invalid PR title format."
             echo "Expected: feat|bug|chore: short description"
             echo "Optional scope is allowed: feat(scope): short description"
+            echo "A pipeline pull request starts with its job key: P1H-123: short description"
             exit 1
           fi
 

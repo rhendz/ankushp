@@ -1,0 +1,59 @@
+# The site's OpenSpec configuration. The schemas in openspec/schemas/ are the dispatch
+# kernel's defaults (`delivery`, `investigation`); `dispatch-plan-check` is the gate.
+
+schema: delivery
+
+context: |
+  ankushp is a personal website and blog, public at ankushp.com: Next.js 16 (App Router,
+  webpack), React 19, TypeScript, Tailwind, contentlayer for MDX posts under data/, a
+  three.js scene on the homepage, and a few API routes (claps, newsletter, OG images).
+  Merging into main deploys the site. The repository is public: plans, reviews and pull
+  request text are public too, so they hold no secrets, credentials or private details.
+
+  Read `CLAUDE.md`, `AGENTS.md` and `README.md` before planning. The runbooks are under
+  docs/runbooks/.
+
+  Authority:
+  - Only the developer decides. Agents investigate, plan, resolve ordinary technical
+    choices inside the approved outcome (recorded in design.md), build and verify.
+  - Who decides each transition is openspec/delegation.yaml: plan approval, accept, any
+    visual sign-off and the merge into main are the developer's.
+  - Linear (team P1H, project "ankushp") is authoritative for what work exists. Each
+    Linear issue names the GitHub issue it delivers.
+
+rules:
+  investigation:
+    - Every claim about current behaviour carries a `path:line`. Say which you read and which you ran.
+    - A claim about a package's compatibility names the version and where you read it.
+  proposal:
+    - Name the Linear issue and the GitHub issue this change belongs to.
+    - State Out of scope explicitly.
+  specs:
+    - A spec states what a visitor or the site observably does. Component and file names
+      belong in design.md.
+  design:
+    - Record technical choices here, with alternatives. A dependency added, removed or moved
+      a major version is named here with the reason and the lockfile impact.
+    - For any change to a page, say which routes change and what a visitor sees differently.
+  tasks:
+    - Give every task an explicit kebab-case id matching contract.json, e.g.
+      `- [ ] 1.1 (date-format) ...`, and state how it is verified.
+  contract:
+    - `acceptance` runs on the PC with no network and no browser:
+      `bash scripts/pipeline-check.sh test` (vitest), `bash scripts/pipeline-check.sh lint`,
+      or a narrower `bash scripts/pipeline-check.sh test -- <file>`.
+    - Typecheck, `npm run build` and the Playwright smoke run in GitHub Actions on the pull
+      request, not as acceptance. Say in the plan which of them the change depends on.
+    - Every task is `class: deterministic`.
+    - Set `"lane": "inline"` when the change touches a path in machinery.toml's `boundary.worker`.
+  review:
+    - Run in a context that did not author the plan, check the premises against the code yourself,
+      and always fill in Not checked.
+
+operations:
+  apply:
+    guidance:
+      - The supervisor picks the task and re-runs its acceptance; its result, not a checked box, completes it.
+      - Nothing on the PC renders the site in a browser. For a change a visitor can see, the delivery
+        review lists the routes to look at and the Actions checks to wait for, and the developer looks
+        at the pull request's preview before accepting.

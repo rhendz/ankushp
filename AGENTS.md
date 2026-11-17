@@ -59,3 +59,17 @@ These rules define the default issue/PR workflow for this repository.
 - Never commit credentials, tokens, or service-account JSON files.
 - Keep secrets in local environment files (for example `.env.local`) or user-level secure paths.
 - Validate required env before running external API workflows (for GA: property id + auth variables).
+
+## Built by dispatch
+
+Work can also arrive through the dispatch pipeline: a Linear issue in the project "ankushp" (team P1H),
+labelled `pipeline`, with a valid entry block and moved to Ready by the developer, is planned, reviewed,
+built in its own worktree and brought to the developer's accept card. The developer approves each plan,
+accepts each result and merges into `main`.
+
+- `machinery.toml`, `openspec/` and `dispatch/` are the registration; agents may not edit them.
+- A pipeline branch is `feature/<job-key>-<slug>` and its pull request title starts with the job key
+  (`P1H-123: ...`); the `pr-title` check accepts both forms.
+- Pipeline checks run through `scripts/pipeline-check.sh` (`test`, `lint`), which links `node_modules`
+  from a store keyed by `package-lock.json`.
+- Each Linear issue names the GitHub issue it delivers; the pull request closes it.

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "change": "<change-name>",
+  "issue": "<LINEAR-ID>",
+  "source": {
+    "planning_revision": "",
+    "base": "<git rev the plan was written against>"
+  },
+  "goal": "One sentence: the outcome, in the developer's terms.",
+  "scope": [
+    "paths or areas a run may change"
+  ],
+  "out_of_scope": [
+    "what it must not touch, and what another lane owns"
+  ],
+  "acceptance": "the whole change's acceptance, in one line",
+  "lane": "workstream",
+  "tasks": [
+    {
+      "id": "example-task",
+      "title": "Short title",
+      "description": "What to do, and how to verify it.",
+      "class": "deterministic",
+      "acceptance": "bash scripts/pipeline-check.sh test",
+      "covers": [
+        "<capability-path>/<Requirement name>#<Scenario name>"
+      ]
+    }
+  ]
+}

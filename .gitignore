@@ -55,3 +55,7 @@ next-env.d.ts
 # Night runner local artifacts
 .night-runner-logs/
 .night-runner.lock/
+
+# dispatch: the controller's and the runner's live state
+.controller/
+.workstream/

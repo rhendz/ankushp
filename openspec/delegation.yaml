@@ -1,0 +1,49 @@
+# The site's authority ledger: which lifecycle transitions need the developer and which an
+# agent carries out, and the limits an autonomous run operates under. Read by the dispatch
+# kernel (its default plan checker parses this flat `key: value` form).
+#
+# Delegation is recognised, never assumed: a transition with no line, or any value but the
+# exact word `delegated`, is human. Widening a line is the developer's decision.
+#
+# `review:`, `verify:` and `delivery-review:` say WHO does them, never WHETHER: no value skips
+# an independent plan review, verification or the delivery review.
+
+# ── Intake ──
+intent: human                   # moving the Linear issue to Ready is the developer's approval
+
+# ── Planning ──
+explore: delegated
+propose: delegated              # writing the plan; not authorization
+review: delegated               # independent review of the plan
+technical-replan: delegated     # replanning inside the authorized outcome
+
+# ── The authorization boundary ──
+dispatch: human                 # the developer approves each plan before anything is built
+dispatch-run: delegated         # the act of handing an approved plan to the runner
+scope-change: human
+authority-change: human         # this file
+reclassify: delegated           # investigate <-> plan
+waive-specs: delegated          # `skip_specs: true`; accept stays human
+
+# ── Execution ──
+execute: delegated
+technical-correction: delegated
+verify: delegated
+sync: delegated
+
+# ── Delivery ──
+delivery-review: delegated      # independent review of what was built
+accept: human                   # the developer accepts each finished job
+visual-acceptance: human        # how a page looks is the developer's call
+merge: human                    # into main, which deploys the public site
+push-branch: delegated          # a change's own branch
+push: human                     # main
+publish: human
+archive: delegated
+
+# ── Limits on an autonomous stretch ──
+limit-attempts-per-task: 3
+limit-dispatches-per-change: 16
+limit-runtime-minutes: 180
+limit-cost-usd: 60
+limit-waiting-ticks: 60
