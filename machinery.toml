@@ -1,0 +1,127 @@
+# How dispatch runs this site as a pipeline project: a Linear issue in the "ankushp" project
+# (team P1H), labelled `pipeline` and moved to Ready by the developer, is planned, reviewed,
+# built and brought to the developer's accept card by the site's own daemon
+# (dispatch-ankushp.service on the PC, decision page 127.0.0.1:47104).
+#
+# The site has no policy library of its own: the kernel's default plan checker
+# (`dispatch-plan-check`, schemas `delivery` and `investigation`) is the gate.
+schema = 1
+
+[game]
+name = "ankushp"
+
+[commands]
+# scripts/pipeline-check.sh links node_modules from a store keyed by package-lock.json, then
+# runs the npm script. Unit tests (vitest) and lint run on the PC with no network and no browser.
+# Typecheck, build and the Playwright smoke run in GitHub Actions on the pull request.
+test = ["bash", "scripts/pipeline-check.sh", "test"]
+openspec_check = ["dispatch-plan-check"]
+
+[[commands.stop_checks]]
+name = "test"
+run = ["bash", "scripts/pipeline-check.sh", "test"]
+
+[[commands.ready_checks]]
+name = "test"
+run = ["bash", "scripts/pipeline-check.sh", "test"]
+
+[[commands.ready_checks]]
+name = "lint"
+run = ["bash", "scripts/pipeline-check.sh", "lint"]
+
+[paths]
+openspec = "openspec"
+changes = "openspec/changes"
+specs = "openspec/specs"
+# The site keeps no decision log; nothing may be written here.
+decision_log = "docs/decisions.md"
+delegation = "openspec/delegation.yaml"
+rules = ".claude/rules"
+instructions = "CLAUDE.md"
+hooks = ".husky"
+change_workflow = "AGENTS.md"
+runbook = "docs/runbooks/README.md"
+
+# Paths agents may not write. A trailing "/" marks a directory; the kernel adds this file itself.
+[boundary]
+# A build worker, in its worktree: what it runs under, the plan it is held to, the
+# repository's own automation and the agents' instructions.
+worker = [
+  "dispatch/",
+  "openspec/",
+  ".claude/",
+  "CLAUDE.md",
+  "AGENTS.md",
+  ".github/",
+  ".husky/",
+  "scripts/pipeline-check.sh",
+]
+# The planner, reviewers and sync: no source, no authority files. Sync alone gets the specs back.
+planning = [
+  "dispatch/",
+  "openspec/delegation.yaml",
+  "openspec/specs/",
+  "openspec/schemas/",
+  "openspec/config.yaml",
+  ".claude/",
+  "CLAUDE.md",
+  "AGENTS.md",
+  ".github/",
+  ".husky/",
+  "app/",
+  "components/",
+  "layouts/",
+  "lib/",
+  "css/",
+  "data/",
+  "public/",
+  "scripts/",
+  "tests/",
+  "package.json",
+  "package-lock.json",
+]
+source = ["app/", "components/", "layouts/", "lib/", "css/", "data/", "public/", "scripts/", "tests/"]
+
+# One line: changes branch from main and merge back into it. main deploys to production,
+# so the developer merges.
+[branches]
+integration = "main"
+release = "main"
+protected = ["main", "master"]
+
+[linear]
+team = "P1H"
+queue_type = "Engineering"
+queue_states = ["Ready", "Needs Changes"]
+
+# Linear intake. Which issues are this site's is the ops project list's `linear_project = "ankushp"`.
+[intake]
+label = "pipeline"
+ready_state = "Ready"
+picked_state = "In Progress"
+invalid_state = "Needs Changes"
+poll_seconds = 120
+
+# The agent App that pushes branches and opens pull requests.
+[github]
+agent_app_id = 5064899
+agent_key = "~/.config/machinery/apps/agent.pem"
+repository = "rhendz/ankushp"
+
+[tools]
+openspec = "~/.local/share/fnm/node-versions/v24.14.0/installation/bin/openspec"
+
+[delivery]
+review_state = "In Review"
+done_state = "Done"
+
+[keychain]
+linear = "plus-hustle-linear"
+
+[dispatch]
+project = "ankushp"
+workflow = "dispatch/workflows/site-build.toml"
+ops = "~/src/ops"
+
+[env]
+repo = "ANKUSHP_REPO"

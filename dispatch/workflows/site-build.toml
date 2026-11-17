@@ -1,0 +1,87 @@
+# The site's build workflow: what dispatch runs for one accepted ankushp issue.
+#
+# The lifecycle is the kernel's transition table (plan, plan review, approval, build, verify,
+# delivery review, accept, merge); this file binds each agent stage to a role file in
+# dispatch/roles/, says which credential pays, and sets the holds, the stall timeout and the
+# cost caps. It declares no transitions and no steps.
+
+name = "site-build"
+credential = "subscription"
+columns = ["ready", "plan", "plan-review", "approval", "build", "verify", "delivery-review", "accept", "done"]
+
+[board]
+ready = "Ready"
+plan = "Planning"
+plan-review = "Planning"
+approval = "Needs you"
+build = "Building"
+verify = "Checking"
+delivery-review = "Checking"
+accept = "Needs you"
+done = "Done"
+
+[credentials.subscription]
+mode = "subscription"
+
+[stages.investigate]
+role = "researcher"
+envelope = "researcher"
+profile = "planner"
+
+[stages.plan]
+role = "planner"
+envelope = "planner"
+profile = "planner"
+
+[stages.refusal_fix]
+role = "planner"
+envelope = "planner"
+profile = "planner"
+
+[stages.plan_review]
+role = "plan-reviewer"
+envelope = "verifier"
+profile = "reviewer"
+
+[stages.delivery_review]
+role = "delivery-reviewer"
+envelope = "verifier"
+profile = "reviewer"
+
+[stages.build]
+role = "builder"
+envelope = "builder"
+profile = "runner"
+
+[stages.conflict_fix]
+role = "builder"
+envelope = "builder"
+profile = "runner"
+
+[stages.spec_sync]
+role = "spec-syncer"
+envelope = "builder"
+profile = "sync"
+
+[hold]
+blocked_by = true
+overlap = true
+touches_exempt = ["README.md"]
+
+[stall]
+minutes = 20
+
+# Read and reported, not enforced. 0 = off. A run's own cap is its role file's budget_usd.
+[cost]
+per_job_usd = 0
+per_day_usd = 0
+
+# `risk` must be high when an issue touches a gated surface:
+#   page     what a visitor sees (app/, components/, layouts/, css/)
+#   content  posts and site data (data/, public/)
+#   api      the API routes and what they store (app/api/, lib/)
+#   deps     package.json and the lockfile
+#   tooling  scripts/, tests/, configuration files
+[entry]
+surfaces = ["page", "content", "api", "deps", "tooling"]
+gated_surfaces = ["api", "deps"]

@@ -1,0 +1,57 @@
+name: investigation
+version: 1
+description: research that may end without implementation - investigation only (dispatch default)
+artifacts:
+  - id: investigation
+    generates: investigation.md
+    description: What was looked at, what was found, and what is recommended
+    template: investigation.md
+    instruction: |
+      Record the investigation that produced this change, before anything is
+      proposed. This artifact is the project's store for deliberation: the
+      analysis behind a decision has nowhere else durable to live.
+
+      Sections:
+      - **Objective**: the question as it was originally asked, in the asker's
+        terms. Restate it, never quote it — a quote is untestable. If you are
+        widening a narrow request, say so here and stop: widening is your
+        invention, not theirs.
+      - **Upstream**: the artifacts this investigation must satisfy — the
+        README, `docs/`, the Linear issue, code paths, prior investigations.
+        Name them with paths.
+      - **Affected behavior**: what observable behavior is in scope, and what the
+        code does today, with file:line evidence. Distinguish what you read from
+        what you ran.
+      - **Existing uses**: REQUIRED before recommending the removal of any
+        capability, flag, script argument, module or documented affordance.
+        Search the whole tracked tree for every caller and every mention
+        (`git grep -n <symbol> -- .`, no directory excluded) and list what you
+        found, including the ones that make removal harder. A removal proposed
+        without this section is not reviewable.
+      - **Alternatives**: the readings and approaches considered, each with why it
+        was rejected. Name the reading you discarded — that is what lets a
+        reviewer correct you without guessing what you were thinking.
+      - **Uncertainties**: what you could not settle, and what it would take to
+        settle it. Separate "needs the developer's decision" from "needs a measurement".
+      - **Recommendation**: one recommendation, with the question it answers
+        attached. A question that reaches the developer with a recommended answer
+        resolves in one line instead of a round trip.
+      - **Conclusion**: filled in when the investigation closes. For an
+        investigation-only change (schema `investigation`), this is
+        the terminal artifact: state what was concluded and link any change or
+        Linear issue that resulted, or record that nothing followed and why.
+
+      Authority: this artifact recommends. It never decides. A technical choice
+      made inside already-delegated authority belongs in design.md; a changed
+      outcome, a product or design trade-off, a scope expansion, an authority
+      change or an irreversible action goes to the developer as a decision
+      request. Never present your own recommendation as the developer's
+      decision.
+    requires: []
+
+# No `apply:` section: this schema plans nothing to implement. That absence is
+# documentation, not enforcement — `dispatch-plan-check` is the gate that
+# refuses tasks, a contract or an implementation branch on an investigation-only
+# change. If the investigation concludes that something should be built, it is
+# closed with a Conclusion and a NEW change is opened under the `delivery`
+# schema, linked from that Conclusion.
