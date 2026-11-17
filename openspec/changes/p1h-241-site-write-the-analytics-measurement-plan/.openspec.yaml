@@ -1,1 +1,4 @@
 schema: delivery
+# A runbook only: no visitor-observable or site behaviour changes, so there is no spec delta.
+# The document's content contract is design.md D1; its acceptance is design.md D2.
+skip_specs: true
