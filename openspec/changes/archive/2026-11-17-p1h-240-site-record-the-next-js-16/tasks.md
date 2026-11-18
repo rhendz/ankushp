@@ -2,7 +2,7 @@
 
 ## 1. Write the sign-off checklist
 
-- [ ] 1.1 (write-validation-checklist) Create `docs/specs/next16-migration/validation.md` with the
+- [x] 1.1 (write-validation-checklist) Create `docs/specs/next16-migration/validation.md` with the
   structure and format rules in `design.md` D2:
   - the seven headings and the subsections `### Homepage (/)` and `### Blog post page`, all with
     their exact text
@@ -35,7 +35,7 @@
 
 ## 2. Confirm nothing else changed
 
-- [ ] 2.1 (confirm-site-unchanged) Confirm the change writes only the checklist and its own plan.
+- [x] 2.1 (confirm-site-unchanged) Confirm the change writes only the checklist and its own plan.
   Every tracked path that differs from the merge base with `origin/main` must be
   `docs/specs/next16-migration/validation.md` or under
   `openspec/changes/p1h-240-site-record-the-next-js-16/`. So must every untracked, non-ignored
