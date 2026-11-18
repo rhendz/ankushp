@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "change": "p1h-240-site-record-the-next-js-16",
+  "issue": "P1H-240",
+  "source": {
+    "planning_revision": "b9ce6e2eed8c99f3",
+    "base": "6404d703518c6f6501e164cd3e0565e28b71493a"
+  },
+  "goal": "docs/specs/next16-migration/validation.md records the Next.js 16 migration on main as a sign-off checklist, every line marked met, not met or not run with its evidence, including smoke coverage of critical routes, the force-dynamic fallback, proposed rollback triggers and the not-run performance spot-checks with their commands.",
+  "scope": [
+    "docs/specs/next16-migration/validation.md"
+  ],
+  "out_of_scope": [
+    "app/, components/, layouts/, lib/, css/, data/, public/, scripts/, tests/: no site code, content, script or test changes",
+    "package.json, package-lock.json, next.config.js, contentlayer.config.ts and other configuration",
+    "docs/specs/next16-migration/blockers.md and readiness.md: the new document notes blockers.md is stale; correcting it is a follow-up",
+    "removing or re-adding force-dynamic; adding smoke coverage for /about",
+    "running Lighthouse or the Playwright smoke on the PC; committing Lighthouse output",
+    "adopting rollback thresholds: they are recorded as proposed; adoption is the developer's"
+  ],
+  "acceptance": "test -f docs/specs/next16-migration/validation.md && bash scripts/pipeline-check.sh lint && bash scripts/pipeline-check.sh test",
+  "lane": "workstream",
+  "tasks": [
+    {
+      "id": "write-validation-checklist",
+      "title": "Write the Next.js 16 migration sign-off checklist",
+      "description": "Create docs/specs/next16-migration/validation.md with the structure and format rules in design.md D2: the seven headings and the two performance subsections with their exact text, rows V1-V13 each with a plain Status cell of met, not met or not run (D1) and its evidence, the 'Proposed, not adopted' note and triggers R1-R4. Re-check each cited fact against the merge base with origin/main before writing it. Record the PC lint and test results in V5 and V6, citing the merge-base commit and the run date. Never mark V7-V13 met. Verified by test -f; grep for every heading and subsection; every row V1-V13 with a valid status; V4 met; V7, V8, V9, V12 and V13 not run; no row V7-V13 met; 'Proposed, not adopted' and R1-R4; 60a7a1f, /about and the Lighthouse command; then the lint pipeline check.",
+      "class": "deterministic",
+      "acceptance": "f=docs/specs/next16-migration/validation.md; test -f \"$f\" && grep -q '^# Next.js 16 Migration Validation' \"$f\" && grep -q '^## Status legend' \"$f\" && grep -q '^## Sign-off checklist' \"$f\" && grep -q '^## Smoke coverage of critical routes' \"$f\" && grep -q '^## force-dynamic fallback' \"$f\" && grep -q '^## Rollback triggers (proposed)' \"$f\" && grep -q '^## Performance spot-checks' \"$f\" && grep -qxF '### Homepage (/)' \"$f\" && grep -qxF '### Blog post page' \"$f\" && for i in $(seq 1 13); do grep -qE \"^\\| *V$i *\\|[^|]*\\| *(met|not met|not run) *\\|\" \"$f\" || exit 1; done && grep -qE '^\\| *V4 *\\|[^|]*\\| *met *\\|' \"$f\" && for i in 7 8 9 12 13; do grep -qE \"^\\| *V$i *\\|[^|]*\\| *not run *\\|\" \"$f\" || exit 1; done && ! grep -qE '^\\| *V(7|8|9|10|11|12|13) *\\|[^|]*\\| *met *\\|' \"$f\" && grep -qF 'Proposed, not adopted' \"$f\" && for r in 1 2 3 4; do grep -qE \"^- \\*\\*R$r\\b\" \"$f\" || exit 1; done && grep -qF '60a7a1f' \"$f\" && grep -qF '/about' \"$f\" && grep -qF 'npx -y lighthouse' \"$f\" && bash scripts/pipeline-check.sh lint",
+      "covers": []
+    },
+    {
+      "id": "confirm-site-unchanged",
+      "title": "Confirm the change writes only the checklist and its plan",
+      "description": "Compare the whole branch against the merge base with origin/main: every tracked path that differs, and every untracked non-ignored path (top-level sandbox dot-entries excluded, .github and .husky included; design.md D4), must be docs/specs/next16-migration/validation.md or under openspec/changes/p1h-240-site-record-the-next-js-16/. Then run the unit tests. Verified by filtering git diff --name-only and git ls-files --others against those two paths and requiring nothing left, then the test pipeline check.",
+      "class": "deterministic",
+      "acceptance": "b=\"$(git merge-base HEAD refs/remotes/origin/main)\" && l=\"$(git diff --name-only \"$b\" && git ls-files --others --exclude-standard -- . ':(exclude,glob).*' && git ls-files --others --exclude-standard -- .github .husky)\" && test -z \"$(printf '%s\\n' \"$l\" | grep -vxE 'docs/specs/next16-migration/validation\\.md|openspec/changes/p1h-240-site-record-the-next-js-16/.+')\" && bash scripts/pipeline-check.sh test",
+      "covers": []
+    }
+  ]
+}
